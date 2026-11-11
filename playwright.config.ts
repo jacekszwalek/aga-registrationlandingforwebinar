@@ -28,7 +28,7 @@ export default defineConfig({
     { name: 'desktop-webkit', use: webkitOr({ ...devices['Desktop Safari'], viewport: { width: 1440, height: 900 } }) },
   ],
   webServer: {
-    command: 'npx astro preview --port 4321',
+    command: 'node scripts/serve.mjs',
     url: 'http://localhost:4321',
     reuseExistingServer: !process.env.CI,
     timeout: 60_000,

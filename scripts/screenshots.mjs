@@ -1,5 +1,5 @@
 // Zrzuty referencyjne: 3 stany × mobile/desktop + strona podziękowania.
-// Wymaga działającego podglądu: npm run build && npm run preview
+// Wymaga działającego serwera: npm run build && npm run serve
 import { chromium, devices } from 'playwright';
 
 const BASE = process.env.BASE_URL || 'http://localhost:4321';
