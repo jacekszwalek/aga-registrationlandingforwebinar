@@ -1,0 +1,29 @@
+---
+/**
+ * Adres główny przekierowuje do aktualnej wersji (v2), zachowując query string (UTM-y).
+ * Statyczny hosting nie ma przekierowań po stronie serwera, więc: JS + meta refresh + link.
+ */
+import { withBase } from '../lib/paths';
+const target = withBase('v2/');
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Bezpłatny webinar | Przystań Zmiany Zawodowej</title>
+    <script is:inline define:vars={{ target }}>
+      location.replace(target + location.search + location.hash);
+    </script>
+    <noscript><meta http-equiv="refresh" content={`0; url=${target}`} /></noscript>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 2rem; background: #fff; color: #1a1a1a; }
+      a { color: #951d5b; }
+    </style>
+  </head>
+  <body>
+    <p>Przekierowuję do strony webinaru… <a href={target}>Przejdź dalej</a></p>
+  </body>
+</html>

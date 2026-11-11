@@ -1,0 +1,95 @@
+/* ---------- Fonty (self-hosted) ---------- */
+@font-face {
+  font-family: 'LT Flode Neue';
+  src: url('../assets/fonts/ltflodeneue-medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/poppins-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/poppins-latin-ext-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/poppins-latin-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Poppins';
+  src: url('../assets/fonts/poppins-latin-ext-600-normal.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* ---------- Tokeny ---------- */
+:root {
+  --white: #ffffff;
+  --pink-500: #f975b9; /* tylko dekoracja – nigdy tło pod tekst */
+  --pink-600: #da4391; /* biały tekst tylko w dużych nagłówkach (4,04:1) */
+  --pink-700: #c43175; /* przyciski: biały tekst 5,19:1 */
+  --pink-800: #951d5b; /* hover: 8,06:1 */
+  --blush-50: #fcf0f6;
+  --blush-100: #fbeaf3;
+  --pink-200: #f2bfda;
+  --ink: #2b081a;
+  --text: #1a1a1a;
+  --text-muted: #545454;
+
+  --font-heading: 'LT Flode Neue', 'Poppins', system-ui, sans-serif;
+  --font-body: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --radius: 20px;
+  --radius-sm: 12px;
+  --shadow: 0 10px 30px -12px rgb(149 29 91 / 0.22), 0 2px 6px rgb(43 8 26 / 0.05);
+  --gutter: clamp(16px, 4vw, 40px);
+  --maxw: 1180px;
+  --focus: 0 0 0 3px var(--white), 0 0 0 6px var(--pink-800);
+  --consent-h: 0px;
+}
+
+
+/* ---------- Stany wydarzenia ----------
+   Każdy element zależny od stanu ma data-show="before during" itp.
+   <html data-state> ustawia skrypt w <head> przed pierwszym renderem. */
+[data-state='before'] [data-show]:not([data-show~='before']),
+[data-state='during'] [data-show]:not([data-show~='during']),
+[data-state='after'] [data-show]:not([data-show~='after']) {
+  display: none !important;
+}
+[data-variant='A'] [data-variant-show='B'],
+[data-variant='B'] [data-variant-show='A'] {
+  display: none !important;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+.todo {
+  background: #fff6c2;
+  color: #4a3b00;
+  padding: 0 4px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+.nowrap {
+  white-space: nowrap;
+}

@@ -1,12 +1,19 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
+import VersionSwitch from './VersionSwitch.astro';
+
+interface Props {
+  version: 'v1' | 'v2';
+}
+const { version } = Astro.props;
 ---
 
 <header class="site-header">
-  <div class="container site-header__inner">
+  <div class="site-header__inner">
     <!-- Celowo bez linku: strona ma jeden cel – zapis. -->
     <Image src={logo} alt="Przystań Zmiany Zawodowej" width={126} height={56} densities={[1, 2]} loading="eager" />
+    <VersionSwitch current={version} />
   </div>
 </header>
 
@@ -18,8 +25,11 @@ import logo from '../assets/logo.png';
   .site-header__inner {
     display: flex;
     align-items: center;
+    gap: 12px;
+    max-width: var(--maxw);
     min-height: 64px;
-    padding-block: 4px;
+    margin-inline: auto;
+    padding: 4px var(--gutter);
   }
   .site-header img {
     width: 108px;

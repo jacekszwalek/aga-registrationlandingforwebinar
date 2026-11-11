@@ -1,6 +1,6 @@
 ---
-import { copy } from '../config/copy';
-import { eventConfig, TODO_MARK } from '../config/event.config';
+import { copy } from '../../config/copy';
+import { eventConfig, TODO_MARK } from '../../config/event.config';
 
 interface Props {
   id: 'hero' | 'bottom';
@@ -17,6 +17,7 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
   id={`zapis-${id}`}
   data-form-id={id}
   data-mode={eventConfig.form.mode}
+  data-thanks="v1/dziekuje/"
   aria-label="Zapis na webinar"
   novalidate
 >

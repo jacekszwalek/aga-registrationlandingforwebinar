@@ -1,0 +1,69 @@
+---
+/**
+ * Dyskretny przełącznik wersji prototypu (v1 ↔ v2). Renderowany tylko przy
+ * allowPreviewParams – przed wydaniem znika razem z parametrami podglądu.
+ * Zachowuje query string (UTM-y, ?state=), żeby porównywać wersje w tym samym stanie.
+ */
+import { eventConfig } from '../config/event.config';
+import { withBase } from '../lib/paths';
+
+interface Props {
+  current: 'v1' | 'v2';
+}
+const { current } = Astro.props;
+const versions = ['v1', 'v2'] as const;
+---
+
+{
+  eventConfig.allowPreviewParams && (
+    <nav class="vswitch" aria-label="Wersja prototypu">
+      <span class="vswitch__label">Wersja</span>
+      {versions.map((v) => (
+        <a href={withBase(`${v}/`)} data-version-link aria-current={v === current ? 'page' : undefined}>
+          {v}
+        </a>
+      ))}
+    </nav>
+  )
+}
+
+<script is:inline>
+  document.querySelectorAll('[data-version-link]').forEach(function (a) {
+    a.addEventListener('click', function () {
+      a.href = a.getAttribute('href').split('?')[0] + location.search;
+    });
+  });
+</script>
+
+<style>
+  .vswitch {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
+    padding: 2px;
+    border: 1px solid var(--pink-200);
+    border-radius: 999px;
+    font: 600 0.75rem/1 var(--font-body);
+    color: var(--text-muted);
+  }
+  .vswitch__label {
+    padding: 0 6px 0 8px;
+  }
+  .vswitch a {
+    display: inline-grid;
+    place-items: center;
+    min-width: 44px;
+    min-height: 32px;
+    border-radius: 999px;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+  .vswitch a[aria-current='page'] {
+    background: var(--blush-100);
+    color: var(--pink-800);
+  }
+  .vswitch a:hover {
+    color: var(--pink-800);
+  }
+</style>

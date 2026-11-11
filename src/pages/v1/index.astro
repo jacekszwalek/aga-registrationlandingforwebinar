@@ -1,29 +1,30 @@
 ---
-import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import DuringBanner from '../components/DuringBanner.astro';
-import Hero from '../components/Hero.astro';
-import Pains from '../components/Pains.astro';
-import Outcomes from '../components/Outcomes.astro';
-import HostBio from '../components/HostBio.astro';
-import Testimonials from '../components/Testimonials.astro';
-import Faq from '../components/Faq.astro';
-import FinalSignup from '../components/FinalSignup.astro';
-import Footer from '../components/Footer.astro';
-import StickyCta from '../components/StickyCta.astro';
-import ConsentBanner from '../components/ConsentBanner.astro';
-import { copy } from '../config/copy';
-import { eventConfig } from '../config/event.config';
-import { parseSessions } from '../lib/eventState';
-import { formatDate, formatTimeRange } from '../lib/format';
+import '../../styles/v1.css';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import DuringBanner from '../../components/DuringBanner.astro';
+import Hero from '../../components/v1/Hero.astro';
+import Pains from '../../components/v1/Pains.astro';
+import Outcomes from '../../components/v1/Outcomes.astro';
+import HostBio from '../../components/v1/HostBio.astro';
+import Testimonials from '../../components/v1/Testimonials.astro';
+import Faq from '../../components/v1/Faq.astro';
+import FinalSignup from '../../components/v1/FinalSignup.astro';
+import Footer from '../../components/v1/Footer.astro';
+import StickyCta from '../../components/StickyCta.astro';
+import ConsentBanner from '../../components/ConsentBanner.astro';
+import { copy } from '../../config/copy';
+import { eventConfig } from '../../config/event.config';
+import { parseSessions } from '../../lib/eventState';
+import { formatDate, formatTimeRange } from '../../lib/format';
 
 const sessions = parseSessions(eventConfig.sessions);
 const first = sessions[0];
 const overline = [copy.hero.overlinePrefix, formatDate(first.start), formatTimeRange(first)];
 ---
 
-<Base title={copy.meta.title} description={copy.meta.description}>
-  <Header />
+<Base title={copy.meta.title} description={copy.meta.description} path="v1/">
+  <Header version="v1" />
   <DuringBanner />
   <main id="main">
     <Hero overline={overline} />
@@ -38,6 +39,6 @@ const overline = [copy.hero.overlinePrefix, formatDate(first.start), formatTimeR
   <StickyCta />
   <ConsentBanner />
   <script>
-    import '../scripts/landing';
+    import '../../scripts/landing';
   </script>
 </Base>
