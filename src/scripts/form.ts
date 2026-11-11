@@ -1,4 +1,4 @@
-import { copy } from '../config/copy';
+import { formMessages } from '../config/formMessages';
 import { eventConfig } from '../config/event.config';
 import { extractUtm, serializeUtm } from '../lib/utm';
 import { withBase } from '../lib/paths';
@@ -52,9 +52,9 @@ function setFieldError(form: HTMLFormElement, field: string, message: string | n
 }
 
 function validate(form: HTMLFormElement): Array<{ field: string; reason: string; message: string }> {
-  const e = copy.form.errors;
+  const e = formMessages;
   const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
-  const name = (form.elements.namedItem('name') as HTMLInputElement).value.trim();
+  const name = ((form.elements.namedItem('name') as HTMLInputElement | null)?.value ?? '').trim();
   const errors: Array<{ field: string; reason: string; message: string }> = [];
   if (!email) errors.push({ field: 'email', reason: 'required', message: e.emailRequired });
   else if (!EMAIL_RE.test(email)) errors.push({ field: 'email', reason: 'invalid', message: e.emailInvalid });
@@ -146,10 +146,10 @@ function bindForm(form: HTMLFormElement): void {
       } catch {
         /* brak sessionStorage – strona podziękowania pokaże wariant domyślny */
       }
-      location.assign(withBase('dziekuje/'));
+      location.assign(withBase(form.dataset.thanks || 'v2/dziekuje/'));
     } catch {
       track('form_error', { form: formId, field: 'network', reason: 'network' });
-      formError.textContent = copy.form.errors.network;
+      formError.textContent = formMessages.network;
       formError.hidden = false;
       busy = false;
       setLoading(form, false);
@@ -159,5 +159,5 @@ function bindForm(form: HTMLFormElement): void {
 
 export function initForms(): void {
   currentUtm();
-  document.querySelectorAll<HTMLFormElement>('form.signup-form').forEach(bindForm);
+  document.querySelectorAll<HTMLFormElement>('form[data-form-id]').forEach(bindForm);
 }

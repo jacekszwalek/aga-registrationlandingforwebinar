@@ -39,7 +39,8 @@ function initCountdown(): void {
 function initSticky(): void {
   const bar = document.querySelector<HTMLElement>('[data-sticky-cta]');
   const hero = document.querySelector<HTMLFormElement>('#zapis-hero');
-  const forms = [...document.querySelectorAll<HTMLFormElement>('form.signup-form')];
+  // Przycisk chowa się, gdy widać formularz albo inne CTA (np. końcowy blok v2).
+  const forms = [...document.querySelectorAll<HTMLElement>('form[data-form-id], [data-sticky-hide]')];
   if (!bar || !hero) return;
   const visible = new Set<Element>();
   let heroAbove = false;
