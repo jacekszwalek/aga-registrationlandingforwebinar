@@ -9,7 +9,9 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test --trace off",
     "test": "npm run test:unit && npm run test:e2e",
-    "screenshots": "node scripts/screenshots.mjs"
+    "screenshots": "node scripts/screenshots.mjs",
+    "serve": "node scripts/serve.mjs",
+    "build:pages": "SITE_URL=https://jacekszwalek.github.io BASE_PATH=/aga-registrationlandingforwebinar npm run build"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.12",

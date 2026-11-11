@@ -1,6 +1,7 @@
 import { copy } from '../config/copy';
 import { eventConfig } from '../config/event.config';
 import { extractUtm, serializeUtm } from '../lib/utm';
+import { withBase } from '../lib/paths';
 import { track, trackOnce } from './track';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -82,7 +83,7 @@ async function send(payload: SignupPayload): Promise<void> {
     if (fail) throw new Error('mock network error');
     return;
   }
-  const res = await fetch('/api/subscribe', {
+  const res = await fetch(withBase('api/subscribe'), {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(payload),
@@ -145,7 +146,7 @@ function bindForm(form: HTMLFormElement): void {
       } catch {
         /* brak sessionStorage – strona podziękowania pokaże wariant domyślny */
       }
-      location.assign('/dziekuje/');
+      location.assign(withBase('dziekuje/'));
     } catch {
       track('form_error', { form: formId, field: 'network', reason: 'network' });
       formError.textContent = copy.form.errors.network;

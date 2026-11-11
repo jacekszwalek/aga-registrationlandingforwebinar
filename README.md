@@ -15,8 +15,13 @@ Testy:
 ```bash
 npm run test:unit
 npm run build && PW_NO_WEBKIT=1 npm run test:e2e   # lokalnie bez WebKita
-npm run preview & npm run screenshots              # zrzuty do docs/screenshots/
+npm run serve & npm run screenshots                # zrzuty do docs/screenshots/
 ```
+
+## Podgląd prototypu (GitHub Pages)
+https://jacekszwalek.github.io/aga-registrationlandingforwebinar/
+
+Każdy push do `main` uruchamia workflow `pages.yml`: build z `BASE_PATH=/aga-registrationlandingforwebinar` i publikacja na gałęzi `gh-pages`. Jednorazowo w repo: *Settings → Pages → Build and deployment → Source: Deploy from a branch → `gh-pages` / `(root)`*. Strona ma `noindex` (`site.indexable = false`).
 
 ## Zmiana terminu
 Edytuj **tylko** `src/config/event.config.ts` → `sessions` (ISO z przesunięciem: `+01:00` zimą, `+02:00` latem). Data w nadtytule, szczegółach, liczniku, `.ics` i Kalendarzu Google wylicza się sama; strona sama przełącza stany `before → during → after`.

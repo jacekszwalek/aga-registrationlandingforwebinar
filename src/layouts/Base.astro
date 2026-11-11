@@ -2,6 +2,8 @@
 import '../styles/global.css';
 import { eventConfig } from '../config/event.config';
 import { parseSessions, getEventStatus } from '../lib/eventState';
+import { withBase } from '../lib/paths';
+import headingFont from '../assets/fonts/ltflodeneue-medium.woff2?url';
 
 interface Props {
   title: string;
@@ -17,7 +19,8 @@ const buildState = getEventStatus(Date.now(), sessions).state;
 const sessionsMs = sessions.map((s) => [s.start, s.end]);
 const variant = eventConfig.headlineVariant;
 const allowPreview = eventConfig.allowPreviewParams;
-const canonical = new URL(path, eventConfig.site.url).toString();
+const canonical = new URL(withBase(path), Astro.site ?? eventConfig.site.url).toString();
+const robotsNoindex = noindex || !eventConfig.site.indexable;
 ---
 
 <!doctype html>
@@ -27,7 +30,7 @@ const canonical = new URL(path, eventConfig.site.url).toString();
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <title>{title}</title>
     <meta name="description" content={description} />
-    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    {robotsNoindex && <meta name="robots" content="noindex, nofollow" />}
     <link rel="canonical" href={canonical} />
     <meta name="theme-color" content="#ffffff" />
     <meta property="og:type" content="website" />
@@ -37,9 +40,9 @@ const canonical = new URL(path, eventConfig.site.url).toString();
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <!-- TODO (etap meta): og:image 1200×630 z nagłówkiem, datą i zdjęciem Agnieszki -->
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="preload" href="/fonts/ltflodeneue-medium.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="icon" type="image/png" sizes="32x32" href={withBase("favicon-32.png")} />
+    <link rel="apple-touch-icon" href={withBase("apple-touch-icon.png")} />
+    <link rel="preload" href={headingFont} as="font" type="font/woff2" crossorigin />
 
     <script is:inline define:vars={{ sessionsMs, variant, allowPreview }}>
       (function () {
