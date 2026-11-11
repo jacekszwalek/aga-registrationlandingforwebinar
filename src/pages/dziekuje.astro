@@ -8,6 +8,7 @@ import { eventConfig, TODO_MARK } from '../config/event.config';
 import { googleCalendarUrl } from '../lib/calendar';
 import { calendarEventFromConfig } from '../lib/calendarEvent';
 import { formatDate, formatTimeRange } from '../lib/format';
+import { withBase } from '../lib/paths';
 
 const t = copy.thankYou;
 const cal = calendarEventFromConfig();
@@ -57,7 +58,7 @@ const cal = calendarEventFromConfig();
         </ul>
         <div class="ty__actions">
           <a class="btn" href={googleCalendarUrl(cal, cal.sessions[0])} target="_blank" rel="noopener" data-calendar="google">{t.google}</a>
-          <a class="btn btn--ghost" href="/webinar.ics" download="webinar.ics" data-calendar="ics">{t.ics}</a>
+          <a class="btn btn--ghost" href={withBase("webinar.ics")} download="webinar.ics" data-calendar="ics">{t.ics}</a>
         </div>
       </section>
 
@@ -100,6 +101,7 @@ const cal = calendarEventFromConfig();
     import { initConsent, hasConsent } from '../scripts/consent';
     import { track } from '../scripts/track';
     import { referralUrl } from '../lib/utm';
+    import { withBase } from '../lib/paths';
 
     initConsent();
 
@@ -128,7 +130,7 @@ const cal = calendarEventFromConfig();
       track('newsletter_signup', { source: 'thank_you' });
     });
 
-    const shareUrl = referralUrl(location.origin + '/');
+    const shareUrl = referralUrl(location.origin + withBase(''));
     const shareBtn = document.querySelector<HTMLButtonElement>('[data-share]')!;
     if (typeof navigator.share === 'function') shareBtn.hidden = false;
     shareBtn.addEventListener('click', async () => {

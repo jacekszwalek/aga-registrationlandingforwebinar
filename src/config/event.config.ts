@@ -45,6 +45,8 @@ export interface EventConfig {
   };
   site: {
     url: string;
+    /** false = noindex na wszystkich stronach (prototyp, podgląd na GitHub Pages). */
+    indexable: boolean;
     privacyPolicyUrl: string;
     termsUrl: string | null;
     consultationUrl: string | null;
@@ -79,6 +81,7 @@ export const eventConfig: EventConfig = {
   },
   site: {
     url: 'https://webinar.przystanzmianyzawodowej.pl',
+    indexable: false,
     privacyPolicyUrl: 'https://przystanzmianyzawodowej.pl/polityka-prywatnosci/',
     termsUrl: null,
     consultationUrl: null,
