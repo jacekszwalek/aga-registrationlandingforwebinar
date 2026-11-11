@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { dismissConsent } from './helpers';
+import { dismissConsent, visibleText } from './helpers';
 
 const lastPayload = (page: Page) =>
   page.evaluate(() => JSON.parse(sessionStorage.getItem('pzz_mock_last_payload') || 'null'));
@@ -60,7 +60,7 @@ test('sukces: stan ładowania, UTM-y w danych, przekierowanie na /dziekuje/', as
     webinar_source: 'utm_campaign=webinar-2026-12|utm_content=post_a|utm_medium=social|utm_source=facebook',
     utm: { utm_source: 'facebook', utm_medium: 'social', utm_campaign: 'webinar-2026-12', utm_content: 'post_a' },
   });
-  await expect(page.locator('h1')).toHaveText('Jesteś zapisana!');
+  expect(await visibleText(page.locator('h1'))).toBe('Jesteś zapisana!');
   // Bez zaznaczonej zgody – zaproszenie do newslettera widoczne.
   await expect(page.locator('[data-newsletter-block]')).toBeVisible();
 });
@@ -108,6 +108,6 @@ test('stan after: zapis na nagranie i wersja strony podziękowania', async ({ pa
   await page.clock.runFor(1000);
   await page.waitForURL('**/dziekuje/');
   expect((await lastPayload(page)).state).toBe('after');
-  await expect(page.locator('h1')).toHaveText('Nagranie jest w drodze na Twoją skrzynkę');
+  expect(await visibleText(page.locator('h1'))).toBe('Nagranie jest w drodze na Twoją skrzynkę');
   await expect(page.locator('[data-calendar]').first()).toBeHidden();
 });

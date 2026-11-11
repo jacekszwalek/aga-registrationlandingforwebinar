@@ -52,9 +52,12 @@ test.describe('zgody', () => {
   });
 
   test('konwersja na /dziekuje/ tylko po zgodzie', async ({ page }) => {
-    await page.addInitScript(() =>
-      sessionStorage.setItem('pzz_signup', JSON.stringify({ newsletter: false, state: 'before', lead: true })),
-    );
+    // Jak po prawdziwym zapisie: flaga ustawiana raz, przeładowanie jej nie odtwarza.
+    await page.addInitScript(() => {
+      if (!sessionStorage.getItem('pzz_signup')) {
+        sessionStorage.setItem('pzz_signup', JSON.stringify({ newsletter: false, state: 'before', lead: true }));
+      }
+    });
     await openAt(page, 'before', '/dziekuje/');
     const leads = () => page.evaluate(() => (window.__events ?? []).filter((e) => e.name === 'generate_lead').length);
     expect(await leads()).toBe(0);

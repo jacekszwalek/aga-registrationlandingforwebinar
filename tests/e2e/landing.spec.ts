@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dismissConsent, isMobile, openAt } from './helpers';
+import { dismissConsent, isMobile, openAt, visibleText } from './helpers';
 
 test.describe('pierwszy ekran', () => {
   test('H1 widoczny, przycisk formularza osiągalny', async ({ page }, info) => {
@@ -29,12 +29,12 @@ test.describe('trzy stany strony', () => {
   test('before: wariant A nagłówka, licznik i data tekstem', async ({ page }) => {
     await openAt(page, 'before');
     await expect(page.locator('html')).toHaveAttribute('data-state', 'before');
-    await expect(page.locator('h1')).toHaveText(/Jak zmienić pracę świadomie/);
+    expect(await visibleText(page.locator('h1'))).toMatch(/Jak zmienić pracę świadomie/);
     await expect(page.locator('[data-countdown]')).toBeVisible();
-    await expect(page.locator('[data-countdown] time')).toHaveText(/3 grudnia 2026, 19:00/);
-    await expect(page.locator('[data-countdown] [data-unit="days"]')).toHaveText('13');
+    expect(await visibleText(page.locator('[data-countdown] time'))).toMatch(/3 grudnia 2026, 19:00/);
+    expect(await visibleText(page.locator('[data-countdown] [data-unit="days"]'))).toBe('13');
     await expect(page.locator('.live')).toBeHidden();
-    await expect(page.locator('#zapis-hero button[type="submit"]')).toHaveText('Zapisuję się bezpłatnie');
+    expect(await visibleText(page.locator('#zapis-hero button[type="submit"]'))).toBe('Zapisuję się bezpłatnie');
   });
 
   test('during: baner „Trwa”, formularz aktywny, bez licznika', async ({ page }) => {
@@ -49,8 +49,8 @@ test.describe('trzy stany strony', () => {
   test('after: nagłówek nagrania, przycisk „Wyślij mi nagranie”, opinie zostają', async ({ page }) => {
     await openAt(page, 'after');
     await expect(page.locator('html')).toHaveAttribute('data-state', 'after');
-    await expect(page.locator('h1')).toHaveText('Obejrzyj nagranie webinaru');
-    await expect(page.locator('#zapis-hero button[type="submit"]')).toHaveText('Wyślij mi nagranie');
+    expect(await visibleText(page.locator('h1'))).toBe('Obejrzyj nagranie webinaru');
+    expect(await visibleText(page.locator('#zapis-hero button[type="submit"]'))).toBe('Wyślij mi nagranie');
     await expect(page.locator('#zapis-hero')).toContainText('Dam Ci też znać o kolejnym webinarze');
     await expect(page.locator('[data-countdown]')).toBeHidden();
     await expect(page.locator('#testimonials-title')).toBeVisible();
@@ -68,7 +68,7 @@ test.describe('trzy stany strony', () => {
   test('wariant B nagłówka (podgląd ?v=b)', async ({ page }) => {
     await page.clock.install({ time: new Date('2026-11-20T12:00:00+01:00') });
     await page.goto('/?v=b');
-    await expect(page.locator('h1')).toHaveText(/Utknęłaś zawodowo\?/);
+    expect(await visibleText(page.locator('h1'))).toMatch(/Utknęłaś zawodowo\?/);
   });
 });
 

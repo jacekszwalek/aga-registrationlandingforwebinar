@@ -1,4 +1,7 @@
-import type { Page, TestInfo } from '@playwright/test';
+import type { Locator, Page, TestInfo } from '@playwright/test';
+
+/** Tekst widoczny dla użytkowniczki (innerText pomija elementy innych stanów z display:none). */
+export const visibleText = (l: Locator) => l.evaluate((e) => (e as HTMLElement).innerText.replace(/\s+/g, ' ').trim());
 
 export const TIMES = {
   before: '2026-11-20T12:00:00+01:00',
