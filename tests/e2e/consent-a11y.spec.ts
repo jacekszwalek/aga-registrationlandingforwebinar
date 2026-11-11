@@ -11,7 +11,7 @@ test.describe('zgody', () => {
     });
     await openAt(page, 'before');
     await page.waitForLoadState('networkidle');
-    await page.mouse.wheel(0, 3000);
+    await page.evaluate((y) => window.scrollBy(0, y), 3000);
     await page.locator('#hero-email').fill('a@example.pl');
     await expect(page.locator('[data-consent-banner]')).toBeVisible();
     expect(foreign).toEqual([]);
