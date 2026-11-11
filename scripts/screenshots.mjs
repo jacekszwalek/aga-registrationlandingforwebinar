@@ -13,8 +13,8 @@ const VIEWPORTS = {
 const browser = await chromium.launch();
 for (const [vp, opts] of Object.entries(VIEWPORTS)) {
   for (const [state, time] of Object.entries(TIMES)) {
-    for (const [name, path] of [['landing', '/'], ['dziekuje', '/dziekuje/']]) {
-      if (name === 'dziekuje' && state === 'during') continue;
+    for (const [name, path] of ['v1', 'v2'].flatMap((v) => [[`${v}-landing`, `/${v}/`], [`${v}-dziekuje`, `/${v}/dziekuje/`]])) {
+      if (name.endsWith('dziekuje') && state === 'during') continue;
       const ctx = await browser.newContext({ ...opts, locale: 'pl-PL', timezoneId: 'Europe/Warsaw' });
       const page = await ctx.newPage();
       await page.clock.install({ time: new Date(time) });
@@ -26,15 +26,15 @@ for (const [vp, opts] of Object.entries(VIEWPORTS)) {
       await page.goto(BASE + path);
       await page.waitForLoadState('networkidle');
       await page.screenshot({ path: `${OUT}/${name}-${state}-${vp}.png`, fullPage: true });
-      if (name === 'landing') await page.screenshot({ path: `${OUT}/${name}-${state}-${vp}-fold.png` });
+      if (name.endsWith('landing')) await page.screenshot({ path: `${OUT}/${name}-${state}-${vp}-fold.png` });
       await ctx.close();
     }
   }
   const ctx = await browser.newContext({ ...opts, locale: 'pl-PL' });
   const page = await ctx.newPage();
   await page.clock.install({ time: new Date(TIMES.before) });
-  await page.goto(BASE + '/');
-  await page.screenshot({ path: `${OUT}/landing-before-${vp}-consent.png` });
+  await page.goto(BASE + '/v2/');
+  await page.screenshot({ path: `${OUT}/v2-landing-before-${vp}-consent.png` });
   await ctx.close();
 }
 await browser.close();
