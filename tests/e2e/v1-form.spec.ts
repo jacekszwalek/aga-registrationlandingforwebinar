@@ -10,7 +10,7 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('checkbox newslettera domyślnie niezaznaczony, imię to input, nie textarea', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/v1/');
   await expect(page.locator('#hero-newsletter')).not.toBeChecked();
   await expect(page.locator('#bottom-newsletter')).not.toBeChecked();
   await expect(page.locator('textarea')).toHaveCount(0);
@@ -20,7 +20,7 @@ test('checkbox newslettera domyślnie niezaznaczony, imię to input, nie textare
 });
 
 test('walidacja: pusty i błędny e-mail, błędy powiązane aria-describedby', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/v1/');
   const email = page.locator('#hero-email');
   const error = page.locator('#hero-email-error');
   await page.locator('#zapis-hero button[type="submit"]').click();
@@ -42,7 +42,7 @@ test('walidacja: pusty i błędny e-mail, błędy powiązane aria-describedby', 
 });
 
 test('sukces: stan ładowania, UTM-y w danych, przekierowanie na /dziekuje/', async ({ page }) => {
-  await page.goto('/?utm_source=facebook&utm_medium=social&utm_campaign=webinar-2026-12&utm_content=post_a&fbclid=xyz');
+  await page.goto('/v1/?utm_source=facebook&utm_medium=social&utm_campaign=webinar-2026-12&utm_content=post_a&fbclid=xyz');
   await page.locator('#hero-name').fill('Anna');
   await page.locator('#hero-email').fill('anna@example.pl');
   const button = page.locator('#zapis-hero button[type="submit"]');
@@ -66,7 +66,7 @@ test('sukces: stan ładowania, UTM-y w danych, przekierowanie na /dziekuje/', as
 });
 
 test('zaznaczony newsletter: brak bloku zaproszenia na /dziekuje/', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/v1/');
   await page.locator('#bottom-email').fill('ola@example.pl');
   await page.locator('label[for="bottom-newsletter"]').click();
   await page.locator('#zapis-bottom button[type="submit"]').click();
@@ -77,7 +77,7 @@ test('zaznaczony newsletter: brak bloku zaproszenia na /dziekuje/', async ({ pag
 });
 
 test('błąd sieci: komunikat, dane zachowane, można ponowić', async ({ page }) => {
-  await page.goto('/?mock=fail');
+  await page.goto('/v1/?mock=fail');
   await page.locator('#hero-name').fill('Ewa');
   await page.locator('#hero-email').fill('ewa@example.pl');
   await page.locator('#zapis-hero button[type="submit"]').click();
@@ -90,7 +90,7 @@ test('błąd sieci: komunikat, dane zachowane, można ponowić', async ({ page }
 });
 
 test('honeypot: bot „widzi” sukces, ale nic nie jest wysyłane ani liczone jako lead', async ({ page }) => {
-  await page.goto('/');
+  await page.goto('/v1/');
   await page.locator('#hero-email').fill('bot@example.pl');
   await page.locator('#hero-website').fill('http://spam.example', { force: true });
   await page.locator('#zapis-hero button[type="submit"]').click();
@@ -102,7 +102,7 @@ test('honeypot: bot „widzi” sukces, ale nic nie jest wysyłane ani liczone j
 
 test('stan after: zapis na nagranie i wersja strony podziękowania', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-12-05T10:00:00+01:00'));
-  await page.goto('/');
+  await page.goto('/v1/');
   await page.locator('#hero-email').fill('kasia@example.pl');
   await page.locator('#zapis-hero button[type="submit"]').click();
   await page.clock.runFor(1000);

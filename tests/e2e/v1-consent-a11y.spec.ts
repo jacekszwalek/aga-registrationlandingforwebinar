@@ -58,7 +58,7 @@ test.describe('zgody', () => {
         sessionStorage.setItem('pzz_signup', JSON.stringify({ newsletter: false, state: 'before', lead: true }));
       }
     });
-    await openAt(page, 'before', '/dziekuje/');
+    await openAt(page, 'before', '/v1/dziekuje/');
     const leads = () => page.evaluate(() => (window.__events ?? []).filter((e) => e.name === 'generate_lead').length);
     expect(await leads()).toBe(0);
     await page.getByRole('button', { name: 'Akceptuję' }).click();
@@ -85,8 +85,8 @@ test.describe('dostępność (axe, WCAG 2.2 AA)', () => {
     const r = await new AxeBuilder({ page }).withTags(tags).analyze();
     expect(r.violations.map((v) => v.id)).toEqual([]);
   });
-  test('/dziekuje/', async ({ page }) => {
-    await openAt(page, 'before', '/dziekuje/');
+  test('/v1/dziekuje/', async ({ page }) => {
+    await openAt(page, 'before', '/v1/dziekuje/');
     const r = await new AxeBuilder({ page }).withTags(tags).analyze();
     expect(r.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(', ')}`)).toEqual([]);
   });

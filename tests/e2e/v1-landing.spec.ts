@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { dismissConsent, isMobile, openAt, visibleText } from './helpers';
+import { dismissConsent, isAllowedLink, isMobile, openAt, visibleText } from './helpers';
 
 test.describe('pierwszy ekran', () => {
   test('H1 widoczny, przycisk formularza osiągalny', async ({ page }, info) => {
@@ -58,7 +58,7 @@ test.describe('trzy stany strony', () => {
 
   test('granice: 19:00 to już during, 20:00 to już after', async ({ page }) => {
     await page.clock.install({ time: new Date('2026-12-03T19:00:00+01:00') });
-    await page.goto('/');
+    await page.goto('/v1/');
     await expect(page.locator('html')).toHaveAttribute('data-state', 'during');
     await page.clock.setSystemTime(new Date('2026-12-03T20:00:00+01:00'));
     await page.reload();
@@ -67,7 +67,7 @@ test.describe('trzy stany strony', () => {
 
   test('wariant B nagłówka (podgląd ?v=b)', async ({ page }) => {
     await page.clock.install({ time: new Date('2026-11-20T12:00:00+01:00') });
-    await page.goto('/?v=b');
+    await page.goto('/v1/?v=b');
     expect(await visibleText(page.locator('h1'))).toMatch(/Utknęłaś zawodowo\?/);
   });
 });
@@ -95,11 +95,10 @@ test.describe('jeden cel – brak linków wychodzących', () => {
   test('landing: tylko kotwice do formularza i linki prawne', async ({ page }) => {
     await openAt(page, 'during');
     const hrefs = await page.locator('a[href]').evaluateAll((as) => as.map((a) => a.getAttribute('href')!));
-    const allowed = (h: string) =>
-      h.startsWith('#zapis-') || h === 'https://przystanzmianyzawodowej.pl/polityka-prywatnosci/';
-    expect(hrefs.filter((h) => !allowed(h))).toEqual([]);
-    await expect(page.locator('nav')).toHaveCount(1); // tylko nawigacja „Informacje prawne” w stopce
-    await expect(page.locator('header a')).toHaveCount(0);
+    expect(hrefs.filter((h) => !isAllowedLink(h))).toEqual([]);
+    // Stopka prawna + przełącznik wersji prototypu (znika przy allowPreviewParams = false).
+    await expect(page.locator('nav')).toHaveCount(2);
+    expect(await page.locator('header a').evaluateAll((as) => as.map((a) => a.getAttribute('href')))).toEqual(['/v1/', '/v2/']);
   });
 });
 

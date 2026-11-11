@@ -12,7 +12,7 @@ export const TIMES = {
 export type State = keyof typeof TIMES;
 
 /** Zamraża czas przed załadowaniem strony – stan liczy skrypt w <head>. */
-export async function openAt(page: Page, state: State, path = '/') {
+export async function openAt(page: Page, state: State, path = '/v1/') {
   await page.clock.install({ time: new Date(TIMES[state]) });
   await page.goto(path);
 }
@@ -23,3 +23,10 @@ export async function dismissConsent(page: Page, decision: 'granted' | 'denied' 
 }
 
 export const isMobile = (info: TestInfo) => ['iphone-13', 'pixel-7'].includes(info.project.name);
+
+/** Jedyny cel strony: dozwolone są tylko kotwice do formularza, linki prawne i przełącznik wersji prototypu. */
+export const isAllowedLink = (h: string) =>
+  h.startsWith('#zapis-') ||
+  h === 'https://przystanzmianyzawodowej.pl/polityka-prywatnosci/' ||
+  h === '/v1/' ||
+  h === '/v2/';
