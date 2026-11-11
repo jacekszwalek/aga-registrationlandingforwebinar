@@ -1,0 +1,156 @@
+---
+/**
+ * Formularz v2: tylko e-mail (wzór: Bandzoogle) + osobna zgoda na newsletter.
+ * Ta sama logika co v1 (src/scripts/form.ts) – imię jest opcjonalne, więc go tu nie ma.
+ */
+import { copy } from '../../config/copy';
+import { copyV2 } from '../../config/copy.v2';
+import { eventConfig, TODO_MARK } from '../../config/event.config';
+
+const f = copyV2.form;
+const controller = `${eventConfig.controller.name} (${eventConfig.controller.brand})`;
+const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
+---
+
+<form
+  class="signup"
+  id="zapis-hero"
+  data-form-id="hero"
+  data-mode={eventConfig.form.mode}
+  data-thanks="v2/dziekuje/"
+  aria-label="Zapis na webinar"
+  novalidate
+>
+  <label class="signup__label" for="hero-email">{f.emailLabel}</label>
+  <div class="signup__row">
+    <input
+      id="hero-email"
+      name="email"
+      type="email"
+      autocomplete="email"
+      inputmode="email"
+      autocapitalize="off"
+      spellcheck="false"
+      enterkeyhint="send"
+      placeholder={f.emailPlaceholder}
+      required
+      aria-required="true"
+      aria-describedby="hero-email-error"
+    />
+    <button class="btn" type="submit">
+      <span class="btn__label" data-show="before">{f.submit.before}</span>
+      <span class="btn__label" data-show="during">{f.submit.during}</span>
+      <span class="btn__label" data-show="after">{f.submit.after}</span>
+      <span class="btn__loading" hidden>{copy.form.loading}</span>
+    </button>
+  </div>
+  <p class="signup__error" id="hero-email-error" hidden></p>
+  <p class="signup__after" data-show="after">{copy.after.newsletterLine}</p>
+
+  <div class="hp" aria-hidden="true">
+    <label for="hero-website">Zostaw to pole puste</label>
+    <input id="hero-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="signup__check">
+    <input id="hero-newsletter" name="newsletter" type="checkbox" value="yes" />
+    <label for="hero-newsletter">{copy.form.newsletter}</label>
+  </div>
+
+  <p class="form-error" role="alert" hidden></p>
+
+  <p class="signup__clause">
+    {clauseBefore}{controller}{clauseAfter}
+    Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a> i Regulaminie{' '}
+    {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie</a> : <span class="todo">{TODO_MARK}</span>}.
+  </p>
+</form>
+
+<style>
+  .signup {
+    display: grid;
+    gap: 10px;
+  }
+  .signup__label {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--ink);
+  }
+  .signup__row {
+    display: grid;
+    gap: 10px;
+  }
+  input[type='email'] {
+    width: 100%;
+    min-height: 54px;
+    padding: 12px 16px;
+    font: 400 16px/1.4 var(--font-body); /* ≥16 px – bez auto-zoomu na iOS */
+    color: var(--text);
+    background: var(--white);
+    border: 1.5px solid #8a7280;
+    border-radius: 4px;
+  }
+  input[type='email']:focus-visible {
+    border-color: var(--pink-800);
+  }
+  input[aria-invalid='true'] {
+    border-color: #b00020;
+    background: #fff7f8;
+  }
+  .btn {
+    min-height: 54px;
+  }
+  .signup__error,
+  .form-error {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #b00020;
+  }
+  .form-error {
+    padding: 10px 14px;
+    border-radius: 4px;
+    background: #fff0f2;
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .signup__after {
+    margin: 0;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .signup__check {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+  .signup__check input {
+    width: 20px;
+    height: 20px;
+    margin: 2px 0 0;
+    accent-color: var(--pink-700);
+  }
+  .signup__check label {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .signup__clause {
+    margin: 0;
+    font-size: 0.6875rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  @media (min-width: 560px) {
+    .signup__row {
+      grid-template-columns: 1fr auto;
+    }
+  }
+</style>

@@ -1,0 +1,170 @@
+---
+import { copyV2 } from '../../config/copy.v2';
+import type { ParsedSession } from '../../lib/eventState';
+import { formatDate, formatTime, formatTimeRange } from '../../lib/format';
+import PhotoPlaceholder from '../PhotoPlaceholder.astro';
+import { copy } from '../../config/copy';
+import SignupForm from './SignupForm.astro';
+
+interface Props {
+  session: ParsedSession;
+}
+const { session } = Astro.props;
+const h = copyV2.hero;
+const date = formatDate(session.start);
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container hero__grid">
+    <div class="hero__main">
+      <p class="eyebrow" data-show="before during">
+        {h.eyebrowPrefix} · <span class="nowrap">{date}</span> · <span class="nowrap">{formatTime(session.start)}</span>
+      </p>
+      <p class="eyebrow" data-show="after">{copyV2.after.eyebrow}</p>
+
+      <h1 id="hero-title">
+        <span data-show="before during">
+          <span data-variant-show="A">{h.headline.A}</span>
+          <span data-variant-show="B">{h.headline.B}</span>
+        </span>
+        <span data-show="after">{copyV2.after.headline}</span>
+      </h1>
+
+      <p class="hero__sub" data-show="before during">{h.subtitle}</p>
+      <p class="hero__sub" data-show="after">{copyV2.after.subtitle}</p>
+
+      <SignupForm />
+
+      <ul class="facts" role="list">
+        <li data-show="before during">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+          <span><time datetime={new Date(session.start).toISOString()}>{date}</time>, {formatTimeRange(session)}</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
+          <span>{h.facts.online}</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7M12 7c-2-4-6-4-6-1s6 1 6 1 6 2 6-1-4-3-6 1"></path></svg>
+          <span>{h.facts.free}</span>
+        </li>
+        <li>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M10 9l5 3-5 3z"></path></svg>
+          <span>{h.facts.recording}</span>
+        </li>
+      </ul>
+
+      <div class="hero__host">
+        <span class="avatar" aria-hidden="true">AB</span>
+        <p>{h.host}</p>
+      </div>
+    </div>
+
+    <!-- Duże zdjęcie tylko od 1024 px; na telefonie formularz zostaje na pierwszym ekranie. -->
+    <div class="hero__media">
+      <PhotoPlaceholder label={copy.host.photoPlaceholder} ratio="4 / 5" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: 20px 36px;
+    background: linear-gradient(180deg, var(--white) 0%, var(--white) 70%, var(--blush-50) 100%);
+    border-bottom: 10px solid var(--pink-600); /* różowy pas pod hero jak na stronie-matce */
+  }
+  .hero__grid {
+    display: grid;
+    gap: 32px;
+  }
+  h1 {
+    font-size: clamp(1.75rem, 1.1rem + 2.6vw, 3.25rem);
+    line-height: 1.1;
+    margin-bottom: 14px;
+  }
+  .hero__sub {
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1875rem);
+    color: var(--graphite);
+    max-width: 52ch;
+    margin-bottom: 18px;
+  }
+  .facts {
+    list-style: none;
+    margin: 18px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px 16px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .facts li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .facts li:first-child {
+    grid-column: 1 / -1;
+  }
+  .facts svg {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: var(--pink-700);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .hero__host {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid var(--blush-100);
+  }
+  .hero__host p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--graphite);
+  }
+  .avatar {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: var(--blush-100);
+    color: var(--pink-800);
+    font: 500 1.125rem/1 var(--font-heading);
+  }
+  .hero__media {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .hero {
+      padding-block: 48px 64px;
+    }
+    .hero__grid {
+      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+      gap: 64px;
+      align-items: center;
+    }
+    .hero__media {
+      display: block;
+    }
+    .hero__media :global(.photo-ph) {
+      max-height: 640px;
+    }
+    .facts {
+      grid-template-columns: repeat(4, auto);
+      justify-content: start;
+    }
+    .facts li:first-child {
+      grid-column: auto;
+    }
+  }
+</style>

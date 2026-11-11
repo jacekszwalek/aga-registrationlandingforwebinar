@@ -1,0 +1,104 @@
+---
+import { copy } from '../../config/copy';
+import { copyV2 } from '../../config/copy.v2';
+const c = copyV2.outcomes;
+---
+
+<section class="section outcomes" aria-labelledby="outcomes-title">
+  <div class="container outcomes__grid">
+    <div>
+      <h2 id="outcomes-title">{c.heading}</h2>
+      <ul class="checks outcomes__list" role="list">
+        {c.items.map((item) => <li>{item}</li>)}
+      </ul>
+    </div>
+
+    <div class="outcomes__more">
+      <details class="more">
+        <summary>{c.programSummary}</summary>
+        <div class="more__body">
+          <ol class="program" role="list">
+            {
+              copy.outcomes.items.map((item, i) => (
+                <li>
+                  <span class="program__num" aria-hidden="true">{i + 1}</span>
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </div>
+                </li>
+              ))
+            }
+          </ol>
+        </div>
+      </details>
+      <details class="more">
+        <summary>{c.forWhoSummary}</summary>
+        <div class="more__body">
+          <ul class="checks" role="list">
+            {copy.pains.items.map((p) => <li>{p.title}</li>)}
+          </ul>
+          <p class="outcomes__notfor">{c.notFor}</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<style>
+  .outcomes__grid {
+    display: grid;
+    gap: 24px;
+  }
+  .outcomes__list {
+    font-size: 1.0625rem;
+    color: var(--ink);
+  }
+  .outcomes__more {
+    border-bottom: 1px solid var(--pink-200);
+  }
+  .program {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 14px;
+  }
+  .program li {
+    display: grid;
+    grid-template-columns: 36px 1fr;
+    gap: 12px;
+  }
+  .program__num {
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--pink-700);
+    color: var(--white);
+    font: 500 1.0625rem/1 var(--font-heading);
+  }
+  .program h3 {
+    font-size: 1rem;
+    margin-bottom: 2px;
+  }
+  .program p {
+    margin: 0;
+    font-size: 0.9375rem;
+  }
+  .outcomes__notfor {
+    margin: 12px 0 0;
+    font-size: 0.9375rem;
+  }
+  @media (min-width: 1024px) {
+    .outcomes__grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 64px;
+      align-items: start;
+    }
+    .outcomes__more {
+      margin-top: 8px;
+    }
+  }
+</style>
