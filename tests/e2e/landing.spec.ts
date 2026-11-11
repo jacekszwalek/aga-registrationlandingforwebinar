@@ -80,7 +80,7 @@ test.describe('przyklejony przycisk', () => {
     const sticky = page.locator('[data-sticky-cta]');
     await expect(sticky).toBeHidden();
     await page.locator('#pains-title').scrollIntoViewIfNeeded();
-    await page.mouse.wheel(0, 400);
+    await page.evaluate((y) => window.scrollBy(0, y), 400);
     await expect(sticky).toBeVisible();
     await sticky.locator('button').click();
     await expect(page.locator('#hero-email')).toBeFocused();
