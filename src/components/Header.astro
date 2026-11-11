@@ -1,0 +1,36 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../assets/logo.png';
+---
+
+<header class="site-header">
+  <div class="container site-header__inner">
+    <!-- Celowo bez linku: strona ma jeden cel – zapis. -->
+    <Image src={logo} alt="Przystań Zmiany Zawodowej" width={126} height={56} densities={[1, 2]} loading="eager" />
+  </div>
+</header>
+
+<style>
+  .site-header {
+    background: var(--white);
+    border-bottom: 1px solid var(--blush-100);
+  }
+  .site-header__inner {
+    display: flex;
+    align-items: center;
+    min-height: 64px;
+    padding-block: 4px;
+  }
+  .site-header img {
+    width: 108px;
+    height: auto;
+  }
+  @media (min-width: 1024px) {
+    .site-header__inner {
+      min-height: 76px;
+    }
+    .site-header img {
+      width: 126px;
+    }
+  }
+</style>

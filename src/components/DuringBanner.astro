@@ -1,0 +1,56 @@
+---
+import { copy } from '../config/copy';
+---
+
+<div class="live" data-show="during" role="status">
+  <div class="container live__inner">
+    <span class="live__dot" aria-hidden="true"></span>
+    <p><strong>{copy.during.banner}.</strong> {copy.during.bannerText}</p>
+    <a class="btn live__btn" href="#zapis-hero" data-scroll-to-form>{copy.during.bannerCta}</a>
+  </div>
+</div>
+
+<style>
+  .live {
+    background: var(--pink-800);
+    color: var(--white);
+  }
+  .live__inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px 14px;
+    padding-block: 10px;
+  }
+  .live p {
+    flex: 1 1 220px;
+    margin: 0;
+    font-size: 0.9375rem;
+  }
+  .live__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--white);
+    box-shadow: 0 0 0 0 rgb(255 255 255 / 0.7);
+    animation: pulse 1.6s infinite;
+  }
+  .live__btn {
+    min-height: 44px;
+    padding: 8px 20px;
+    background: var(--white);
+    color: var(--pink-800);
+    box-shadow: none;
+  }
+  .live__btn:hover {
+    background: var(--blush-50);
+  }
+  @keyframes pulse {
+    70% {
+      box-shadow: 0 0 0 10px rgb(255 255 255 / 0);
+    }
+    100% {
+      box-shadow: 0 0 0 0 rgb(255 255 255 / 0);
+    }
+  }
+</style>

@@ -1,0 +1,63 @@
+---
+import { copy } from '../config/copy';
+const c = copy.pains;
+---
+
+<section class="section" aria-labelledby="pains-title">
+  <div class="container">
+    <h2 id="pains-title">{c.heading}</h2>
+    <ul class="pains" role="list">
+      {
+        c.items.map((item) => (
+          <li class="card pains__item">
+            <svg class="pains__icon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+              <circle cx="12" cy="12" r="12" fill="var(--blush-100)" />
+              <path d="M7 12.5l3.2 3.2L17 9" fill="none" stroke="var(--pink-700)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            <div>
+              <h3>{item.title}</h3>
+              <p>{item.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .pains {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+  .pains__item {
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .pains__icon {
+    width: 32px;
+    height: 32px;
+  }
+  .pains__item h3 {
+    font-size: 1.125rem;
+    margin-bottom: 6px;
+  }
+  .pains__item p {
+    margin: 0;
+    color: var(--text-muted);
+  }
+  @media (min-width: 768px) {
+    .pains {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .pains__item {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
