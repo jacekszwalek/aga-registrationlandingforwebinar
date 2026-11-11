@@ -17,6 +17,9 @@ Stan na 11.11.2026. Prototyp działa bez tych elementów; w kodzie i na stronie 
 | 10 | Microsoft Clarity – czy używamy; jeśli tak, ID | `event.config.ts` → `analytics.clarityId` | decyzja |
 | 11 | Test A/B nagłówka: przełącznik w konfiguracji (jest) czy podział 50/50 na brzegu (funkcja Cloudflare) | `headlineVariant` | decyzja |
 
+- Wybór wersji (v1/v2) do dalszego rozwoju; przed wydaniem usunąć przełącznik i przekierowanie z `/`.
+- v1: CLS 0,275 w Lighthouse mobile (przekracza budżet 0,1) – do poprawy, jeśli v1 zostanie.
+
 ## Integracje (kolejne etapy)
 - **MailerLite**: identyfikatory grup (rejestracja, nagranie, newsletter), pole `webinar_source`, ustawienie double opt-in; funkcja `/api/subscribe` (walidacja, honeypot, grupy wg stanu, newsletter tylko przy zgodzie); przełączenie `form.mode` na `'api'`; zapis do newslettera z `/dziekuje/`.
 - **Hosting**: konto Cloudflare Pages, podpięcie repo (preview dla PR), zmienna `MAILERLITE_API_KEY`, rekord DNS w webd.pl (patrz README).

@@ -1,5 +1,16 @@
 # Decyzje
 
+## v2 – krótka squeeze page (11.11.2026)
+v1 realizowała pełną strukturę briefu i wyszła na ok. 4,7 ekranu desktopu – za dużo treści na ruch z social mediów. v2 opiera się na rekomendacjach Unbounce i przykładach Tailwind / Bandzoogle / Unbounce:
+- **Formularz z jednym polem (e-mail)** na pierwszym ekranie także na telefonie; imię usunięte (było opcjonalne). Zgoda na newsletter zostaje osobno.
+- **Treść rozwijana zamiast długich sekcji**: program, „dla kogo”, pełne bio, kolejne opinie i FAQ są w `<details>` – widać tylko 3 rezultaty, krótkie bio, jedną opinię i CTA.
+- **Jeden formularz**: końcowe CTA i przyklejony przycisk przewijają do formularza w hero i ustawiają fokus (zamiast drugiego formularza).
+- **Wygląd strony-matki** (`docs/research/design-vector.md`): WIELKIE LITERY w nagłówkach, prostokątne przyciski, różowy pas pod hero, różowa karta opinii, szary blok CTA, różowa stopka. Tła pod biały tekst w `#c43175` zamiast `#DA4391` (kontrast).
+- **Szybkość na mobile**: duże zdjęcie tylko od 1024 px (na telefonie awatar), jeden formularz, JS formularza nie ładuje treści strony (`formMessages.ts`). Lighthouse mobile (lokalnie): v2 – wydajność 100, LCP 1,5 s, CLS 0,021, TBT 0 ms, 108 KB; v1 – 85, LCP 1,8 s, CLS 0,275.
+- Wysokość: 2566 px przy 1440×900 (2,85 ekranu); na iPhonie 13 przycisk zapisu kończy się na 527 px z 664 px.
+
+## v1
+
 **Astro, statyczny output, bez frameworka UI.** Strona to jeden cel i kilka sekcji; komponenty `.astro` renderują HTML przy buildzie, a JS dostają tylko formularz, licznik, przyklejony przycisk, zgody i zdarzenia (~10 KB). To główna różnica wobec obecnego landingu (~75 skryptów WP/WooCommerce).
 
 **Stan wydarzenia w `<html data-state>`, wszystkie warianty w HTML.** Build liczy stan, a mały skrypt inline w `<head>` koryguje go przed pierwszym renderem, więc strona przełącza się sama o 19:00 i 20:00 bez ponownego wdrożenia i bez skoku układu. CSS ukrywa elementy innych stanów (`data-show`). Lista sesji obsługuje wydarzenia kilkudniowe; przerwa między sesjami to `before` z licznikiem do najbliższej.
