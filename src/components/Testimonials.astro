@@ -1,0 +1,76 @@
+---
+import { copy } from '../config/copy';
+const c = copy.testimonials;
+---
+
+<section class="section section--blush" aria-labelledby="testimonials-title">
+  <div class="container">
+    <h2 id="testimonials-title">{c.heading}</h2>
+    <ul class="quotes" role="list">
+      {
+        c.items.map((t) => (
+          <li class="card">
+            <figure>
+              <blockquote>
+                <p>„{t.quote}”</p>
+              </blockquote>
+              <figcaption>
+                <strong>{t.author}</strong>
+                <span>{t.role}</span>
+              </figcaption>
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
+    <p class="quotes__note">{c.note}</p>
+  </div>
+</section>
+
+<style>
+  .quotes {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 16px;
+  }
+  figure,
+  blockquote {
+    margin: 0;
+  }
+  blockquote p {
+    font-size: 0.9875rem;
+    color: var(--text);
+  }
+  blockquote p::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 4px;
+    margin-bottom: 14px;
+    border-radius: 2px;
+    background: var(--pink-500);
+  }
+  figcaption {
+    display: grid;
+    font-size: 0.875rem;
+  }
+  figcaption strong {
+    color: var(--ink);
+  }
+  figcaption span {
+    color: var(--text-muted);
+  }
+  .quotes__note {
+    margin: 16px 0 0;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+  @media (min-width: 768px) {
+    .quotes {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+  }
+</style>

@@ -1,0 +1,72 @@
+---
+import { eventConfig, TODO_MARK } from '../config/event.config';
+const c = eventConfig.controller;
+---
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <nav aria-label="Informacje prawne">
+      <ul role="list">
+        <li><a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityka prywatności</a></li>
+        <li>
+          {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulamin</a> : <span>Regulamin <span class="todo">{TODO_MARK}</span></span>}
+        </li>
+        <li><button type="button" class="linklike" data-consent-open>Ustawienia cookies</button></li>
+      </ul>
+    </nav>
+    <p>
+      Administrator danych: {c.name}, {c.brand} · NIP {c.nip}<br />
+      {c.seat} · {c.email}
+    </p>
+    <p>© {new Date().getFullYear()} {c.brand}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    background: var(--ink);
+    color: #f6e3ee;
+    font-size: 0.8125rem;
+    padding-block: 32px calc(32px + 72px); /* miejsce na przyklejony przycisk na mobile */
+  }
+  @media (min-width: 1024px) {
+    .site-footer {
+      padding-bottom: 32px;
+    }
+  }
+  .site-footer__inner {
+    display: grid;
+    gap: 12px;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 20px;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  a,
+  .linklike {
+    color: var(--white);
+    font: inherit;
+    font-weight: 600;
+  }
+  .linklike {
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+  p {
+    margin: 0;
+  }
+</style>

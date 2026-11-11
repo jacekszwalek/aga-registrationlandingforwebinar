@@ -1,0 +1,84 @@
+---
+import '../styles/global.css';
+import { eventConfig } from '../config/event.config';
+import { parseSessions, getEventStatus } from '../lib/eventState';
+
+interface Props {
+  title: string;
+  description: string;
+  noindex?: boolean;
+  path?: string;
+}
+
+const { title, description, noindex = false, path = '/' } = Astro.props;
+const sessions = parseSessions(eventConfig.sessions);
+// Stan liczony przy budowaniu (fallback bez JS); skrypt niżej koryguje go w przeglądarce.
+const buildState = getEventStatus(Date.now(), sessions).state;
+const sessionsMs = sessions.map((s) => [s.start, s.end]);
+const variant = eventConfig.headlineVariant;
+const allowPreview = eventConfig.allowPreviewParams;
+const canonical = new URL(path, eventConfig.site.url).toString();
+---
+
+<!doctype html>
+<html lang="pl" data-state={buildState} data-variant={variant}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex && <meta name="robots" content="noindex, nofollow" />}
+    <link rel="canonical" href={canonical} />
+    <meta name="theme-color" content="#ffffff" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="pl_PL" />
+    <meta property="og:site_name" content="Przystań Zmiany Zawodowej" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <!-- TODO (etap meta): og:image 1200×630 z nagłówkiem, datą i zdjęciem Agnieszki -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="preload" href="/fonts/ltflodeneue-medium.woff2" as="font" type="font/woff2" crossorigin />
+
+    <script is:inline define:vars={{ sessionsMs, variant, allowPreview }}>
+      (function () {
+        var d = document.documentElement;
+        var now = Date.now();
+        var state = 'after';
+        for (var i = 0; i < sessionsMs.length; i++) {
+          if (now >= sessionsMs[i][0] && now < sessionsMs[i][1]) { state = 'during'; break; }
+        }
+        if (state === 'after') {
+          for (var j = 0; j < sessionsMs.length; j++) {
+            if (now < sessionsMs[j][0]) { state = 'before'; break; }
+          }
+        }
+        var v = variant;
+        if (allowPreview) {
+          var q = new URLSearchParams(location.search);
+          var ps = q.get('state');
+          if (ps === 'before' || ps === 'during' || ps === 'after') state = ps;
+          var pv = (q.get('v') || '').toUpperCase();
+          if (pv === 'A' || pv === 'B') v = pv;
+        }
+        d.dataset.state = state;
+        d.dataset.variant = v;
+        window.__pzzSessions = sessionsMs;
+
+        // Google Consent Mode v2 – domyślnie odmowa. Żaden skrypt zewnętrzny nie jest tu ładowany.
+        window.dataLayer = window.dataLayer || [];
+        window.gtag = function () { window.dataLayer.push(arguments); };
+        window.gtag('consent', 'default', {
+          ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied',
+          analytics_storage: 'denied', functionality_storage: 'granted', security_storage: 'granted',
+          wait_for_update: 500
+        });
+      })();
+    </script>
+    <slot name="head" />
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>

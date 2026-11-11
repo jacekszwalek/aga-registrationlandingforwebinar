@@ -1,0 +1,71 @@
+---
+import { copy } from '../config/copy';
+import { TODO_MARK } from '../config/event.config';
+---
+
+<section class="section" aria-labelledby="faq-title">
+  <div class="container faq-grid">
+    <h2 id="faq-title">{copy.faq.heading}</h2>
+    <div class="faq">
+      {
+        copy.faq.items.map((item) => (
+          <details>
+            <summary>{item.q}</summary>
+            <p>{item.a === TODO_MARK ? <span class="todo">{item.a}</span> : item.a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-grid {
+    display: grid;
+    gap: 8px;
+  }
+  .faq {
+    display: grid;
+    gap: 10px;
+  }
+  details {
+    border-radius: var(--radius-sm);
+    background: var(--blush-50);
+  }
+  summary {
+    position: relative;
+    min-height: 52px;
+    padding: 14px 48px 14px 18px;
+    font-weight: 600;
+    color: var(--ink);
+    cursor: pointer;
+    list-style: none;
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary::after {
+    content: '+';
+    position: absolute;
+    right: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--pink-700);
+  }
+  details[open] summary::after {
+    content: '–';
+  }
+  details p {
+    margin: 0;
+    padding: 0 18px 16px;
+  }
+  @media (min-width: 1024px) {
+    .faq-grid {
+      grid-template-columns: 1fr 1.8fr;
+      gap: 64px;
+      align-items: start;
+    }
+  }
+</style>

@@ -1,0 +1,30 @@
+---
+import { copy } from '../config/copy';
+---
+
+<div class="sticky-cta" data-sticky-cta hidden>
+  <button type="button" class="btn btn--block" data-sticky-button>
+    <span data-show="before during">{copy.sticky}</span>
+    <span data-show="after">{copy.stickyAfter}</span>
+  </button>
+</div>
+
+<style>
+  .sticky-cta {
+    position: fixed;
+    inset-inline: 0;
+    bottom: var(--consent-h);
+    z-index: 40;
+    padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom));
+    background: rgb(255 255 255 / 0.96);
+    box-shadow: 0 -6px 20px -10px rgb(43 8 26 / 0.25);
+  }
+  .sticky-cta[hidden] {
+    display: none;
+  }
+  @media (min-width: 1024px) {
+    .sticky-cta {
+      display: none !important;
+    }
+  }
+</style>
