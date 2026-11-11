@@ -6,10 +6,11 @@ Etap: **prototyp** – formularz w trybie mock, integracje to TODO (patrz `docs/
 ## Komendy
 - `npm run dev` – serwer deweloperski
 - `npm run build` – `astro check` + build do `dist/`
-- `npm run preview` – podgląd builda na :4321
+- `npm run serve` – serwer statyczny `dist/` na :4321 (używany też przez Playwright; `astro preview` w Astro 7 przechodzi w tło)
+- `npm run build:pages` – build pod GitHub Pages (`/aga-registrationlandingforwebinar/`)
 - `npm run test:unit` – Vitest (`tests/unit`)
 - `PW_NO_WEBKIT=1 npm run test:e2e` – Playwright lokalnie bez WebKita; na CI bez zmiennej
-- `npm run screenshots` – zrzuty referencyjne do `docs/screenshots/` (wymaga `npm run preview`)
+- `npm run screenshots` – zrzuty referencyjne do `docs/screenshots/` (wymaga `npm run serve`)
 
 ## Struktura
 - `src/config/event.config.ts` – termin (sesje ISO z przesunięciem strefy), wariant H1, grupy MailerLite, analityka, linki. **Termin zmieniaj tylko tutaj.**
@@ -26,6 +27,7 @@ Etap: **prototyp** – formularz w trybie mock, integracje to TODO (patrz `docs/
 - Kontrast: przyciski = biały na `--pink-700` (hover `--pink-800`); biały na `--pink-600` tylko w dużych nagłówkach; `--pink-500` nigdy jako tło pod tekst; bez pomarańczowego. Tekst: `--ink`/`--text`.
 - Żadnych skryptów stron trzecich przed zgodą (test w `consent-a11y.spec.ts`). Pola formularza ≥16 px, cele dotykowe ≥44 px.
 - Brakujące dane oznaczaj wyłącznie `[DO UZUPEŁNIENIA]` (`TODO_MARK`) i dopisz do `docs/todo.md`.
+- Ścieżki zawsze przez `withBase()` z `src/lib/paths.ts` – strona działa też pod podkatalogiem GitHub Pages.
 - Sekrety (np. `MAILERLITE_API_KEY`) tylko w zmiennych środowiskowych hostingu – nigdy w repo.
 
 ## Git
