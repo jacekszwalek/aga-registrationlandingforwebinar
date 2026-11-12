@@ -1,0 +1,101 @@
+---
+import { copy } from '../../config/copy';
+import { eventConfig, TODO_MARK } from '../../config/event.config';
+import type { ParsedSession } from '../../lib/eventState';
+import { formatDate, formatTime, formatTimeRange, durationMinutes } from '../../lib/format';
+
+interface Props {
+  sessions: ParsedSession[];
+}
+const { sessions } = Astro.props;
+const first = sessions[0];
+const minutes = sessions.reduce((sum, s) => sum + durationMinutes(s), 0);
+const platformTodo = eventConfig.platform === TODO_MARK;
+---
+
+<div class="facts-wrap">
+  <h3 class="facts__title">{copy.details.heading}</h3>
+  <ul class="facts" role="list">
+    <li data-show="before during">{copy.details.live}{!platformTodo && ` (${eventConfig.platform})`}</li>
+    {
+      sessions.map((s) => (
+        <li>
+          <time datetime={new Date(s.start).toISOString()}>{formatDate(s.start)}</time> · {formatTimeRange(s)}
+        </li>
+      ))
+    }
+    <li>{minutes} minut · 0 zł</li>
+    <li>{copy.details.recording}</li>
+    {platformTodo && <li data-show="before during">Platforma: <span class="todo">{TODO_MARK}</span></li>}
+  </ul>
+
+  <div class="countdown" data-show="before" data-countdown>
+    <p class="countdown__label">
+      {copy.details.countdownLabel} – start <time datetime={new Date(first.start).toISOString()}>{formatDate(first.start)}, {formatTime(first.start)}</time>
+    </p>
+    <!-- Liczby nie są ogłaszane przez czytniki ekranu co sekundę; datę podaje tekst powyżej. -->
+    <div class="countdown__grid" aria-hidden="true">
+      <div><span data-unit="days">–</span><small data-label="days">dni</small></div>
+      <div><span data-unit="hours">–</span><small data-label="hours">godz.</small></div>
+      <div><span data-unit="minutes">–</span><small data-label="minutes">min</small></div>
+      <div><span data-unit="seconds">–</span><small data-label="seconds">sek.</small></div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .facts__title {
+    font-size: 1.25rem;
+    margin-bottom: 10px;
+  }
+  .facts {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+  .facts li {
+    position: relative;
+    padding-left: 22px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .facts li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.55em;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--pink-500);
+  }
+  .countdown__label {
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .countdown__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    text-align: center;
+  }
+  .countdown__grid div {
+    display: grid;
+    padding: 10px 4px;
+    border-radius: var(--radius-sm);
+    background: var(--white);
+    box-shadow: var(--shadow);
+  }
+  .countdown__grid span {
+    font: 500 clamp(1.5rem, 1.2rem + 1.5vw, 2.25rem) / 1.1 var(--font-heading);
+    color: var(--pink-800);
+    font-variant-numeric: tabular-nums;
+  }
+  .countdown__grid small {
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+</style>

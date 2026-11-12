@@ -1,0 +1,116 @@
+---
+/** FAQ (rozwijane) obok końcowego CTA z licznikiem – jedna sekcja zamiast dwóch. */
+import { copy } from '../../config/copy';
+import { copyV2 } from '../../config/copy.v2';
+import { TODO_MARK } from '../../config/event.config';
+import type { ParsedSession } from '../../lib/eventState';
+import { formatDate, formatTime } from '../../lib/format';
+
+interface Props {
+  session: ParsedSession;
+}
+const { session } = Astro.props;
+const f = copyV2.final;
+---
+
+<section class="section" aria-labelledby="faq-title">
+  <div class="container ff">
+    <div>
+      <h2 id="faq-title">{copyV2.faq.heading}</h2>
+      {
+        copy.faq.items.map((item) => (
+          <details class="more">
+            <summary>{item.q}</summary>
+            <div class="more__body">
+              <p>{item.a === TODO_MARK ? <span class="todo">{item.a}</span> : item.a}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+
+    <div class="final" data-sticky-hide>
+      <h2 id="final-title">
+        <span data-show="before">{f.before}</span>
+        <span data-show="during">{f.during}</span>
+        <span data-show="after">{f.after}</span>
+      </h2>
+      <div data-show="before" data-countdown>
+        <p class="final__date">
+          Start: <time datetime={new Date(session.start).toISOString()}>{formatDate(session.start)}, {formatTime(session.start)}</time>
+        </p>
+        <div class="final__grid" aria-hidden="true">
+          <div><span data-unit="days">–</span><small data-label="days">dni</small></div>
+          <div><span data-unit="hours">–</span><small data-label="hours">godz.</small></div>
+          <div><span data-unit="minutes">–</span><small data-label="minutes">min</small></div>
+          <div><span data-unit="seconds">–</span><small data-label="seconds">sek.</small></div>
+        </div>
+      </div>
+      <a class="btn btn--light btn--block" href="#zapis-hero" data-scroll-to-form>
+        <span data-show="before">{f.cta.before}</span>
+        <span data-show="during">{f.cta.during}</span>
+        <span data-show="after">{f.cta.after}</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .ff {
+    display: grid;
+    gap: 56px;
+  }
+  .ff .more:last-of-type {
+    border-bottom: 1px solid var(--pink-200);
+  }
+  .final {
+    align-self: start;
+    padding: clamp(28px, 3.5vw, 44px);
+    border-radius: var(--radius);
+    background: var(--graphite); /* szary pas CTA jak „Wiem, że chcesz…” na stronie-matce */
+    color: var(--white);
+  }
+  .final h2 {
+    color: var(--white);
+  }
+  .final__date {
+    margin-bottom: 12px;
+    font-weight: 600;
+  }
+  .final__grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+  .final__grid div {
+    display: grid;
+    padding: 10px 4px;
+    border-radius: 4px;
+    background: rgb(255 255 255 / 0.1);
+  }
+  .final__grid span {
+    font: 500 clamp(1.5rem, 1.2rem + 1.2vw, 2rem) / 1.1 var(--font-heading);
+    font-variant-numeric: tabular-nums;
+  }
+  .final__grid small {
+    font-size: 0.75rem;
+  }
+  .btn--light {
+    background: var(--white);
+    color: var(--pink-800);
+  }
+  .btn--light:hover {
+    background: var(--blush-100);
+  }
+  .final :focus-visible {
+    box-shadow: 0 0 0 3px var(--graphite), 0 0 0 6px var(--white);
+  }
+  @media (min-width: 1024px) {
+    .ff {
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 96px;
+    }
+  }
+</style>

@@ -1,12 +1,23 @@
 ---
 import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
+import VersionSwitch, { type Version } from './VersionSwitch.astro';
+
+interface Props {
+  version: Version;
+  /** v3: logo na środku (wzór Tailwind). */
+  centered?: boolean;
+  /** v4: bez tła i obramowania – nagłówek leży na tle hero (wzór Unbounce). */
+  transparent?: boolean;
+}
+const { version, centered = false, transparent = false } = Astro.props;
 ---
 
-<header class="site-header">
-  <div class="container site-header__inner">
+<header class:list={['site-header', { 'site-header--center': centered, 'site-header--transparent': transparent }]}>
+  <div class="site-header__inner">
     <!-- Celowo bez linku: strona ma jeden cel – zapis. -->
     <Image src={logo} alt="Przystań Zmiany Zawodowej" width={126} height={56} densities={[1, 2]} loading="eager" />
+    <VersionSwitch current={version} />
   </div>
 </header>
 
@@ -15,15 +26,38 @@ import logo from '../assets/logo.png';
     background: var(--white);
     border-bottom: 1px solid var(--blush-100);
   }
+  .site-header--transparent {
+    position: relative;
+    z-index: 2;
+    background: transparent;
+    border-bottom: 0;
+  }
   .site-header__inner {
+    position: relative;
     display: flex;
     align-items: center;
+    gap: 12px;
+    max-width: var(--maxw);
     min-height: 64px;
-    padding-block: 4px;
+    margin-inline: auto;
+    padding: 4px var(--gutter);
   }
   .site-header img {
     width: 108px;
     height: auto;
+  }
+  /* Logo na środku; przełącznik wersji przy prawej krawędzi. */
+  .site-header--center .site-header__inner {
+    justify-content: center;
+  }
+  .site-header--center :global(.vswitch) {
+    position: absolute;
+    right: var(--gutter);
+  }
+  @media (max-width: 479.98px) {
+    .site-header--center .site-header__inner {
+      justify-content: flex-start;
+    }
   }
   @media (min-width: 1024px) {
     .site-header__inner {

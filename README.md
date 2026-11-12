@@ -19,7 +19,16 @@ npm run serve & npm run screenshots                # zrzuty do docs/screenshots/
 ```
 
 ## Podgląd prototypu (GitHub Pages)
-https://jacekszwalek.github.io/aga-registrationlandingforwebinar/
+https://jacekszwalek.github.io/aga-registrationlandingforwebinar/ → przekierowuje do v2
+
+- **v2** (bieżąca): https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v2/ – krótka squeeze page w stylu strony-matki
+- **v1**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v1/ – pierwszy, pełny landing z briefu
+- **v3**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v3/ – kompozycja Tailwind (pasy, wyśrodkowane hero, formularz w oknie)
+- **v4**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v4/ – kompozycja Unbounce (siatka, ikonki, kafelki wokół zdjęcia)
+
+Ikona telefonu w przełączniku otwiera `/podglad/` – bieżącą wersję w ramce iPhone'a 15 (szerokość 393 px, czyli prawdziwe breakpointy mobilne strony; pasek statusu 47 px, strona 393 × 805). W ramce przełączanie wersji zostaje w podglądzie, ikona monitora wraca do widoku desktop.
+
+Przełącznik „Wersja v1 · v2 · v3 · v4” w prawym górnym rogu zachowuje parametry adresu (np. `?state=after`).
 
 Każdy push do `main` uruchamia workflow `pages.yml`: build z `BASE_PATH=/aga-registrationlandingforwebinar` i publikacja na gałęzi `gh-pages`. Jednorazowo w repo: *Settings → Pages → Build and deployment → Source: Deploy from a branch → `gh-pages` / `(root)`*. Strona ma `noindex` (`site.indexable = false`).
 

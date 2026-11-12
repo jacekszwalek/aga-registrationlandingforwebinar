@@ -1,0 +1,161 @@
+---
+import '../../styles/v1.css';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/v1/Footer.astro';
+import ConsentBanner from '../../components/ConsentBanner.astro';
+import { copy } from '../../config/copy';
+import { eventConfig, TODO_MARK } from '../../config/event.config';
+import { googleCalendarUrl } from '../../lib/calendar';
+import { calendarEventFromConfig } from '../../lib/calendarEvent';
+import { formatDate, formatTimeRange } from '../../lib/format';
+import { withBase } from '../../lib/paths';
+
+const t = copy.thankYou;
+const cal = calendarEventFromConfig();
+---
+
+<Base title={t.metaTitle} description={copy.meta.description} noindex path="v1/dziekuje/">
+  <script is:inline slot="head">
+    (function () {
+      var d = document.documentElement;
+      var nl = 'no';
+      try {
+        var s = JSON.parse(sessionStorage.getItem('pzz_signup') || 'null');
+        if (s) {
+          nl = s.newsletter ? 'yes' : 'no';
+          if (s.state === 'after') d.dataset.state = 'after';
+        }
+      } catch (e) {}
+      d.dataset.nl = nl;
+    })();
+  </script>
+  <Header version="v1" />
+  <main id="main" class="ty">
+    <div class="container ty__inner">
+      <section class="card ty__hero" aria-labelledby="ty-title">
+        <svg class="ty__icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <circle cx="24" cy="24" r="24" fill="var(--blush-100)"></circle>
+          <path d="M14 25l7 7 13-15" fill="none" stroke="var(--pink-700)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h1 id="ty-title">
+          <span data-show="before during">{t.headline.before}</span>
+          <span data-show="after">{t.headline.after}</span>
+        </h1>
+        <p class="ty__lead">{t.inbox}</p>
+        <p data-show="before during">{t.recording}</p>
+      </section>
+
+      <section class="card" aria-labelledby="cal-title" data-show="before during">
+        <h2 id="cal-title">{t.calendarHeading}</h2>
+        <ul class="ty__dates" role="list">
+          {
+            cal.sessions.map((s) => (
+              <li>
+                <time datetime={new Date(s.start).toISOString()}>{formatDate(s.start)}</time> · {formatTimeRange(s)} · online
+              </li>
+            ))
+          }
+        </ul>
+        <div class="ty__actions">
+          <a class="btn" href={googleCalendarUrl(cal, cal.sessions[0])} target="_blank" rel="noopener" data-calendar="google">{t.google}</a>
+          <a class="btn btn--ghost" href={withBase("webinar.ics")} download="webinar.ics" data-calendar="ics">{t.ics}</a>
+        </div>
+      </section>
+
+      <section class="card ty__nl" aria-labelledby="nl-title" data-newsletter-block>
+        <h2 id="nl-title">{t.newsletterHeading}</h2>
+        <p>{t.newsletterText}</p>
+        <button type="button" class="btn" data-newsletter-cta>{t.newsletterCta}</button>
+        <p class="ty__done" role="status" data-newsletter-done hidden>{t.newsletterDone}</p>
+      </section>
+
+      <section class="card" aria-labelledby="share-title">
+        <h2 id="share-title">{t.shareHeading}</h2>
+        <div class="ty__actions">
+          <button type="button" class="btn" data-share hidden>{t.shareCta}</button>
+          <button type="button" class="btn btn--ghost" data-copy>{t.copyCta}</button>
+        </div>
+        <p class="ty__done" role="status" data-copied hidden>{t.copied}</p>
+      </section>
+
+      <section class="ty__consult" aria-labelledby="consult-title">
+        <h2 id="consult-title">{t.consultationHeading}</h2>
+        {
+          eventConfig.site.consultationUrl ? (
+            <a class="btn btn--ghost" href={eventConfig.site.consultationUrl} rel="noopener">
+              Umawiam konsultację
+            </a>
+          ) : (
+            <p>
+              Link do konsultacji: <span class="todo">{TODO_MARK}</span>
+            </p>
+          )
+        }
+      </section>
+    </div>
+  </main>
+  <Footer />
+  <ConsentBanner />
+
+  <script>
+    import '../../scripts/thankyou';
+  </script>
+</Base>
+
+<style>
+  .ty {
+    background: var(--blush-50);
+    padding-block: 32px 64px;
+  }
+  .ty__inner {
+    display: grid;
+    gap: 20px;
+    max-width: 720px;
+  }
+  .ty__hero {
+    text-align: center;
+  }
+  .ty__icon {
+    width: 64px;
+    height: 64px;
+    margin: 0 auto 16px;
+  }
+  h1 {
+    font-size: clamp(2rem, 1.5rem + 2.4vw, 3rem);
+  }
+  h2 {
+    font-size: 1.5rem;
+  }
+  .ty__lead {
+    font-size: 1.0625rem;
+    color: var(--ink);
+  }
+  .ty__dates {
+    list-style: none;
+    margin: 0 0 16px;
+    padding: 0;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .ty__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .ty__actions .btn {
+    flex: 1 1 220px;
+  }
+  .ty__done {
+    margin: 12px 0 0;
+    font-weight: 600;
+    color: var(--pink-800);
+  }
+  :global([data-nl='yes']) .ty__nl {
+    display: none;
+  }
+  .ty__consult {
+    text-align: center;
+    padding: 12px;
+  }
+</style>

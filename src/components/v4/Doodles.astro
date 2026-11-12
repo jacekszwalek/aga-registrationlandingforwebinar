@@ -1,0 +1,85 @@
+---
+/** Dekoracyjne ikonki w stylu Unbounce (kwiatek, serce, zygzak, kropki, samolocik) – kolory marki, aria-hidden. */
+---
+
+<div class="doodles" aria-hidden="true">
+  <svg class="d d--flower" viewBox="0 0 48 48"><path d="M24 24c-6-10-2-18 0-18s6 8 0 18zm0 0c10-6 18-2 18 0s-8 6-18 0zm0 0c6 10 2 18 0 18s-6-8 0-18zm0 0c-10 6-18 2-18 0s8-6 18 0z"></path><circle cx="24" cy="24" r="3"></circle></svg>
+  <svg class="d d--heart" viewBox="0 0 48 48"><path d="M24 40S6 29 6 17a9 9 0 0 1 18-3 9 9 0 0 1 18 3c0 12-18 23-18 23z"></path></svg>
+  <svg class="d d--zig" viewBox="0 0 96 24"><path d="M2 18l10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12"></path></svg>
+  <svg class="d d--zig2" viewBox="0 0 96 24"><path d="M2 18l10-12 10 12 10-12 10 12 10-12 10 12 10-12 10 12"></path></svg>
+  <svg class="d d--dots" viewBox="0 0 12 60"><circle cx="6" cy="6" r="4"></circle><circle cx="6" cy="30" r="4"></circle><circle cx="6" cy="54" r="4"></circle></svg>
+  <svg class="d d--plane" viewBox="0 0 48 48"><path d="M44 6L4 22l14 6 4 14 6-10 10 6z"></path><path d="M18 28l26-22"></path></svg>
+</div>
+
+<style>
+  .doodles {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+  .d {
+    position: absolute;
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .d--flower {
+    width: 54px;
+    top: 28px;
+    left: 47%;
+    stroke: var(--pink-600);
+  }
+  .d--heart {
+    width: 46px;
+    top: 26%;
+    left: 54%;
+    stroke: var(--pink-700);
+  }
+  .d--zig {
+    width: 90px;
+    top: 9%;
+    right: 26%;
+    stroke: var(--pink-500);
+  }
+  .d--zig2 {
+    width: 90px;
+    bottom: 22%;
+    right: 3%;
+    stroke: var(--pink-800);
+  }
+  .d--dots {
+    width: 10px;
+    top: 5%;
+    left: 56%;
+    fill: var(--pink-500);
+    stroke: none;
+  }
+  .d--plane {
+    width: 56px;
+    top: 30%;
+    right: 3%;
+    stroke: var(--pink-500);
+  }
+  @media (max-width: 1023.98px) {
+    .d--heart,
+    .d--plane,
+    .d--zig2,
+    .d--dots {
+      display: none;
+    }
+    .d--flower {
+      width: 40px;
+      top: 8px;
+      left: auto;
+      right: 12px;
+    }
+    .d--zig {
+      width: 64px;
+      top: auto;
+      bottom: 12px;
+      right: 16px;
+    }
+  }
+</style>

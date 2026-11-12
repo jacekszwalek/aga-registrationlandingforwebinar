@@ -1,0 +1,78 @@
+---
+import { eventConfig, TODO_MARK } from '../../config/event.config';
+const c = eventConfig.controller;
+---
+
+<footer class="foot">
+  <div class="container foot__inner">
+    <p class="foot__claim">Nie musisz rzucać wszystkiego, żeby zmienić wszystko.</p>
+    <nav aria-label="Informacje prawne">
+      <ul role="list">
+        <li><a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityka prywatności</a></li>
+        <li>{eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulamin</a> : <span>Regulamin <span class="todo">{TODO_MARK}</span></span>}</li>
+        <li><button type="button" class="linklike" data-consent-open>Ustawienia cookies</button></li>
+      </ul>
+    </nav>
+    <p class="foot__admin">
+      Administrator danych: {c.name}, {c.brand} · NIP {c.nip} · {c.seat} · {c.email}
+    </p>
+    <p class="foot__admin">© {new Date().getFullYear()} {c.brand}</p>
+  </div>
+</footer>
+
+<style>
+  .foot {
+    background: var(--pink-700);
+    color: var(--white);
+    font-size: 0.8125rem;
+    padding-block: 28px calc(28px + 72px); /* miejsce na przyklejony przycisk na mobile */
+  }
+  @media (min-width: 1024px) {
+    .foot {
+      padding-bottom: 28px;
+    }
+  }
+  .foot__inner {
+    display: grid;
+    gap: 8px;
+  }
+  .foot__claim {
+    margin: 0 0 4px;
+    font: 500 1.125rem/1.3 var(--font-heading);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 20px;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  a,
+  .linklike {
+    color: var(--white);
+    font: inherit;
+    font-weight: 600;
+  }
+  .linklike {
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+  .foot__admin {
+    margin: 0;
+    color: var(--white);
+  }
+  .foot :focus-visible {
+    box-shadow: 0 0 0 3px var(--white);
+  }
+</style>

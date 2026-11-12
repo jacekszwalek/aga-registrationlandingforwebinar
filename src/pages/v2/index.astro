@@ -1,0 +1,35 @@
+---
+import '../../styles/v2.css';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import DuringBanner from '../../components/DuringBanner.astro';
+import Hero from '../../components/v2/Hero.astro';
+import Outcomes from '../../components/v2/Outcomes.astro';
+import HostProof from '../../components/v2/HostProof.astro';
+import FaqFinal from '../../components/v2/FaqFinal.astro';
+import Footer from '../../components/v2/Footer.astro';
+import StickyCta from '../../components/StickyCta.astro';
+import ConsentBanner from '../../components/ConsentBanner.astro';
+import { copy } from '../../config/copy';
+import { eventConfig } from '../../config/event.config';
+import { parseSessions } from '../../lib/eventState';
+
+const [first] = parseSessions(eventConfig.sessions);
+---
+
+<Base title={copy.meta.title} description={copy.meta.description} path="v2/">
+  <Header version="v2" />
+  <DuringBanner />
+  <main id="main">
+    <Hero session={first} />
+    <Outcomes />
+    <HostProof />
+    <FaqFinal session={first} />
+  </main>
+  <Footer />
+  <StickyCta />
+  <ConsentBanner />
+  <script>
+    import '../../scripts/landing';
+  </script>
+</Base>

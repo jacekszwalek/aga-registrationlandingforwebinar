@@ -1,0 +1,64 @@
+---
+/**
+ * Zdjęcie Agnieszki w jednym z gotowych kadrów (src/assets/photos/, wycięte z oryginału 1500×2000).
+ * Astro generuje AVIF + WebP w kilku szerokościach (srcset/sizes), z jawnymi wymiarami.
+ * Wrapper ma klasę `photo-ph`, więc działa ze stylami wersji (proporcje, promień, max-height).
+ */
+import { Picture } from 'astro:assets';
+import portrait from '../assets/photos/agnieszka-portrait-4x5.jpg';
+import square from '../assets/photos/agnieszka-square.jpg';
+import wide from '../assets/photos/agnieszka-wide-16x9.jpg';
+import tall from '../assets/photos/agnieszka-tall-3x4.jpg';
+
+const crops = {
+  portrait: { src: portrait, ratio: '4 / 5', widths: [320, 480, 640, 960] },
+  square: { src: square, ratio: '1 / 1', widths: [96, 176, 320, 480] },
+  wide: { src: wide, ratio: '16 / 9', widths: [400, 760, 1140, 1500] },
+  tall: { src: tall, ratio: '3 / 4', widths: [320, 480, 640, 960] },
+} as const;
+
+interface Props {
+  crop: keyof typeof crops;
+  /** Atrybut sizes – ile miejsca zajmuje zdjęcie w układzie. */
+  sizes: string;
+  /** Zdjęcie w pierwszym ekranie (LCP): eager + fetchpriority=high. */
+  priority?: boolean;
+  /** Pozycja kadru, gdy CSS zmienia proporcje (np. 2:1 na telefonie). */
+  position?: string;
+  class?: string;
+}
+const { crop, sizes, priority = false, position = '50% 30%', class: className } = Astro.props;
+const c = crops[crop];
+---
+
+<div class:list={['photo-ph', 'host-photo', className]} style={`aspect-ratio:${c.ratio}`}>
+  <Picture
+    src={c.src}
+    alt="Agnieszka Baranowska – psycholożka i coachka ICF"
+    formats={['avif', 'webp']}
+    widths={[...c.widths]}
+    sizes={sizes}
+    quality={72}
+    loading={priority ? 'eager' : 'lazy'}
+    decoding={priority ? 'sync' : 'async'}
+    fetchpriority={priority ? 'high' : 'auto'}
+    style={`object-position:${position}`}
+  />
+</div>
+
+<style>
+  .host-photo {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    border-radius: var(--radius);
+    background: var(--blush-100);
+  }
+  .host-photo :global(img) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

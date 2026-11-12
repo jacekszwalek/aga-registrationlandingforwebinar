@@ -1,0 +1,195 @@
+---
+/**
+ * Podgląd mobile prototypu: wybrana strona w ramce iPhone'a 15 (viewport 393 × 852 px CSS).
+ * iframe ma prawdziwą szerokość telefonu, więc działają media queries strony (bez symulacji).
+ * Parametr ?url= przyjmuje wyłącznie ścieżki wersji v1–v4 tej witryny.
+ */
+import { withBase } from '../lib/paths';
+
+const base = withBase('');
+const versions = ['v1', 'v2', 'v3', 'v4'];
+---
+
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Podgląd mobile (iPhone 15) | Przystań Zmiany Zawodowej</title>
+    <link rel="icon" type="image/png" sizes="32x32" href={withBase('favicon-32.png')} />
+    <style>
+      :root {
+        --ink: #2b081a;
+        --pink-200: #f2bfda;
+        --pink-700: #c43175;
+        --pink-800: #951d5b;
+        --blush-50: #fcf0f6;
+        --w: 393px;
+        --h: 852px; /* ekran iPhone'a 15 */
+        --status: 47px; /* pasek statusu z Dynamic Island – poza obszarem strony */
+        --s: 1;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        min-height: 100dvh;
+        font: 400 14px/1.4 system-ui, -apple-system, 'Segoe UI', sans-serif;
+        color: var(--ink);
+        background: radial-gradient(80% 60% at 50% 0%, #fff 0%, var(--blush-50) 70%);
+      }
+      .bar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+        gap: 8px 16px;
+        padding: 12px 16px;
+      }
+      .bar strong {
+        font-weight: 600;
+      }
+      .bar nav {
+        display: inline-flex;
+        gap: 2px;
+        padding: 2px;
+        border: 1px solid var(--pink-200);
+        border-radius: 999px;
+        background: #fff;
+      }
+      .bar a {
+        display: inline-grid;
+        place-items: center;
+        min-width: 44px;
+        min-height: 34px;
+        padding: 0 10px;
+        border-radius: 999px;
+        color: #545454;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .bar a[aria-current] {
+        background: #fbeaf3;
+        color: var(--pink-800);
+      }
+      .bar a:focus-visible {
+        outline: 3px solid var(--pink-800);
+        outline-offset: 2px;
+      }
+      .stage {
+        display: grid;
+        justify-items: center;
+        padding: 8px 16px 32px;
+      }
+      /* Ramka telefonu skalowana, gdy okno jest niższe niż telefon. */
+      .phone {
+        width: calc((var(--w) + 24px) * var(--s));
+        height: calc((var(--h) + 24px) * var(--s));
+      }
+      .phone__body {
+        position: relative;
+        width: calc(var(--w) + 24px);
+        height: calc(var(--h) + 24px);
+        padding: 12px;
+        border-radius: 56px;
+        background: #1b1b1f;
+        box-shadow: 0 0 0 2px #3a3a40, 0 40px 80px -30px rgb(43 8 26 / 0.5);
+        transform: scale(var(--s));
+        transform-origin: top left;
+      }
+      .phone__island {
+        position: absolute;
+        top: 23px;
+        left: 50%;
+        z-index: 2;
+        width: 112px;
+        height: 32px;
+        border-radius: 999px;
+        background: #000;
+        transform: translateX(-50%);
+        pointer-events: none;
+      }
+      .phone__screen {
+        overflow: hidden;
+        width: var(--w);
+        height: var(--h);
+        border-radius: 44px;
+        background: #fff;
+      }
+      .phone__status {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        height: var(--status);
+        padding: 4px 34px 0 40px;
+        font: 600 15px/1 system-ui, -apple-system, sans-serif;
+        color: #000;
+      }
+      .phone__status svg {
+        width: 52px;
+        height: 12px;
+      }
+      iframe {
+        display: block;
+        width: var(--w);
+        height: calc(var(--h) - var(--status));
+        border: 0;
+        background: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="bar">
+      <strong>Podgląd mobile · iPhone 15 (ekran 393 × 852, strona 393 × 805)</strong>
+      <nav aria-label="Wersja prototypu">
+        {versions.map((v) => <a href={withBase(`podglad/?url=${encodeURIComponent(withBase(`${v}/`))}`)} data-preview-version={v}>{v}</a>)}
+      </nav>
+      <nav aria-label="Urządzenie">
+        <a href={withBase('v2/')} data-exit>Wróć do desktopu</a>
+      </nav>
+    </header>
+    <main class="stage">
+      <div class="phone">
+        <div class="phone__body">
+          <span class="phone__island" aria-hidden="true"></span>
+          <div class="phone__screen">
+            <div class="phone__status" aria-hidden="true">
+              <span>9:41</span>
+              <svg viewBox="0 0 52 12"><rect x="0" y="7" width="3" height="5" rx="1"></rect><rect x="5" y="5" width="3" height="7" rx="1"></rect><rect x="10" y="3" width="3" height="9" rx="1"></rect><rect x="15" y="1" width="3" height="11" rx="1"></rect><rect x="27" y="1" width="22" height="11" rx="3" fill="none" stroke="#000"></rect><rect x="29" y="3" width="16" height="7" rx="1.5"></rect></svg>
+            </div>
+            <iframe title="Strona webinaru w podglądzie iPhone 15" data-preview-frame></iframe>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script is:inline define:vars={{ base }}>
+      (function () {
+        var esc = base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        var allowed = new RegExp('^' + esc + 'v[1-4]/(dziekuje/)?(\\?[^#]*)?$');
+        var requested = new URLSearchParams(location.search).get('url') || '';
+        var url = allowed.test(requested) ? requested : base + 'v2/';
+        var frame = document.querySelector('[data-preview-frame]');
+        frame.setAttribute('src', url);
+        document.querySelector('[data-exit]').setAttribute('href', url);
+
+        var query = url.indexOf('?') >= 0 ? url.slice(url.indexOf('?')) : '';
+        var version = (url.slice(base.length).match(/^v[1-4]/) || ['v2'])[0];
+        document.querySelectorAll('[data-preview-version]').forEach(function (a) {
+          var v = a.dataset.previewVersion;
+          a.setAttribute('href', location.pathname + '?url=' + encodeURIComponent(base + v + '/' + query));
+          if (v === version) a.setAttribute('aria-current', 'page');
+        });
+
+        var fit = function () {
+          var s = Math.min(1, (window.innerHeight - 90) / 876, (window.innerWidth - 32) / 417);
+          document.documentElement.style.setProperty('--s', String(Math.max(0.4, s)));
+        };
+        fit();
+        window.addEventListener('resize', fit);
+      })();
+    </script>
+  </body>
+</html>

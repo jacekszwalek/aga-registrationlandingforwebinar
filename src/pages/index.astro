@@ -1,43 +1,29 @@
 ---
-import Base from '../layouts/Base.astro';
-import Header from '../components/Header.astro';
-import DuringBanner from '../components/DuringBanner.astro';
-import Hero from '../components/Hero.astro';
-import Pains from '../components/Pains.astro';
-import Outcomes from '../components/Outcomes.astro';
-import HostBio from '../components/HostBio.astro';
-import Testimonials from '../components/Testimonials.astro';
-import Faq from '../components/Faq.astro';
-import FinalSignup from '../components/FinalSignup.astro';
-import Footer from '../components/Footer.astro';
-import StickyCta from '../components/StickyCta.astro';
-import ConsentBanner from '../components/ConsentBanner.astro';
-import { copy } from '../config/copy';
-import { eventConfig } from '../config/event.config';
-import { parseSessions } from '../lib/eventState';
-import { formatDate, formatTimeRange } from '../lib/format';
-
-const sessions = parseSessions(eventConfig.sessions);
-const first = sessions[0];
-const overline = [copy.hero.overlinePrefix, formatDate(first.start), formatTimeRange(first)];
+/**
+ * Adres główny przekierowuje do aktualnej wersji (v2), zachowując query string (UTM-y).
+ * Statyczny hosting nie ma przekierowań po stronie serwera, więc: JS + meta refresh + link.
+ */
+import { withBase } from '../lib/paths';
+const target = withBase('v2/');
 ---
 
-<Base title={copy.meta.title} description={copy.meta.description}>
-  <Header />
-  <DuringBanner />
-  <main id="main">
-    <Hero overline={overline} />
-    <Pains />
-    <Outcomes />
-    <HostBio />
-    <Testimonials />
-    <Faq />
-    <FinalSignup sessions={sessions} />
-  </main>
-  <Footer />
-  <StickyCta />
-  <ConsentBanner />
-  <script>
-    import '../scripts/landing';
-  </script>
-</Base>
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Bezpłatny webinar | Przystań Zmiany Zawodowej</title>
+    <script is:inline define:vars={{ target }}>
+      location.replace(target + location.search + location.hash);
+    </script>
+    <noscript><meta http-equiv="refresh" content={`0; url=${target}`} /></noscript>
+    <style>
+      body { font-family: system-ui, sans-serif; margin: 2rem; background: #fff; color: #1a1a1a; }
+      a { color: #951d5b; }
+    </style>
+  </head>
+  <body>
+    <p>Przekierowuję do strony webinaru… <a href={target}>Przejdź dalej</a></p>
+  </body>
+</html>

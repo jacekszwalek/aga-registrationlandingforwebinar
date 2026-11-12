@@ -1,0 +1,34 @@
+/*
+ * v3 – kompozycja Tailwind (pełnoszerokie pasy, wyśrodkowane hero, formularz w oknie)
+ * w kolorach i krojach marki. Baza marki (typografia, przyciski, karty): v2.css.
+ */
+@import './v2.css';
+
+.band {
+  background: var(--pink-700);
+  color: var(--white);
+}
+.band h1,
+.band h2,
+.band h3 {
+  color: var(--white);
+}
+/* Pasek gradientu marki (u Tailwind pomarańcz → róż). */
+.stripe {
+  height: 8px;
+  background: linear-gradient(90deg, var(--pink-500), var(--pink-600) 45%, var(--pink-800));
+}
+.btn--white {
+  background: var(--white);
+  color: var(--pink-800);
+  box-shadow: 0 10px 24px -10px rgb(43 8 26 / 0.45);
+}
+.btn--white:hover {
+  background: var(--blush-100);
+}
+.band :focus-visible {
+  box-shadow: 0 0 0 3px var(--pink-700), 0 0 0 6px var(--white);
+}
+.center {
+  text-align: center;
+}

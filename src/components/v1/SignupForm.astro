@@ -1,0 +1,185 @@
+---
+import { copy } from '../../config/copy';
+import { eventConfig, TODO_MARK } from '../../config/event.config';
+
+interface Props {
+  id: 'hero' | 'bottom';
+}
+const { id } = Astro.props;
+const f = copy.form;
+const p = (name: string) => `${id}-${name}`;
+const controller = `${eventConfig.controller.name} (${eventConfig.controller.brand})`;
+const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
+---
+
+<form
+  class="signup-form"
+  id={`zapis-${id}`}
+  data-form-id={id}
+  data-mode={eventConfig.form.mode}
+  data-thanks="v1/dziekuje/"
+  aria-label="Zapis na webinar"
+  novalidate
+>
+  <div class="field">
+    <label for={p('name')}>{f.nameLabel} <span class="field__hint">{f.nameHint}</span></label>
+    <input id={p('name')} name="name" type="text" autocomplete="given-name" maxlength="60" enterkeyhint="next" aria-describedby={p('name-error')} />
+    <p class="field__error" id={p('name-error')} hidden></p>
+  </div>
+
+  <div class="field">
+    <label for={p('email')}>{f.emailLabel}</label>
+    <input
+      id={p('email')}
+      name="email"
+      type="email"
+      autocomplete="email"
+      inputmode="email"
+      autocapitalize="off"
+      spellcheck="false"
+      enterkeyhint="send"
+      required
+      aria-required="true"
+      aria-describedby={p('email-error')}
+    />
+    <p class="field__error" id={p('email-error')} hidden></p>
+  </div>
+
+  <!-- Honeypot: niewidoczne dla ludzi, wypełniane przez boty. -->
+  <div class="hp" aria-hidden="true">
+    <label for={p('website')}>Zostaw to pole puste</label>
+    <input id={p('website')} name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="consent-check">
+    <input id={p('newsletter')} name="newsletter" type="checkbox" value="yes" />
+    <label for={p('newsletter')}>{f.newsletter}</label>
+  </div>
+
+  <p class="form-error" role="alert" hidden></p>
+
+  <button class="btn btn--block" type="submit">
+    <span class="btn__label" data-show="before">{f.submit.before}</span>
+    <span class="btn__label" data-show="during">{f.submit.during}</span>
+    <span class="btn__label" data-show="after">{f.submit.after}</span>
+    <span class="btn__loading" hidden>{f.loading}</span>
+  </button>
+
+  <p class="after-line" data-show="after">{copy.after.newsletterLine}</p>
+  <p class="microcopy">
+    <span data-show="before">{f.microcopy.before}</span>
+    <span data-show="during">{f.microcopy.during}</span>
+    <span data-show="after">{f.microcopy.after}</span>
+  </p>
+
+  <p class="clause">
+    {clauseBefore}{controller}{clauseAfter}
+    Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a>
+    {' '}i Regulaminie{' '}
+    {
+      eventConfig.site.termsUrl ? (
+        <a href={eventConfig.site.termsUrl} rel="noopener">
+          Regulaminie
+        </a>
+      ) : (
+        <span class="todo">{TODO_MARK}</span>
+      )
+    }.
+  </p>
+</form>
+
+<style>
+  .signup-form {
+    display: grid;
+    gap: 14px;
+  }
+  .field {
+    display: grid;
+    gap: 6px;
+  }
+  label {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--ink);
+  }
+  .field__hint {
+    font-weight: 400;
+    color: var(--text-muted);
+  }
+  input[type='text'],
+  input[type='email'] {
+    width: 100%;
+    min-height: 52px;
+    padding: 12px 16px;
+    font: 400 16px/1.4 var(--font-body); /* min. 16 px – bez auto-zoomu na iOS */
+    color: var(--text);
+    background: var(--white);
+    border: 1.5px solid #8a7280;
+    border-radius: var(--radius-sm);
+  }
+  input:focus-visible {
+    border-color: var(--pink-800);
+  }
+  input[aria-invalid='true'] {
+    border-color: #b00020;
+    background: #fff7f8;
+  }
+  .field__error,
+  .form-error {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #b00020;
+  }
+  .form-error {
+    padding: 10px 14px;
+    border-radius: var(--radius-sm);
+    background: #fff0f2;
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .consent-check {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 10px;
+    align-items: start;
+  }
+  .consent-check input {
+    width: 22px;
+    height: 22px;
+    margin: 2px 0 0;
+    accent-color: var(--pink-700);
+  }
+  /* Etykieta checkboxa jest długa – cały obszar etykiety jest klikalny (> 44 px). */
+  .consent-check label {
+    font-weight: 400;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .microcopy {
+    margin: 0;
+    text-align: center;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .after-line {
+    margin: 0;
+    text-align: center;
+    font-size: 0.9375rem;
+    color: var(--ink);
+  }
+  .clause {
+    margin: 0;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+</style>

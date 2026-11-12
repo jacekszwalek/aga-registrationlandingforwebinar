@@ -1,0 +1,56 @@
+---
+import { copy } from '../../config/copy';
+import type { ParsedSession } from '../../lib/eventState';
+import SignupForm from './SignupForm.astro';
+import EventFacts from './EventFacts.astro';
+
+interface Props {
+  sessions: ParsedSession[];
+}
+const { sessions } = Astro.props;
+const h = copy.form.repeatHeading;
+---
+
+<section class="section section--blush" aria-labelledby="final-title">
+  <div class="container final">
+    <div class="final__intro">
+      <h2 id="final-title">
+        <span data-show="before">{h.before}</span>
+        <span data-show="during">{h.during}</span>
+        <span data-show="after">{h.after}</span>
+      </h2>
+      <p class="final__closing">{copy.outcomes.closing}</p>
+      <EventFacts sessions={sessions} />
+    </div>
+    <div class="card final__card">
+      <SignupForm id="bottom" />
+    </div>
+  </div>
+</section>
+
+<style>
+  .final {
+    display: grid;
+    gap: 24px;
+  }
+  .final__closing {
+    font: 500 1.125rem/1.45 var(--font-heading);
+    color: var(--ink);
+  }
+  @media (min-width: 768px) {
+    .final__card :global(.signup-form) {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 14px;
+    }
+    .final__card :global(.signup-form > :not(.field)) {
+      grid-column: 1 / -1;
+    }
+  }
+  @media (min-width: 1024px) {
+    .final {
+      grid-template-columns: 1fr 1.15fr;
+      gap: 56px;
+      align-items: center;
+    }
+  }
+</style>

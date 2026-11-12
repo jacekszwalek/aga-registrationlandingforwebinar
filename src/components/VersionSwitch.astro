@@ -1,0 +1,145 @@
+---
+/**
+ * Dyskretny przełącznik prototypu: wersje v1–v4 oraz podgląd mobile/desktop.
+ * „Mobile” otwiera /podglad/ – bieżącą stronę w ramce iPhone'a 15 (393 × 852 px CSS),
+ * więc działają prawdziwe breakpointy strony. W ramce przełączanie wersji zostaje w podglądzie.
+ * Renderowany tylko przy allowPreviewParams – przed wydaniem znika.
+ * Zachowuje query string (UTM-y, ?state=), żeby porównywać wersje w tym samym stanie.
+ */
+import { eventConfig } from '../config/event.config';
+import { withBase } from '../lib/paths';
+
+export type Version = 'v1' | 'v2' | 'v3' | 'v4';
+interface Props {
+  current: Version;
+}
+const { current } = Astro.props;
+const versions: Version[] = ['v1', 'v2', 'v3', 'v4'];
+const previewBase = withBase('podglad/');
+const previewHref = `${previewBase}?url=${encodeURIComponent(withBase(`${current}/`))}`;
+---
+
+{
+  eventConfig.allowPreviewParams && (
+    <nav class="vswitch" aria-label="Wersja prototypu">
+      <span class="vswitch__label">Wersja</span>
+      {versions.map((v) => (
+        <a href={withBase(`${v}/`)} data-version-link data-version={v} aria-current={v === current ? 'page' : undefined}>
+          {v}
+        </a>
+      ))}
+      <span class="vswitch__sep" aria-hidden="true" />
+      <a class="vswitch__dev" href={previewHref} data-device-link="mobile" aria-label="Podgląd mobile (iPhone 15)" title="Podgląd mobile (iPhone 15)">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></svg>
+      </a>
+      <a class="vswitch__dev" href={withBase(`${current}/`)} data-device-link="desktop" aria-label="Podgląd desktop" title="Podgląd desktop" aria-current="true">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
+      </a>
+    </nav>
+  )
+}
+
+<script is:inline define:vars={{ previewBase }}>
+  (function () {
+    var inFrame = false;
+    try {
+      inFrame = window.self !== window.top;
+    } catch (e) {
+      inFrame = true;
+    }
+    var here = location.pathname + location.search;
+    var preview = function (url) {
+      return previewBase + '?url=' + encodeURIComponent(url);
+    };
+    if (inFrame) {
+      document.documentElement.dataset.embedded = '1';
+      document.querySelectorAll('[data-device-link]').forEach(function (a) {
+        if (a.dataset.deviceLink === 'mobile') a.setAttribute('aria-current', 'true');
+        else a.removeAttribute('aria-current');
+      });
+    }
+    document.querySelectorAll('[data-version-link]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        var target = a.getAttribute('href').split('?')[0] + location.search;
+        if (inFrame) {
+          e.preventDefault();
+          window.top.location.href = preview(target);
+        } else {
+          a.href = target;
+        }
+      });
+    });
+    document.querySelectorAll('[data-device-link]').forEach(function (a) {
+      a.addEventListener('click', function (e) {
+        e.preventDefault();
+        var mobile = a.dataset.deviceLink === 'mobile';
+        if (mobile && !inFrame) location.href = preview(here);
+        if (!mobile && inFrame) window.top.location.href = here;
+      });
+    });
+  })();
+</script>
+
+<style>
+  .vswitch {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
+    padding: 2px;
+    border: 1px solid var(--pink-200);
+    border-radius: 999px;
+    background: var(--white);
+    font: 600 0.75rem/1 var(--font-body);
+    color: var(--text-muted);
+  }
+  .vswitch__label {
+    padding: 0 6px 0 8px;
+  }
+  .vswitch a {
+    display: inline-grid;
+    place-items: center;
+    min-width: 40px;
+    min-height: 32px;
+    border-radius: 999px;
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+  .vswitch a[aria-current] {
+    background: var(--blush-100);
+    color: var(--pink-800);
+  }
+  .vswitch a:hover {
+    color: var(--pink-800);
+  }
+  .vswitch__sep {
+    width: 1px;
+    height: 18px;
+    margin: 0 4px;
+    background: var(--pink-200);
+  }
+  .vswitch__dev svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  /* Na prawdziwym telefonie przełącznik urządzeń nic nie wnosi – w ramce podglądu zostaje (wyjście do desktopu). */
+  @media (max-width: 767.98px) {
+    :global(html:not([data-embedded])) .vswitch__sep,
+    :global(html:not([data-embedded])) .vswitch__dev {
+      display: none;
+    }
+  }
+  @media (max-width: 479.98px) {
+    .vswitch__label {
+      display: none;
+    }
+    .vswitch a {
+      min-width: 34px;
+    }
+  }
+</style>

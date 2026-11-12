@@ -4,6 +4,7 @@
  * Daty i godziny nie są tu wpisywane – generuje je event.config.ts.
  */
 import { TODO_MARK } from './event.config';
+import { formMessages } from './formMessages';
 
 export const copy = {
   meta: {
@@ -50,12 +51,7 @@ export const copy = {
     },
     newsletter:
       'Tak, chcę też dostawać newsletter Przystani Zmiany Zawodowej z poradami o rozwoju zawodowym oraz informacjami o wydarzeniach, kursach i ofertach. Mogę wycofać zgodę w każdej chwili.',
-    errors: {
-      emailRequired: 'Wpisz adres e-mail, na który wyślę link.',
-      emailInvalid: 'Sprawdź adres e-mail – wygląda na niepełny (np. imie@domena.pl).',
-      nameTooLong: 'Imię może mieć najwyżej 60 znaków.',
-      network: 'Nie udało się połączyć. Twoje dane są zachowane – spróbuj ponownie za chwilę.',
-    },
+    errors: formMessages,
     repeatHeading: { before: 'Zarezerwuj miejsce na webinarze', during: 'Dołącz do webinaru', after: 'Wyślij mi nagranie' },
   },
 
