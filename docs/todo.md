@@ -17,6 +17,7 @@ Stan na 11.11.2026. Prototyp działa bez tych elementów; w kodzie i na stronie 
 | 10 | Microsoft Clarity – czy używamy; jeśli tak, ID | `event.config.ts` → `analytics.clarityId` | decyzja |
 | 11 | Test A/B nagłówka: przełącznik w konfiguracji (jest) czy podział 50/50 na brzegu (funkcja Cloudflare) | `headlineVariant` | decyzja |
 
+- Skrócenie treści zgody na newsletter (np. „Chcę też dostawać newsletter z poradami, wydarzeniami i ofertami. Mogę wycofać zgodę w każdej chwili.”) – tylko po akceptacji prawnej.
 - Wybór wersji (v1/v2) do dalszego rozwoju; przed wydaniem usunąć przełącznik i przekierowanie z `/`.
 - v1: CLS 0,275 w Lighthouse mobile (przekracza budżet 0,1) – do poprawy, jeśli v1 zostanie.
 

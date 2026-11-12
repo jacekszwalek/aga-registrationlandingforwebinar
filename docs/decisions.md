@@ -9,6 +9,12 @@ v1 realizowała pełną strukturę briefu i wyszła na ok. 4,7 ekranu desktopu �
 - **Szybkość na mobile**: duże zdjęcie tylko od 1024 px (na telefonie awatar), jeden formularz, JS formularza nie ładuje treści strony (`formMessages.ts`). Lighthouse mobile (lokalnie): v2 – wydajność 100, LCP 1,5 s, CLS 0,021, TBT 0 ms, 108 KB; v1 – 85, LCP 1,8 s, CLS 0,275.
 - Wysokość: 2566 px przy 1440×900 (2,85 ekranu); na iPhonie 13 przycisk zapisu kończy się na 527 px z 664 px.
 
+### Iteracja 2 (12.11.2026)
+- **Karta wydarzenia zamiast dużego portretu**: prawa kolumna hero to różowa karta (`--pink-700`) z terminem, formą, ceną i nagraniem oraz małym okrągłym zdjęciem prowadzącej. Konkrety są wyróżnione i widoczne obok formularza.
+- **Zgody w mniejszej formie**: zgoda na newsletter zostaje dosłowna (treść prawna), a klauzula informacyjna jest warstwowa – jedna linijka „Twoje dane są bezpieczne – kto je przetwarza?” rozwija pełny tekst z linkami.
+- **Więcej przestrzeni**: sekcje 64–112 px, większe odstępy w listach i między kolumnami, interlinia 1,7. Desktop: 2815 px (3,1 ekranu). Na telefonie górny ekran zostaje zwarty, bo przycisk zapisu musi być widoczny nad banerem cookies (test to wykrył).
+- Lighthouse mobile (lokalnie): wydajność 99, LCP 1,6 s, CLS 0,001, 110 KB, dostępność 100.
+
 ## v1
 
 **Astro, statyczny output, bez frameworka UI.** Strona to jeden cel i kilka sekcji; komponenty `.astro` renderują HTML przy buildzie, a JS dostają tylko formularz, licznik, przyklejony przycisk, zgody i zdarzenia (~10 KB). To główna różnica wobec obecnego landingu (~75 skryptów WP/WooCommerce).
