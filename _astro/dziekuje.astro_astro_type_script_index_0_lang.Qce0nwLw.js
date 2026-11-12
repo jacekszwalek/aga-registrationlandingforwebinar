@@ -1,0 +1,1 @@
+import"./thankyou.Nf9E1KXn.js";

@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Przystan Zmiany Zawodowej//Webinar//PL
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:webinar-2026-12-03-1@przystanzmianyzawodowej.pl
+DTSTAMP:20261112T004130Z
+DTSTART:20261203T180000Z
+DTEND:20261203T190000Z
+SUMMARY:Bezpłatny webinar Przystani Zmiany Zawodowej
+DESCRIPTION:Bezpłatny webinar z Agnieszką Baranowską. Link do spotkania 
+ wyślę Ci mailem przed startem.
+LOCATION:Online – link w mailu
+URL:https://webinar.przystanzmianyzawodowej.pl
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Bezpłatny webinar Przystani Zmiany Zawodowej
+END:VALARM
+END:VEVENT
+END:VCALENDAR
