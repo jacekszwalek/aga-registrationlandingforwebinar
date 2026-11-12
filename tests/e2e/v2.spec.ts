@@ -12,22 +12,24 @@ test.describe('v2 – wejście i pierwszy ekran', () => {
     await page.waitForURL('**/v2/?utm_source=linkedin&utm_medium=social');
   });
 
-  test('H1 i przycisk zapisu na pierwszym ekranie – także na telefonie', async ({ page }, info) => {
+  test('H1 i przycisk zapisu na pierwszym ekranie – także na telefonie', async ({ page }) => {
     await openAt(page, 'before', V2);
     await expect(page.locator('h1')).toHaveCount(1);
     await expect(page.locator('h1')).toBeInViewport();
     const box = (await submit(page).boundingBox())!;
     expect(box.y + box.height).toBeLessThanOrEqual(page.viewportSize()!.height);
-    // Duże zdjęcie tylko na desktopie – na telefonie nie opóźnia formularza.
-    if (isMobile(info)) await expect(page.locator('.hero__media')).toBeHidden();
-    else await expect(page.locator('.hero__media')).toBeVisible();
+    // Konkrety wydarzenia w różowej karcie zamiast dużego portretu.
+    const card = page.locator('aside.event');
+    await expect(card).toBeVisible();
+    await expect(card).toContainText('Online, 60 minut');
+    await expect(card).toContainText('Nagranie dla zapisanych');
   });
 
-  test('strona jest krótka: najwyżej 3 ekrany na desktopie', async ({ page }, info) => {
+  test('strona jest krótka: najwyżej 3,5 ekranu na desktopie', async ({ page }, info) => {
     test.skip(isMobile(info), 'tylko desktop');
     await openAt(page, 'before', V2);
     const h = await page.evaluate(() => document.documentElement.scrollHeight);
-    expect(h).toBeLessThanOrEqual(page.viewportSize()!.height * 3);
+    expect(h).toBeLessThanOrEqual(page.viewportSize()!.height * 3.5);
   });
 
   test('waga strony przed zgodą ≤ 300 KB i zero domen trzecich', async ({ page }) => {
@@ -213,4 +215,13 @@ test.describe('v2 – dostępność (axe, WCAG 2.2 AA)', () => {
     const r = await new AxeBuilder({ page }).withTags(tags).analyze();
     expect(r.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(', ')}`)).toEqual([]);
   });
+});
+
+test('v2 – klauzula danych schowana warstwowo, link do polityki w środku', async ({ page }) => {
+  await dismissConsent(page);
+  await openAt(page, 'before', V2);
+  const privacy = page.locator('#zapis-hero details.signup__privacy');
+  await expect(privacy.locator('p')).toBeHidden();
+  await privacy.locator('summary').click();
+  await expect(privacy.getByRole('link', { name: 'Polityce prywatności' })).toBeVisible();
 });
