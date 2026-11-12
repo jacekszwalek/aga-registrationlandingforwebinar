@@ -1,9 +1,8 @@
 ---
 import { copyV2 } from '../../config/copy.v2';
+import { copy } from '../../config/copy';
 import type { ParsedSession } from '../../lib/eventState';
 import { formatDate, formatTime, formatTimeRange } from '../../lib/format';
-import PhotoPlaceholder from '../PhotoPlaceholder.astro';
-import { copy } from '../../config/copy';
 import SignupForm from './SignupForm.astro';
 
 interface Props {
@@ -34,48 +33,51 @@ const date = formatDate(session.start);
       <p class="hero__sub" data-show="after">{copyV2.after.subtitle}</p>
 
       <SignupForm />
+    </div>
 
-      <ul class="facts" role="list">
+    <!-- Karta wydarzenia: konkrety na różowym tle + małe zdjęcie prowadzącej zamiast dużego portretu. -->
+    <aside class="event" aria-label="Szczegóły webinaru">
+      <ul class="event__facts" role="list">
         <li data-show="before during">
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
-          <span><time datetime={new Date(session.start).toISOString()}>{date}</time>, {formatTimeRange(session)}</span>
+          <span><strong><time datetime={new Date(session.start).toISOString()}>{date}</time></strong><br />{formatTimeRange(session)}</span>
         </li>
         <li>
           <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
-          <span>{h.facts.online}</span>
+          <span><strong>{h.facts.online}</strong></span>
         </li>
         <li>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7M12 7c-2-4-6-4-6-1s6 1 6 1 6 2 6-1-4-3-6 1"></path></svg>
-          <span>{h.facts.free}</span>
+          <span><strong>{h.facts.free}</strong></span>
         </li>
         <li>
           <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M10 9l5 3-5 3z"></path></svg>
-          <span>{h.facts.recording}</span>
+          <span><strong>{h.facts.recording}</strong></span>
         </li>
       </ul>
 
-      <div class="hero__host">
-        <span class="avatar" aria-hidden="true">AB</span>
+      <div class="event__host">
+        <!-- TODO: okrągłe zdjęcie Agnieszki 96×96 (AVIF/WebP) – teraz zamiennik. -->
+        <span class="event__photo" role="img" aria-label={copy.host.photoPlaceholder}>AB</span>
         <p>{h.host}</p>
       </div>
-    </div>
-
-    <!-- Duże zdjęcie tylko od 1024 px; na telefonie formularz zostaje na pierwszym ekranie. -->
-    <div class="hero__media">
-      <PhotoPlaceholder label={copy.host.photoPlaceholder} ratio="4 / 5" />
-    </div>
+    </aside>
   </div>
 </section>
 
 <style>
+  /* Telefon: zwarty górny ekran, żeby przycisk zapisu był widoczny nad banerem cookies. */
   .hero {
-    padding-block: 20px 36px;
-    background: linear-gradient(180deg, var(--white) 0%, var(--white) 70%, var(--blush-50) 100%);
+    padding-block: 16px 48px;
+    background: linear-gradient(180deg, var(--white) 0%, var(--white) 65%, var(--blush-50) 100%);
     border-bottom: 10px solid var(--pink-600); /* różowy pas pod hero jak na stronie-matce */
   }
   .hero__grid {
     display: grid;
-    gap: 32px;
+    gap: 40px;
+  }
+  .eyebrow {
+    margin-bottom: 12px;
   }
   h1 {
     font-size: clamp(1.75rem, 1.1rem + 2.6vw, 3.25rem);
@@ -84,87 +86,103 @@ const date = formatDate(session.start);
   }
   .hero__sub {
     font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1875rem);
+    line-height: 1.65;
     color: var(--graphite);
-    max-width: 52ch;
+    max-width: 48ch;
     margin-bottom: 18px;
   }
-  .facts {
+
+  .event {
+    align-self: start;
+    padding: 28px;
+    border-radius: var(--radius);
+    background: var(--pink-700);
+    color: var(--white);
+  }
+  .event__facts {
     list-style: none;
-    margin: 18px 0 0;
+    margin: 0;
     padding: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px 16px;
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: var(--ink);
+    gap: 20px 16px;
+    font-size: 0.9375rem;
+    line-height: 1.4;
   }
-  .facts li {
+  .event__facts li {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    align-items: flex-start;
+    gap: 10px;
   }
-  .facts li:first-child {
-    grid-column: 1 / -1;
+  .event__facts strong {
+    font-weight: 600;
   }
-  .facts svg {
+  .event__facts svg {
     flex: none;
-    width: 20px;
-    height: 20px;
+    width: 22px;
+    height: 22px;
+    margin-top: 1px;
     fill: none;
-    stroke: var(--pink-700);
+    stroke: var(--white);
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
   }
-  .hero__host {
+  .event__host {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-top: 18px;
-    padding-top: 16px;
-    border-top: 1px solid var(--blush-100);
+    gap: 14px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid rgb(255 255 255 / 0.35);
   }
-  .hero__host p {
+  .event__host p {
     margin: 0;
     font-size: 0.875rem;
-    color: var(--graphite);
+    line-height: 1.5;
   }
-  .avatar {
+  .event__photo {
     flex: none;
     display: grid;
     place-items: center;
-    width: 52px;
-    height: 52px;
+    width: 72px;
+    height: 72px;
     border-radius: 50%;
+    border: 3px solid var(--white);
     background: var(--blush-100);
     color: var(--pink-800);
-    font: 500 1.125rem/1 var(--font-heading);
+    font: 500 1.25rem/1 var(--font-heading);
   }
-  .hero__media {
-    display: none;
-  }
+
   @media (min-width: 1024px) {
     .hero {
-      padding-block: 48px 64px;
+      padding-block: 72px 88px;
+    }
+    .eyebrow {
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin-bottom: 20px;
+    }
+    .hero__sub {
+      margin-bottom: 28px;
     }
     .hero__grid {
-      grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-      gap: 64px;
+      grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr);
+      gap: 80px;
       align-items: center;
     }
-    .hero__media {
-      display: block;
+    .event {
+      padding: 36px;
     }
-    .hero__media :global(.photo-ph) {
-      max-height: 640px;
+    .event__facts {
+      grid-template-columns: 1fr;
+      gap: 22px;
+      font-size: 1rem;
     }
-    .facts {
-      grid-template-columns: repeat(4, auto);
-      justify-content: start;
-    }
-    .facts li:first-child {
-      grid-column: auto;
+    .event__photo {
+      width: 88px;
+      height: 88px;
     }
   }
 </style>
