@@ -13,7 +13,7 @@ const VIEWPORTS = {
 const browser = await chromium.launch();
 for (const [vp, opts] of Object.entries(VIEWPORTS)) {
   for (const [state, time] of Object.entries(TIMES)) {
-    for (const [name, path] of ['v1', 'v2'].flatMap((v) => [[`${v}-landing`, `/${v}/`], [`${v}-dziekuje`, `/${v}/dziekuje/`]])) {
+    for (const [name, path] of ['v1', 'v2', 'v3', 'v4'].flatMap((v) => [[`${v}-landing`, `/${v}/`], [`${v}-dziekuje`, `/${v}/dziekuje/`]])) {
       if (name.endsWith('dziekuje') && state === 'during') continue;
       const ctx = await browser.newContext({ ...opts, locale: 'pl-PL', timezoneId: 'Europe/Warsaw' });
       const page = await ctx.newPage();
