@@ -4,6 +4,7 @@ import { copy } from '../../config/copy';
 import type { ParsedSession } from '../../lib/eventState';
 import { formatDate, formatTime, formatTimeRange } from '../../lib/format';
 import SignupForm from './SignupForm.astro';
+import HostPhoto from '../HostPhoto.astro';
 
 interface Props {
   session: ParsedSession;
@@ -57,8 +58,7 @@ const date = formatDate(session.start);
       </ul>
 
       <div class="event__host">
-        <!-- TODO: okrągłe zdjęcie Agnieszki 96×96 (AVIF/WebP) – teraz zamiennik. -->
-        <span class="event__photo" role="img" aria-label={copy.host.photoPlaceholder}>AB</span>
+        <HostPhoto crop="square" sizes="88px" class="event__photo" position="50% 40%" />
         <p>{h.host}</p>
       </div>
     </aside>
@@ -141,17 +141,11 @@ const date = formatDate(session.start);
     font-size: 0.875rem;
     line-height: 1.5;
   }
-  .event__photo {
+  .event :global(.event__photo) {
     flex: none;
-    display: grid;
-    place-items: center;
     width: 72px;
-    height: 72px;
     border-radius: 50%;
-    border: 3px solid var(--white);
-    background: var(--blush-100);
-    color: var(--pink-800);
-    font: 500 1.25rem/1 var(--font-heading);
+    box-shadow: 0 0 0 3px var(--white);
   }
 
   @media (min-width: 1024px) {
@@ -180,9 +174,8 @@ const date = formatDate(session.start);
       gap: 22px;
       font-size: 1rem;
     }
-    .event__photo {
+    .event :global(.event__photo) {
       width: 88px;
-      height: 88px;
     }
   }
 </style>

@@ -1,7 +1,7 @@
 ---
 import { copy } from '../../config/copy';
 import { copyV2 } from '../../config/copy.v2';
-import PhotoPlaceholder from '../PhotoPlaceholder.astro';
+import HostPhoto from '../HostPhoto.astro';
 
 const h = copyV2.host;
 const [first, ...rest] = copy.testimonials.items;
@@ -11,7 +11,7 @@ const [first, ...rest] = copy.testimonials.items;
   <div class="container hp-grid">
     <div class="host">
       <div class="host__photo">
-        <PhotoPlaceholder label={copy.host.photoPlaceholder} ratio="1 / 1" />
+        <HostPhoto crop="square" sizes="160px" />
       </div>
       <div>
         <h2 id="host-title">{h.heading}</h2>
@@ -63,9 +63,6 @@ const [first, ...rest] = copy.testimonials.items;
   }
   .host__photo :global(.photo-ph) {
     border-radius: var(--radius-lg);
-  }
-  .host__photo :global(.photo-ph__label) {
-    font-size: 0.6875rem;
   }
   .host__name {
     margin-bottom: 6px;

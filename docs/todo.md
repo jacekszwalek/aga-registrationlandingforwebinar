@@ -8,7 +8,7 @@ Stan na 11.11.2026. Prototyp działa bez tych elementów; w kodzie i na stronie 
 | 1 | Termin i format: jedno spotkanie 3.12.2026, 19:00–20:00 | `event.config.ts` → `sessions` | założenie, do potwierdzenia |
 | 2 | Platforma webinaru (Zoom/Meet/…) i sposób dołączenia w stanie `during` | `event.config.ts` → `platform`, `copy.during` | TODO |
 | 3 | Odpowiedź FAQ „Czy będzie oferta sprzedażowa?” | `copy.ts` → `faq` | TODO |
-| 4 | Zdjęcia Agnieszki w wysokiej rozdzielczości (hero pionowe 4:5, bio 1:1) | `PhotoPlaceholder` → `<Picture>` AVIF/WebP | TODO |
+| 4 | Zdjęcia Agnieszki – jest jedno (1500×2000), kadry w `src/assets/photos/`; przydałoby się zdjęcie z przezroczystym tłem do v4 i większa rozdzielczość | `HostPhoto.astro` | częściowo |
 | 5 | **Zgoda autorek** opinii (Agnieszka – Handlowiec, Wiola – PM, Klaudia Rozmarynowska) na publikację na tym landingu; cytaty dosłowne z /wyzwanie2/ | `copy.ts` → `testimonials` | TODO – wymagana zgoda |
 | 6 | URL regulaminu (webinaru? newslettera?) | `event.config.ts` → `site.termsUrl` | TODO |
 | 7 | Link do bezpłatnej konsultacji | `event.config.ts` → `site.consultationUrl` | TBC |

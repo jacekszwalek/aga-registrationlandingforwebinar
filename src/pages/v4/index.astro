@@ -10,6 +10,7 @@ import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import DuringBanner from '../../components/DuringBanner.astro';
 import Doodles from '../../components/v4/Doodles.astro';
+import HostPhoto from '../../components/HostPhoto.astro';
 import SignupForm from '../../components/v4/SignupForm.astro';
 import Footer from '../../components/v4/Footer.astro';
 import StickyCta from '../../components/StickyCta.astro';
@@ -55,13 +56,7 @@ const date = formatDate(first.start);
               <div class="stage__lines"><i></i><i></i><i></i></div>
               <div class="stage__pill"></div>
             </div>
-            <div class="stage__person" role="img" aria-label={copy.host.photoPlaceholder}>
-              <svg viewBox="0 0 200 260" aria-hidden="true">
-                <circle cx="100" cy="78" r="44"></circle>
-                <path d="M18 260c4-72 38-112 82-112s78 40 82 112z"></path>
-              </svg>
-              <span class="stage__label">{copy.host.photoPlaceholder}</span>
-            </div>
+            <HostPhoto crop="tall" sizes="340px" class="stage__person" position="50% 20%" />
 
             <ul class="tiles" role="list" aria-label="Szczegóły webinaru">
               <li class="tile tile--date" data-show="before during">
@@ -136,7 +131,7 @@ const date = formatDate(first.start);
     position: relative;
   }
   .stage__window,
-  .stage__person {
+  .stage :global(.stage__person) {
     display: none;
   }
   .tiles {
@@ -246,36 +241,15 @@ const date = formatDate(first.start);
       border-radius: 999px;
       background: var(--pink-700);
     }
-    /* Wycinanka osoby dosunięta do dołu sceny (TODO: zdjęcie PNG/AVIF z przezroczystym tłem). */
-    .stage__person {
+    /* Zdjęcie w łuku – odpowiednik wycinanki osoby u Unbounce (TODO: PNG z przezroczystym tłem). */
+    .stage :global(.stage__person) {
       display: block;
       position: absolute;
-      right: 2%;
+      right: 4%;
       bottom: 0;
-      width: 58%;
-      height: 92%;
-    }
-    .stage__person svg {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-      height: 100%;
-      fill: var(--pink-200);
-      stroke: var(--white);
-      stroke-width: 4;
-    }
-    .stage__label {
-      position: absolute;
-      top: 34%;
-      left: 50%;
-      transform: translateX(-50%);
-      white-space: nowrap;
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: #4a3b00;
-      background: #fff6c2;
-      border-radius: 6px;
-      padding: 2px 8px;
+      width: 54%;
+      border-radius: 999px 999px 0 0;
+      box-shadow: 0 30px 60px -30px rgb(43 8 26 / 0.45);
     }
     /* Kafelki „pływają” wokół zdjęcia jak ikony u Unbounce. */
     .tiles {

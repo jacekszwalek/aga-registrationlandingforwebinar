@@ -9,7 +9,7 @@ import '../../styles/v3.css';
 import Base from '../../layouts/Base.astro';
 import Header from '../../components/Header.astro';
 import DuringBanner from '../../components/DuringBanner.astro';
-import PhotoPlaceholder from '../../components/PhotoPlaceholder.astro';
+import HostPhoto from '../../components/HostPhoto.astro';
 import FormDialog from '../../components/v3/FormDialog.astro';
 import Footer from '../../components/v3/Footer.astro';
 import StickyCta from '../../components/StickyCta.astro';
@@ -61,7 +61,7 @@ const initials = quote.author
     <div class="frame3">
       <div class="frame3__stripe stripe" aria-hidden="true"></div>
       <figure class="container frame3__fig">
-        <PhotoPlaceholder label={copy.host.photoPlaceholder} ratio="16 / 9" />
+        <HostPhoto crop="wide" sizes="(min-width: 800px) 760px, calc(100vw - 32px)" priority position="55% 30%" />
         <figcaption>{copyV3.photoCaption} · psycholożka i coachka ICF</figcaption>
       </figure>
     </div>
@@ -127,7 +127,7 @@ const initials = quote.author
           </p>
         </div>
         <div class="host3__photo">
-          <PhotoPlaceholder label={copy.host.photoPlaceholder} ratio="4 / 5" />
+          <HostPhoto crop="portrait" sizes="(min-width: 1024px) 420px, 100vw" position="50% 20%" />
         </div>
       </div>
     </section>

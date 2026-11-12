@@ -1,7 +1,7 @@
 ---
 import { copy } from '../../config/copy';
 import SignupForm from './SignupForm.astro';
-import PhotoPlaceholder from '../PhotoPlaceholder.astro';
+import HostPhoto from '../HostPhoto.astro';
 
 interface Props {
   overline: string[];
@@ -31,7 +31,7 @@ const h = copy.hero;
     </div>
 
     <div class="hero__media">
-      <PhotoPlaceholder label={copy.host.photoPlaceholder} ratio="4 / 5" />
+      <HostPhoto crop="portrait" sizes="(min-width: 1024px) 460px, 100vw" priority position="50% 22%" />
     </div>
 
     <div class="hero__form card">

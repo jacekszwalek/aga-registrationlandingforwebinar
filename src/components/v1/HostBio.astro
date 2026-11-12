@@ -1,13 +1,13 @@
 ---
 import { copy } from '../../config/copy';
-import PhotoPlaceholder from '../PhotoPlaceholder.astro';
+import HostPhoto from '../HostPhoto.astro';
 const c = copy.host;
 ---
 
 <section class="section" aria-labelledby="host-title">
   <div class="container host">
     <div class="host__media">
-      <PhotoPlaceholder label={c.photoPlaceholder} ratio="1 / 1" />
+      <HostPhoto crop="square" sizes="(min-width: 768px) 220px, 280px" />
     </div>
     <div>
       <h2 id="host-title">{c.heading}</h2>
