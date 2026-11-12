@@ -1,0 +1,180 @@
+---
+/**
+ * v3 (wzór Tailwind): formularz nie stoi na stronie – otwiera go każdy przycisk CTA.
+ * Natywny <dialog> (showModal): pułapka fokusu, Esc, inert tła – bez bibliotek.
+ */
+import { copy } from '../../config/copy';
+import { copyV2 } from '../../config/copy.v2';
+import { eventConfig, TODO_MARK } from '../../config/event.config';
+
+interface Props {
+  thanks: string;
+}
+const { thanks } = Astro.props;
+const controller = `${eventConfig.controller.name} (${eventConfig.controller.brand})`;
+const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
+---
+
+<dialog class="fdialog" data-form-dialog aria-labelledby="fdialog-title">
+  <button type="button" class="fdialog__close" data-close-form aria-label="Zamknij">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+  </button>
+  <p class="fdialog__eyebrow">Bezpłatny webinar</p>
+  <h2 id="fdialog-title">
+    <span data-show="before during">Zarezerwuj miejsce</span>
+    <span data-show="after">Wyślij mi nagranie</span>
+  </h2>
+  <p class="fdialog__lead" data-show="before during">Podaj e-mail – wyślę Ci link do spotkania i przypomnienie.</p>
+  <p class="fdialog__lead" data-show="after">{copy.after.newsletterLine}</p>
+
+  <form class="fdialog__form" id="zapis-hero" data-form-id="dialog" data-mode={eventConfig.form.mode} data-thanks={thanks} aria-label="Zapis na webinar" novalidate>
+    <label class="fdialog__label" for="hero-email">{copyV2.form.emailLabel}</label>
+    <input id="hero-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder={copyV2.form.emailPlaceholder} required aria-required="true" aria-describedby="hero-email-error" />
+    <p class="fdialog__error" id="hero-email-error" hidden></p>
+
+    <div class="hp" aria-hidden="true">
+      <label for="hero-website">Zostaw to pole puste</label>
+      <input id="hero-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <div class="fdialog__check">
+      <input id="hero-newsletter" name="newsletter" type="checkbox" value="yes" />
+      <label for="hero-newsletter">{copy.form.newsletter}</label>
+    </div>
+
+    <p class="form-error" role="alert" hidden></p>
+
+    <button class="btn btn--block" type="submit">
+      <span class="btn__label" data-show="before during">{copy.form.submit.before}</span>
+      <span class="btn__label" data-show="after">{copy.form.submit.after}</span>
+      <span class="btn__loading" hidden>{copy.form.loading}</span>
+    </button>
+
+    <details class="fdialog__privacy">
+      <summary>Twoje dane są bezpieczne – kto je przetwarza?</summary>
+      <p>
+        {clauseBefore}{controller}{clauseAfter}
+        Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a> i Regulaminie{' '}
+        {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie</a> : <span class="todo">{TODO_MARK}</span>}.
+      </p>
+    </details>
+  </form>
+</dialog>
+
+<style>
+  .fdialog {
+    width: min(480px, calc(100% - 32px));
+    max-height: calc(100dvh - 32px);
+    padding: 32px 28px 24px;
+    border: 0;
+    border-top: 6px solid var(--pink-700);
+    border-radius: 8px;
+    background: var(--white);
+    color: var(--graphite);
+    box-shadow: 0 30px 80px -20px rgb(43 8 26 / 0.45);
+  }
+  .fdialog::backdrop {
+    background: rgb(43 8 26 / 0.55);
+  }
+  .fdialog__close {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+  }
+  .fdialog__close svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--ink);
+    stroke-width: 2;
+  }
+  .fdialog__eyebrow {
+    margin: 0 0 6px;
+    font: 600 0.75rem/1.4 var(--font-body);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--pink-700);
+  }
+  h2 {
+    font-size: 1.75rem;
+    margin-bottom: 8px;
+  }
+  .fdialog__lead {
+    margin-bottom: 20px;
+    font-size: 0.9375rem;
+  }
+  .fdialog__form {
+    display: grid;
+    gap: 12px;
+  }
+  .fdialog__label {
+    font-weight: 600;
+    font-size: 0.9375rem;
+    color: var(--ink);
+  }
+  input[type='email'] {
+    width: 100%;
+    min-height: 54px;
+    padding: 12px 16px;
+    font: 400 16px/1.4 var(--font-body);
+    color: var(--text);
+    border: 1.5px solid #8a7280;
+    border-radius: 4px;
+  }
+  input[aria-invalid='true'] {
+    border-color: #b00020;
+    background: #fff7f8;
+  }
+  .fdialog__error,
+  .form-error {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #b00020;
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .fdialog__check {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+  }
+  .fdialog__check input {
+    width: 20px;
+    height: 20px;
+    margin: 2px 0 0;
+    accent-color: var(--pink-700);
+  }
+  .fdialog__check label {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+  }
+  .fdialog__privacy {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .fdialog__privacy summary {
+    min-height: 32px;
+    padding-top: 6px;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--pink-200);
+    text-underline-offset: 3px;
+  }
+  .fdialog__privacy p {
+    margin: 4px 0 0;
+  }
+</style>

@@ -1,0 +1,427 @@
+---
+/**
+ * v3 – kompozycja Tailwind: biały pasek z logo na środku, różowy pas hero z wyśrodkowanym
+ * nagłówkiem i przyciskiem, duża ramka ze zdjęciem na granicy pasów, lista 2×3,
+ * karta CTA na styku bieli i różu, opinia na pasie, bio z dużym zdjęciem, końcowy pas CTA.
+ * Formularz w oknie dialogowym otwieranym przez każdy przycisk.
+ */
+import '../../styles/v3.css';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import DuringBanner from '../../components/DuringBanner.astro';
+import PhotoPlaceholder from '../../components/PhotoPlaceholder.astro';
+import FormDialog from '../../components/v3/FormDialog.astro';
+import Footer from '../../components/v3/Footer.astro';
+import StickyCta from '../../components/StickyCta.astro';
+import ConsentBanner from '../../components/ConsentBanner.astro';
+import { copy } from '../../config/copy';
+import { copyV3, learnItems } from '../../config/copy.v34';
+import { eventConfig } from '../../config/event.config';
+import { parseSessions } from '../../lib/eventState';
+import { formatDate, formatTime } from '../../lib/format';
+
+const [first] = parseSessions(eventConfig.sessions);
+const date = formatDate(first.start);
+const time = formatTime(first.start);
+const quote = copy.testimonials.items[2];
+const initials = quote.author
+  .split(' ')
+  .map((w) => w[0])
+  .join('');
+---
+
+<Base title={copy.meta.title} description={copy.meta.description} path="v3/">
+  <Header version="v3" centered />
+  <DuringBanner />
+  <main id="main">
+    <!-- HERO: różowy pas, wszystko wyśrodkowane -->
+    <section class="band hero3" aria-labelledby="hero-title">
+      <div class="container hero3__inner">
+        <p class="pill">{copyV3.pill}</p>
+        <p class="hero3__over" data-show="before during">
+          <span class="nowrap">{date}</span> · <span class="nowrap">{time}</span> · <span class="nowrap">online</span>
+        </p>
+        <p class="hero3__over" data-show="after">Nagranie · bez limitu czasu</p>
+        <h1 id="hero-title">
+          <span data-show="before during">
+            <span data-variant-show="A">{copy.hero.headline.A}</span>
+            <span data-variant-show="B">{copy.hero.headline.B}</span>
+          </span>
+          <span data-show="after">{copy.after.headline}</span>
+        </h1>
+        <p class="hero3__sub">{copyV3.overline}</p>
+        <button type="button" class="btn btn--white hero3__cta" data-open-form="hero" data-sticky-anchor>
+          <span data-show="before during">{copyV3.cta}</span>
+          <span data-show="after">{copyV3.ctaAfter}</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- Ramka ze zdjęciem na granicy pasów + pasek gradientu (jak wideo u Tailwind) -->
+    <div class="frame3">
+      <div class="frame3__stripe stripe" aria-hidden="true"></div>
+      <figure class="container frame3__fig">
+        <PhotoPlaceholder label={copy.host.photoPlaceholder} ratio="16 / 9" />
+        <figcaption>{copyV3.photoCaption} · psycholożka i coachka ICF</figcaption>
+      </figure>
+    </div>
+
+    <!-- Czego się dowiesz: wyśrodkowany nagłówek, lista 2 × 3 -->
+    <section class="section learn3" aria-labelledby="learn-title">
+      <div class="container">
+        <h2 id="learn-title" class="center">{copyV3.learnHeading}</h2>
+        <ul class="learn3__list" role="list">
+          {
+            learnItems.map((i) => (
+              <li>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" /><path d="M7.5 12.5l3 3 6-6.5" /></svg>
+                <p><strong>{i.lead}</strong> – {i.text}</p>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </section>
+
+    <!-- Karta CTA na styku bieli i różu -->
+    <section class="plan3" aria-labelledby="plan-title">
+      <div class="container">
+        <div class="plan3__card">
+          <h2 id="plan-title">{copyV3.plan.heading}</h2>
+          <ul class="plan3__ticks" role="list">
+            {copyV3.plan.ticks.map((t) => <li>{t}</li>)}
+          </ul>
+          <button type="button" class="btn" data-open-form="plan">
+            <span data-show="before during">{copyV3.cta}</span>
+            <span data-show="after">{copyV3.ctaAfter}</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Opinia na różowym pasie -->
+    <section class="band quote3" aria-labelledby="quote-title">
+      <div class="container quote3__inner">
+        <h2 id="quote-title" class="visually-hidden">{copy.testimonials.heading}</h2>
+        <figure>
+          <blockquote><p>„{quote.quote}”</p></blockquote>
+          <figcaption>
+            <span class="quote3__avatar" aria-hidden="true">{initials}</span>
+            <span><strong>{quote.author}</strong><br />{quote.role}</span>
+          </figcaption>
+        </figure>
+        <p class="quote3__note">{copy.testimonials.note}</p>
+      </div>
+    </section>
+
+    <!-- Prowadząca: tekst po lewej, duże zdjęcie po prawej dosunięte do dołu -->
+    <section class="host3" aria-labelledby="host-title">
+      <div class="container host3__grid">
+        <div class="host3__text">
+          <p class="host3__kicker">{copyV3.host.kicker},</p>
+          <h2 id="host-title">{copy.host.name}</h2>
+          <p>{copyV3.host.bio}</p>
+          <p class="host3__companies">
+            <span class="visually-hidden">Wcześniej m.in.: </span>
+            {copyV3.host.companies.map((c, i) => <span>{c}{i < copyV3.host.companies.length - 1 && <span class="visually-hidden">, </span>}</span>)}
+          </p>
+        </div>
+        <div class="host3__photo">
+          <PhotoPlaceholder label={copy.host.photoPlaceholder} ratio="4 / 5" />
+        </div>
+      </div>
+    </section>
+
+    <!-- Końcowy pas CTA -->
+    <section class="band final3" aria-labelledby="final-title">
+      <div class="container final3__inner">
+        <h2 id="final-title">
+          <span data-show="before">{copyV3.final.before}</span>
+          <span data-show="during">{copyV3.final.during}</span>
+          <span data-show="after">{copyV3.final.after}</span>
+        </h2>
+        <p class="final3__count" data-show="before" data-countdown>
+          Start <time datetime={new Date(first.start).toISOString()}>{date}, {time}</time> – za <strong><span data-unit="days">–</span> <span data-label="days">dni</span></strong>
+        </p>
+        <button type="button" class="btn btn--white" data-open-form="final">
+          <span data-show="before during">{copyV3.cta}</span>
+          <span data-show="after">{copyV3.ctaAfter}</span>
+        </button>
+      </div>
+    </section>
+  </main>
+  <Footer />
+  <FormDialog thanks="v3/dziekuje/" />
+  <StickyCta />
+  <ConsentBanner />
+  <script>
+    import '../../scripts/landing';
+  </script>
+</Base>
+
+<style>
+  /* HERO */
+  .hero3 {
+    padding-block: 40px 140px;
+  }
+  .hero3__inner {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+  .pill {
+    margin: 0 0 18px;
+    padding: 4px 18px;
+    border: 2px solid var(--white);
+    border-radius: 999px;
+    font: 600 0.75rem/1.5 var(--font-body);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .hero3__over {
+    margin: 0 0 10px;
+    font-size: 0.9375rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .hero3 h1 {
+    max-width: 22ch;
+    margin-bottom: 14px;
+    font-size: clamp(1.875rem, 1.2rem + 3vw, 3.5rem);
+    line-height: 1.08;
+  }
+  .hero3__sub {
+    max-width: 44ch;
+    margin-bottom: 26px;
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.1875rem);
+  }
+  .hero3__cta {
+    min-width: min(100%, 320px);
+  }
+
+  /* RAMKA ZE ZDJĘCIEM */
+  .frame3 {
+    position: relative;
+    margin-top: -110px;
+  }
+  .frame3__stripe {
+    position: absolute;
+    inset-inline: 0;
+    top: 110px;
+  }
+  .frame3__fig {
+    position: relative;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .frame3__fig :global(.photo-ph) {
+    border-radius: 6px;
+    box-shadow: 0 30px 60px -24px rgb(43 8 26 / 0.45);
+  }
+  .frame3 figcaption {
+    margin-top: 10px;
+    text-align: center;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+  }
+
+  /* CZEGO SIĘ DOWIESZ */
+  .learn3 h2 {
+    max-width: 24ch;
+    margin-inline: auto;
+    margin-bottom: 40px;
+  }
+  .learn3__list {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 920px;
+    display: grid;
+    gap: 22px 56px;
+  }
+  .learn3__list li {
+    display: grid;
+    grid-template-columns: 24px 1fr;
+    gap: 12px;
+  }
+  .learn3__list svg {
+    width: 24px;
+    height: 24px;
+    margin-top: 2px;
+    fill: none;
+    stroke: var(--pink-700);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .learn3__list p {
+    margin: 0;
+    font-size: 0.9875rem;
+  }
+  .learn3__list strong {
+    color: var(--ink);
+  }
+
+  /* KARTA CTA NA STYKU PASÓW */
+  .plan3 {
+    background: linear-gradient(180deg, var(--white) 50%, var(--pink-700) 50%);
+  }
+  .plan3__card {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 28px 24px;
+    border-radius: 6px;
+    background: var(--white);
+    box-shadow: 0 20px 50px -20px rgb(43 8 26 / 0.35);
+    text-align: center;
+  }
+  .plan3__card h2 {
+    margin-bottom: 14px;
+    font-size: clamp(1.25rem, 1.05rem + 0.9vw, 1.75rem);
+    color: var(--ink);
+  }
+  .plan3__ticks {
+    list-style: none;
+    margin: 0 0 20px;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 6px 20px;
+    font-size: 0.8125rem;
+    color: var(--text-muted);
+  }
+  .plan3__ticks li::before {
+    content: '✓';
+    margin-right: 6px;
+    color: var(--pink-700);
+    font-weight: 700;
+  }
+
+  /* OPINIA */
+  .quote3 {
+    padding-block: 56px 64px;
+  }
+  .quote3__inner {
+    max-width: 820px;
+    text-align: center;
+  }
+  .quote3 figure,
+  .quote3 blockquote {
+    margin: 0;
+  }
+  .quote3 blockquote p {
+    margin-bottom: 20px;
+    font-size: clamp(1.0625rem, 1rem + 0.4vw, 1.25rem);
+    line-height: 1.6;
+  }
+  .quote3 figcaption {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    text-align: left;
+    font-size: 0.875rem;
+  }
+  .quote3 strong {
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .quote3__avatar {
+    display: grid;
+    place-items: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--white);
+    background: var(--blush-100);
+    color: var(--pink-800);
+    font: 500 1rem/1 var(--font-heading);
+  }
+  .quote3__note {
+    margin: 18px 0 0;
+    font-size: 0.75rem;
+  }
+
+  /* PROWADZĄCA */
+  .host3 {
+    padding-top: clamp(56px, 7vw, 96px);
+    overflow: hidden;
+  }
+  .host3__grid {
+    display: grid;
+    gap: 32px;
+    align-items: end;
+  }
+  .host3__text {
+    padding-bottom: clamp(24px, 4vw, 64px);
+  }
+  .host3__kicker {
+    margin: 0;
+    font: 600 1.0625rem/1.4 var(--font-body);
+    color: var(--ink);
+  }
+  .host3 h2 {
+    font-size: clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
+    margin-bottom: 16px;
+  }
+  .host3__companies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 28px;
+    margin: 24px 0 0;
+    font: 500 1.25rem/1 var(--font-heading);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #6b6b6b;
+  }
+  .host3__photo {
+    max-width: 420px;
+    justify-self: center;
+    width: 100%;
+  }
+  .host3__photo :global(.photo-ph) {
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+
+  /* KOŃCOWY PAS */
+  .final3 {
+    padding-block: clamp(56px, 7vw, 88px);
+  }
+  .final3__inner {
+    display: grid;
+    justify-items: center;
+    text-align: center;
+  }
+  .final3 h2 {
+    max-width: 22ch;
+    font-size: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+    margin-bottom: 12px;
+  }
+  .final3__count {
+    margin: 0 0 24px;
+  }
+
+  @media (min-width: 768px) {
+    .learn3__list {
+      grid-template-columns: 1fr 1fr;
+    }
+    .plan3__card {
+      padding: 32px 40px;
+    }
+  }
+  @media (min-width: 1024px) {
+    .hero3 {
+      padding-block: 64px 180px;
+    }
+    .frame3 {
+      margin-top: -150px;
+    }
+    .frame3__stripe {
+      top: 150px;
+    }
+    .host3__grid {
+      grid-template-columns: 1fr 0.8fr;
+      gap: 64px;
+    }
+  }
+</style>

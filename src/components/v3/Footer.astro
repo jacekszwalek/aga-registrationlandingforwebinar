@@ -1,0 +1,84 @@
+---
+import { eventConfig, TODO_MARK } from '../../config/event.config';
+const c = eventConfig.controller;
+---
+
+<footer class="foot3">
+  <div class="container foot3__inner">
+    <p class="foot3__claim">Nie musisz rzucać wszystkiego, żeby zmienić wszystko.</p>
+    <nav aria-label="Informacje prawne">
+      <ul role="list">
+        <li><a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityka prywatności</a></li>
+        <li>{eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulamin</a> : <span>Regulamin <span class="todo">{TODO_MARK}</span></span>}</li>
+        <li><button type="button" class="linklike" data-consent-open>Ustawienia cookies</button></li>
+      </ul>
+    </nav>
+    <p class="foot3__fine">
+      © {new Date().getFullYear()} {c.brand} · Administrator danych: {c.name} · NIP {c.nip} · {c.seat} · {c.email}
+    </p>
+  </div>
+</footer>
+
+<style>
+  .foot3 {
+    background: var(--ink);
+    color: var(--white);
+    padding-block: 40px calc(40px + 72px);
+    text-align: center;
+  }
+  @media (min-width: 1024px) {
+    .foot3 {
+      padding-bottom: 40px;
+    }
+  }
+  .foot3__inner {
+    display: grid;
+    gap: 10px;
+    justify-items: center;
+  }
+  .foot3__claim {
+    margin: 0;
+    font: 500 1.125rem/1.3 var(--font-heading);
+    color: var(--pink-200);
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 24px;
+    font-size: 0.8125rem;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  a,
+  .linklike {
+    color: var(--white);
+    font: inherit;
+    font-weight: 600;
+  }
+  .linklike {
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+  .foot3__fine {
+    max-width: 70ch;
+    margin: 0;
+    font-size: 0.6875rem;
+    line-height: 1.6;
+    color: #f2dce8;
+  }
+  .foot3 :focus-visible {
+    box-shadow: 0 0 0 3px var(--white);
+  }
+</style>
