@@ -1,5 +1,8 @@
 # Decyzje
 
+## Przełącznik mobile/desktop (12.11.2026)
+Strona nie może zmienić własnych media queries z poziomu JS, więc „mobile” otwiera `/podglad/` z bieżącą stroną w `<iframe>` o szerokości iPhone'a 15 (393 px). Strona dostaje prawdziwy viewport 393 × 805 (ekran 852 minus pasek statusu 47 px z Dynamic Island) i działa dokładnie jak na telefonie – łącznie z JS, zgodami i formularzem. W ramce linki wersji prowadzą do podglądu kolejnej wersji, a ikona monitora wraca do zwykłego widoku. `?url=` jest walidowany (tylko `/<base>/v1–v4/…`). Uwaga: realny Safari z paskami UI pokazuje mniej wysokości (ok. 393 × 659) – podgląd odwzorowuje ekran, nie stan pasków przeglądarki.
+
 ## v3 i v4 – kompozycja z referencji (12.11.2026)
 Na prośbę: dwa odmienne projekty mocno oparte na kompozycji ze screenów, w kolorach i krojach marki, z widocznym logo.
 
