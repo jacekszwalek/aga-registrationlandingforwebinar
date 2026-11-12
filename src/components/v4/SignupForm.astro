@@ -1,0 +1,203 @@
+---
+/**
+ * Formularz v4 (wzór Unbounce): duża etykieta, pole i przycisk pod spodem, notka z gwiazdką.
+ * Logika wspólna: src/scripts/form.ts.
+ */
+import { copyV4 } from '../../config/copy.v34';
+import { copy } from '../../config/copy';
+import { copyV2 } from '../../config/copy.v2';
+import { eventConfig, TODO_MARK } from '../../config/event.config';
+
+const f = copyV2.form;
+const controller = `${eventConfig.controller.name} (${eventConfig.controller.brand})`;
+const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
+---
+
+<form
+  class="signup"
+  id="zapis-hero"
+  data-form-id="hero"
+  data-mode={eventConfig.form.mode}
+  data-thanks="v4/dziekuje/"
+  aria-label="Zapis na webinar"
+  novalidate
+>
+  <label class="signup__label" for="hero-email">{copyV4.formLabel} <span aria-hidden="true">*</span></label>
+  <div class="signup__row">
+    <input
+      id="hero-email"
+      name="email"
+      type="email"
+      autocomplete="email"
+      inputmode="email"
+      autocapitalize="off"
+      spellcheck="false"
+      enterkeyhint="send"
+      placeholder={f.emailPlaceholder}
+      required
+      aria-required="true"
+      aria-describedby="hero-email-error"
+    />
+    <button class="btn" type="submit">
+      <span class="btn__label" data-show="before during">{copyV4.submit}</span>
+      <span class="btn__label" data-show="after">{copyV4.submitAfter}</span>
+      <span class="btn__loading" hidden>{copy.form.loading}</span>
+    </button>
+  </div>
+  <p class="signup__error" id="hero-email-error" hidden></p>
+  <p class="signup__after" data-show="after">{copy.after.newsletterLine}</p>
+  <p class="signup__note" data-show="before during"><span aria-hidden="true">*</span>{copyV4.note}</p>
+
+  <div class="hp" aria-hidden="true">
+    <label for="hero-website">Zostaw to pole puste</label>
+    <input id="hero-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <div class="signup__check">
+    <input id="hero-newsletter" name="newsletter" type="checkbox" value="yes" />
+    <label for="hero-newsletter">{copy.form.newsletter}</label>
+  </div>
+
+  <p class="form-error" role="alert" hidden></p>
+
+  <!-- Informacja warstwowa (RODO): krótka linijka + pełna klauzula po rozwinięciu. -->
+  <details class="signup__privacy">
+    <summary>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+      Twoje dane są bezpieczne – kto je przetwarza?
+    </summary>
+    <p>
+      {clauseBefore}{controller}{clauseAfter}
+      Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a> i Regulaminie{' '}
+      {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie</a> : <span class="todo">{TODO_MARK}</span>}.
+    </p>
+  </details>
+</form>
+
+<style>
+  .signup {
+    display: grid;
+    gap: 12px;
+    max-width: 560px;
+  }
+  .signup__label {
+    font: 500 clamp(1.25rem, 1.1rem + 0.6vw, 1.5rem) / 1.2 var(--font-heading);
+    color: var(--ink);
+  }
+  .signup__note {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--graphite);
+  }
+  .signup__row {
+    display: grid;
+    gap: 10px;
+  }
+  input[type='email'] {
+    width: 100%;
+    min-height: 54px;
+    padding: 12px 16px;
+    font: 400 16px/1.4 var(--font-body); /* ≥16 px – bez auto-zoomu na iOS */
+    color: var(--text);
+    background: var(--white);
+    border: 1.5px solid #8a7280;
+    border-radius: 2px;
+  }
+  input[type='email']:focus-visible {
+    border-color: var(--pink-800);
+  }
+  input[aria-invalid='true'] {
+    border-color: #b00020;
+    background: #fff7f8;
+  }
+  .btn {
+    min-height: 54px;
+  }
+  .signup__error,
+  .form-error {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #b00020;
+  }
+  .form-error {
+    padding: 10px 14px;
+    border-radius: 4px;
+    background: #fff0f2;
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .signup__after {
+    margin: 0;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .signup__check {
+    display: grid;
+    grid-template-columns: 22px 1fr;
+    gap: 10px;
+    align-items: start;
+    margin-top: 6px;
+  }
+  .signup__check input {
+    width: 20px;
+    height: 20px;
+    margin: 2px 0 0;
+    accent-color: var(--pink-700);
+  }
+  .signup__check label {
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+  .signup__privacy {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  .signup__privacy summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    cursor: pointer;
+    list-style: none;
+    text-decoration: underline;
+    text-decoration-color: var(--pink-200);
+    text-underline-offset: 3px;
+  }
+  .signup__privacy summary::-webkit-details-marker {
+    display: none;
+  }
+  .signup__privacy svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: var(--pink-700);
+    stroke-width: 2;
+  }
+  .signup__privacy p {
+    margin: 4px 0 0;
+    line-height: 1.5;
+  }
+  .signup__row {
+    max-width: 380px;
+  }
+  .signup__row .btn {
+    justify-self: start;
+    padding-inline: 32px;
+  }
+  @media (max-width: 559.98px) {
+    .signup__row {
+      max-width: none;
+    }
+    .signup__row .btn {
+      justify-self: stretch;
+    }
+  }
+</style>

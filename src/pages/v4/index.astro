@@ -1,0 +1,353 @@
+---
+/**
+ * v4 – kompozycja Unbounce: jasne tło w siatkę z ikonkami, logo w lewym górnym rogu,
+ * duży nagłówek, krótki opis i formularz po lewej; po prawej okno „aplikacji” ze
+ * zdjęciem-wycinanką i pływającymi kafelkami faktów. Niżej wyśrodkowany nagłówek
+ * i checklista 2 × 3, na końcu lekka stopka.
+ */
+import '../../styles/v4.css';
+import Base from '../../layouts/Base.astro';
+import Header from '../../components/Header.astro';
+import DuringBanner from '../../components/DuringBanner.astro';
+import Doodles from '../../components/v4/Doodles.astro';
+import SignupForm from '../../components/v4/SignupForm.astro';
+import Footer from '../../components/v4/Footer.astro';
+import StickyCta from '../../components/StickyCta.astro';
+import ConsentBanner from '../../components/ConsentBanner.astro';
+import { copy } from '../../config/copy';
+import { copyV4, learnItems } from '../../config/copy.v34';
+import { eventConfig } from '../../config/event.config';
+import { parseSessions } from '../../lib/eventState';
+import { formatDate, formatTime, formatTimeRange } from '../../lib/format';
+
+const [first] = parseSessions(eventConfig.sessions);
+const date = formatDate(first.start);
+---
+
+<Base title={copy.meta.title} description={copy.meta.description} path="v4/">
+  <div class="grid-bg top4">
+    <Header version="v4" transparent />
+    <DuringBanner />
+    <main id="main">
+      <section class="hero4" aria-labelledby="hero-title">
+        <Doodles />
+        <div class="container hero4__grid">
+          <div class="hero4__text">
+            <h1 id="hero-title">
+              <span data-show="before during">
+                <span data-variant-show="A">{copy.hero.headline.A}</span>
+                <span data-variant-show="B">{copy.hero.headline.B}</span>
+              </span>
+              <span data-show="after">{copy.after.headline}</span>
+            </h1>
+            <p class="hero4__lead" data-show="before during">
+              {copyV4.lead} <strong class="nowrap">{date}, {formatTimeRange(first)}</strong>.
+            </p>
+            <p class="hero4__lead" data-show="after">{copyV4.leadAfter}</p>
+            <SignupForm />
+          </div>
+
+          <!-- Okno „aplikacji” ze zdjęciem i kafelkami (na telefonie tylko kafelki). -->
+          <div class="stage">
+            <div class="stage__window" aria-hidden="true">
+              <div class="stage__bar"><span></span><span></span><span></span></div>
+              <div class="stage__accent"></div>
+              <div class="stage__lines"><i></i><i></i><i></i></div>
+              <div class="stage__pill"></div>
+            </div>
+            <div class="stage__person" role="img" aria-label={copy.host.photoPlaceholder}>
+              <svg viewBox="0 0 200 260" aria-hidden="true">
+                <circle cx="100" cy="78" r="44"></circle>
+                <path d="M18 260c4-72 38-112 82-112s78 40 82 112z"></path>
+              </svg>
+              <span class="stage__label">{copy.host.photoPlaceholder}</span>
+            </div>
+
+            <ul class="tiles" role="list" aria-label="Szczegóły webinaru">
+              <li class="tile tile--date" data-show="before during">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+                <span><time datetime={new Date(first.start).toISOString()}>{date}</time><br />{formatTime(first.start)}</span>
+              </li>
+              <li class="tile tile--count" data-show="before" data-countdown>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13" r="8"></circle><path d="M12 9v4l2.5 2M9 2h6"></path></svg>
+                <span>Start za<br /><strong><span data-unit="days">–</span> <span data-label="days">dni</span></strong></span>
+              </li>
+              <li class="tile tile--free">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12v8H4v-8M2 7h20v5H2zM12 22V7M12 7c-2-4-6-4-6-1s6 1 6 1 6 2 6-1-4-3-6 1"></path></svg>
+                <span>{copyV4.tiles.free}<br />{copyV4.tiles.online}</span>
+              </li>
+              <li class="tile tile--rec">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="5" width="20" height="14" rx="2"></rect><path d="M10 9l5 3-5 3z"></path></svg>
+                <span>{copyV4.tiles.recording}<br />bez limitu</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="learn4" aria-labelledby="learn-title">
+        <div class="container">
+          <h2 id="learn-title">{copyV4.learnHeading}</h2>
+          <ul class="learn4__list" role="list">
+            {learnItems.map((i) => <li><strong>{i.lead}</strong> – {i.text}</li>)}
+          </ul>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <Footer />
+  <StickyCta />
+  <ConsentBanner />
+  <script>
+    import '../../scripts/landing';
+  </script>
+</Base>
+
+<style>
+  .top4 {
+    position: relative;
+  }
+  .hero4 {
+    position: relative;
+    padding-block: 4px 48px;
+  }
+  .hero4__grid {
+    position: relative;
+    display: grid;
+    gap: 32px;
+  }
+  .hero4 h1 {
+    max-width: 16ch;
+    margin-bottom: 12px;
+    font-size: clamp(2rem, 1.2rem + 3vw, 3.75rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+  }
+  .hero4__lead {
+    max-width: 46ch;
+    margin-bottom: 16px;
+    font-size: clamp(1rem, 0.95rem + 0.3vw, 1.125rem);
+    color: var(--ink);
+  }
+
+  /* SCENA: okno + osoba + kafelki */
+  .stage {
+    position: relative;
+  }
+  .stage__window,
+  .stage__person {
+    display: none;
+  }
+  .tiles {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .tile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    border: 2px solid var(--pink-200);
+    border-radius: 6px;
+    background: var(--white);
+    box-shadow: 0 10px 24px -14px rgb(43 8 26 / 0.35);
+    font-size: 0.875rem;
+    line-height: 1.35;
+    color: var(--ink);
+  }
+  .tile svg {
+    flex: none;
+    width: 30px;
+    height: 30px;
+    fill: none;
+    stroke: var(--pink-700);
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .tile strong {
+    color: var(--pink-800);
+  }
+
+  @media (min-width: 1024px) {
+    .hero4 {
+      padding-block: 24px 0;
+    }
+    .hero4__grid {
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 24px;
+      align-items: end;
+    }
+    .hero4__text {
+      padding-block: 24px 72px;
+    }
+    .hero4 h1 {
+      margin-bottom: 18px;
+    }
+    .hero4__lead {
+      margin-bottom: 24px;
+    }
+    .stage {
+      height: 620px;
+    }
+    .stage__window {
+      display: block;
+      position: absolute;
+      top: 70px;
+      left: 14%;
+      right: -4%;
+      height: 360px;
+      border-radius: 6px;
+      background: var(--white);
+      box-shadow: 0 20px 50px -24px rgb(43 8 26 / 0.35);
+    }
+    .stage__bar {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      height: 52px;
+      padding-inline: 18px;
+      border-bottom: 1px solid var(--blush-100);
+    }
+    .stage__bar span {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--pink-200);
+    }
+    .stage__accent {
+      height: 34px;
+      margin: 26px 22px 0;
+      border-radius: 2px;
+      background: var(--pink-200);
+    }
+    .stage__lines {
+      display: grid;
+      gap: 10px;
+      margin: 26px 22px 0;
+      width: 38%;
+    }
+    .stage__lines i {
+      height: 12px;
+      background: var(--blush-100);
+    }
+    .stage__lines i:first-child {
+      height: 28px;
+    }
+    .stage__pill {
+      width: 30%;
+      height: 26px;
+      margin: 26px 22px 0;
+      border-radius: 999px;
+      background: var(--pink-700);
+    }
+    /* Wycinanka osoby dosunięta do dołu sceny (TODO: zdjęcie PNG/AVIF z przezroczystym tłem). */
+    .stage__person {
+      display: block;
+      position: absolute;
+      right: 2%;
+      bottom: 0;
+      width: 58%;
+      height: 92%;
+    }
+    .stage__person svg {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+      height: 100%;
+      fill: var(--pink-200);
+      stroke: var(--white);
+      stroke-width: 4;
+    }
+    .stage__label {
+      position: absolute;
+      top: 34%;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #4a3b00;
+      background: #fff6c2;
+      border-radius: 6px;
+      padding: 2px 8px;
+    }
+    /* Kafelki „pływają” wokół zdjęcia jak ikony u Unbounce. */
+    .tiles {
+      display: block;
+    }
+    .tile {
+      position: absolute;
+      width: 196px;
+      z-index: 1;
+    }
+    .tile--date {
+      top: 250px;
+      left: -2%;
+    }
+    .tile--count {
+      top: 400px;
+      left: 10%;
+    }
+    .tile--free {
+      top: 520px;
+      left: 0;
+    }
+    .tile--rec {
+      top: 470px;
+      right: -6%;
+    }
+  }
+
+  /* CHECKLISTA */
+  .learn4 {
+    background: var(--v4-bg);
+    padding-block: clamp(56px, 8vw, 104px);
+  }
+  .learn4 h2 {
+    max-width: 22ch;
+    margin: 0 auto 48px;
+    text-align: center;
+    font-size: clamp(1.875rem, 1.2rem + 3vw, 3.75rem);
+    line-height: 1.08;
+  }
+  .learn4__list {
+    list-style: none;
+    margin: 0 auto;
+    padding: 0;
+    max-width: 1020px;
+    display: grid;
+    gap: 26px 56px;
+  }
+  .learn4__list li {
+    position: relative;
+    padding-left: 44px;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    color: var(--graphite);
+  }
+  .learn4__list li::before {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 0.3em;
+    width: 20px;
+    height: 10px;
+    border-left: 3.5px solid var(--pink-700);
+    border-bottom: 3.5px solid var(--pink-700);
+    transform: rotate(-45deg);
+  }
+  .learn4__list strong {
+    color: var(--ink);
+  }
+  @media (min-width: 768px) {
+    .learn4__list {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+</style>

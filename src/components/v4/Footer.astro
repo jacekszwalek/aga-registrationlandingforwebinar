@@ -1,0 +1,93 @@
+---
+import { Image } from 'astro:assets';
+import logo from '../../assets/logo.png';
+import { eventConfig, TODO_MARK } from '../../config/event.config';
+const c = eventConfig.controller;
+---
+
+<footer class="foot4">
+  <div class="container foot4__inner">
+    <div class="foot4__brand">
+      <Image src={logo} alt="Przystań Zmiany Zawodowej" width={108} height={48} densities={[1, 2]} loading="lazy" />
+      <p>© {new Date().getFullYear()} {c.brand}</p>
+    </div>
+    <nav aria-label="Informacje prawne">
+      <ul role="list">
+        <li><a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityka prywatności</a></li>
+        <li>{eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulamin</a> : <span>Regulamin <span class="todo">{TODO_MARK}</span></span>}</li>
+        <li><button type="button" class="linklike" data-consent-open>Ustawienia cookies</button></li>
+      </ul>
+    </nav>
+    <p class="foot4__fine">Administrator danych: {c.name}, {c.brand} · NIP {c.nip} · {c.seat} · {c.email}</p>
+  </div>
+</footer>
+
+<style>
+  .foot4 {
+    border-top: 1px solid var(--pink-200);
+    background: var(--v4-bg);
+    padding-block: 32px calc(32px + 72px);
+    font-size: 0.875rem;
+    color: var(--graphite);
+  }
+  @media (min-width: 1024px) {
+    .foot4 {
+      padding-bottom: 32px;
+    }
+  }
+  .foot4__inner {
+    display: grid;
+    gap: 12px;
+    align-items: center;
+  }
+  .foot4__brand {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .foot4__brand img {
+    width: 108px;
+    height: auto;
+  }
+  .foot4__brand p {
+    margin: 0;
+  }
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0 24px;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  a,
+  .linklike {
+    color: var(--graphite);
+    font: inherit;
+  }
+  .linklike {
+    min-height: 44px;
+    padding: 0;
+    border: 0;
+    background: none;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    cursor: pointer;
+  }
+  .foot4__fine {
+    grid-column: 1 / -1;
+    margin: 0;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+  }
+  @media (min-width: 1024px) {
+    .foot4__inner {
+      grid-template-columns: 1fr auto;
+    }
+  }
+</style>

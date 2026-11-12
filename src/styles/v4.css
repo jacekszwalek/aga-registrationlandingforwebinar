@@ -1,0 +1,28 @@
+/*
+ * v4 – kompozycja Unbounce: jasne tło w siatkę, dekoracyjne ikonki, duży nagłówek
+ * bez wielkich liter, formularz w hero, wycinanka zdjęcia z pływającymi kafelkami,
+ * wyśrodkowana checklista 2 × 3, lekka stopka. Kolory i kroje marki (baza: v2.css).
+ */
+@import './v2.css';
+
+:root {
+  --v4-bg: #faf6f8;
+  --v4-grid: rgb(242 191 218 / 0.45);
+}
+body {
+  background: var(--v4-bg);
+}
+.grid-bg {
+  background-color: var(--v4-bg);
+  background-image:
+    linear-gradient(to right, var(--v4-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--v4-grid) 1px, transparent 1px);
+  background-size: 220px 220px;
+  background-position: -1px -1px;
+}
+/* Nagłówki jak u Unbounce: duże, zwykła wielkość liter, ciemne. */
+h1,
+h2 {
+  color: var(--ink);
+  text-transform: none;
+}
