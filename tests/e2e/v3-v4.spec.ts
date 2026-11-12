@@ -186,3 +186,48 @@ test.describe('v4 – kompozycja Unbounce', () => {
     expect(await axe(page)).toEqual([]);
   });
 });
+
+// ---------------------------------------------------------------- podgląd mobile (iPhone 15)
+test.describe('przełącznik mobile/desktop', () => {
+  test.beforeEach(async ({}, info) => test.skip(isMobile(info), 'przełącznik urządzeń jest na desktopie'));
+
+  test('mobile otwiera bieżącą wersję w ramce iPhone 15 (393 px szerokości) z mobilnymi breakpointami', async ({ page }) => {
+    await dismissConsent(page);
+    await page.goto('/v4/?state=after');
+    await page.locator('[data-device-link="mobile"]').click();
+    await page.waitForURL(/\/podglad\/\?url=%2Fv4%2F%3Fstate%3Dafter$/);
+    const iframe = page.locator('iframe[data-preview-frame]');
+    const size = await iframe.evaluate((f) => ({ w: f.clientWidth, h: f.clientHeight }));
+    // Ekran 393 × 852, z czego 47 px zajmuje pasek statusu.
+    expect(size).toEqual({ w: 393, h: 805 });
+    expect(await page.frameLocator('iframe[data-preview-frame]').locator('html').evaluate(() => innerWidth)).toBe(393);
+    const frame = page.frameLocator('iframe[data-preview-frame]');
+    // W ramce działa układ mobilny v4 (bez sceny ze zdjęciem) i stan z adresu.
+    await expect(frame.locator('.stage__person')).toBeHidden();
+    await expect(frame.locator('.tile--free')).toBeVisible();
+    await expect(frame.locator('h1')).toHaveText(/Obejrzyj nagranie webinaru/);
+    await expect(frame.locator('[data-device-link="mobile"]')).toHaveAttribute('aria-current', 'true');
+  });
+
+  test('w ramce zmiana wersji zostaje w podglądzie, a „desktop” z niego wychodzi', async ({ page }) => {
+    await dismissConsent(page);
+    await page.goto('/podglad/?url=%2Fv2%2F');
+    const frame = page.frameLocator('iframe[data-preview-frame]');
+    await frame.locator('[data-version-link][data-version="v3"]').click();
+    await page.waitForURL(/\/podglad\/\?url=%2Fv3%2F$/);
+    await expect(page.locator('[data-preview-version="v3"]')).toHaveAttribute('aria-current', 'page');
+    await page.frameLocator('iframe[data-preview-frame]').locator('[data-device-link="desktop"]').click();
+    await page.waitForURL(/\/v3\/$/);
+  });
+
+  test('podgląd przyjmuje tylko ścieżki wersji tej witryny', async ({ page }) => {
+    await page.goto('/podglad/?url=https%3A%2F%2Fevil.example%2F');
+    await expect(page.locator('iframe[data-preview-frame]')).toHaveAttribute('src', '/v2/');
+  });
+
+  test('axe – strona podglądu', async ({ page }) => {
+    await page.goto('/podglad/?url=%2Fv3%2F');
+    const r = await new AxeBuilder({ page }).withTags(tags).exclude('iframe').analyze();
+    expect(r.violations.map((v) => v.id)).toEqual([]);
+  });
+});
