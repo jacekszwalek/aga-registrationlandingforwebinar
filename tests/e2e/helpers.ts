@@ -28,5 +28,4 @@ export const isMobile = (info: TestInfo) => ['iphone-13', 'pixel-7'].includes(in
 export const isAllowedLink = (h: string) =>
   h.startsWith('#zapis-') ||
   h === 'https://przystanzmianyzawodowej.pl/polityka-prywatnosci/' ||
-  h === '/v1/' ||
-  h === '/v2/';
+  /^\/v[1-4]\/$/.test(h);

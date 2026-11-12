@@ -98,7 +98,7 @@ test.describe('jeden cel – brak linków wychodzących', () => {
     expect(hrefs.filter((h) => !isAllowedLink(h))).toEqual([]);
     // Stopka prawna + przełącznik wersji prototypu (znika przy allowPreviewParams = false).
     await expect(page.locator('nav')).toHaveCount(2);
-    expect(await page.locator('header a').evaluateAll((as) => as.map((a) => a.getAttribute('href')))).toEqual(['/v1/', '/v2/']);
+    expect(await page.locator('header a').evaluateAll((as) => as.map((a) => a.getAttribute('href')))).toEqual(['/v1/', '/v2/', '/v3/', '/v4/']);
   });
 });
 
