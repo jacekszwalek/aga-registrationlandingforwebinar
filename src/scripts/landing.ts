@@ -6,7 +6,37 @@ import { track, trackOnce } from './track';
 
 const reduceMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+/** v3: formularz w oknie dialogowym (wzór Tailwind – przycisk otwiera formularz). */
+function formDialog(): HTMLDialogElement | null {
+  return document.querySelector<HTMLDialogElement>('dialog[data-form-dialog]');
+}
+
+function openFormDialog(source: string): boolean {
+  const d = formDialog();
+  if (!d) return false;
+  if (!d.open) {
+    d.showModal();
+    track('form_open', { source });
+  }
+  d.querySelector<HTMLInputElement>('input[name="email"]')?.focus();
+  return true;
+}
+
+function initFormDialog(): void {
+  const d = formDialog();
+  if (!d) return;
+  document.querySelectorAll<HTMLElement>('[data-open-form]').forEach((b) =>
+    b.addEventListener('click', () => openFormDialog(b.dataset.openForm || 'cta')),
+  );
+  d.querySelector('[data-close-form]')?.addEventListener('click', () => d.close());
+  // Klik w tło zamyka okno.
+  d.addEventListener('click', (e) => {
+    if (e.target === d) d.close();
+  });
+}
+
 function focusEmail(form: HTMLFormElement): void {
+  if (openFormDialog('scroll')) return;
   form.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth', block: 'center' });
   form.querySelector<HTMLInputElement>('input[name="email"]')?.focus({ preventScroll: true });
 }
@@ -28,8 +58,11 @@ function initCountdown(): void {
     if (!next) return;
     const c = getCountdown(now, next[0]);
     for (const u of units) {
-      el.querySelector(`[data-unit="${u}"]`)!.textContent = String(c[u]).padStart(u === 'days' ? 1 : 2, '0');
-      el.querySelector(`[data-label="${u}"]`)!.textContent = plural(c[u], ...forms[u]);
+      // Niektóre wersje pokazują tylko część jednostek (np. same dni).
+      const unit = el.querySelector(`[data-unit="${u}"]`);
+      const label = el.querySelector(`[data-label="${u}"]`);
+      if (unit) unit.textContent = String(c[u]).padStart(u === 'days' ? 1 : 2, '0');
+      if (label) label.textContent = plural(c[u], ...forms[u]);
     }
   };
   tick();
@@ -39,9 +72,11 @@ function initCountdown(): void {
 function initSticky(): void {
   const bar = document.querySelector<HTMLElement>('[data-sticky-cta]');
   const hero = document.querySelector<HTMLFormElement>('#zapis-hero');
+  // Kotwica: element, po którego minięciu pojawia się przycisk (domyślnie formularz w hero).
+  const anchor = document.querySelector<HTMLElement>('[data-sticky-anchor]') ?? hero;
   // Przycisk chowa się, gdy widać formularz albo inne CTA (np. końcowy blok v2).
-  const forms = [...document.querySelectorAll<HTMLElement>('form[data-form-id], [data-sticky-hide]')];
-  if (!bar || !hero) return;
+  const forms = [...document.querySelectorAll<HTMLElement>('form[data-form-id], [data-sticky-hide], [data-sticky-anchor]')];
+  if (!bar || !hero || !anchor) return;
   const visible = new Set<Element>();
   let heroAbove = false;
   const update = () => {
@@ -51,7 +86,7 @@ function initSticky(): void {
     for (const e of entries) {
       if (e.isIntersecting) visible.add(e.target);
       else visible.delete(e.target);
-      if (e.target === hero) heroAbove = !e.isIntersecting && e.boundingClientRect.top < 0;
+      if (e.target === anchor) heroAbove = !e.isIntersecting && e.boundingClientRect.top < 0;
     }
     update();
   });
@@ -85,6 +120,7 @@ function initAnchors(): void {
 
 initConsent();
 initForms();
+initFormDialog();
 initCountdown();
 initSticky();
 initScrollDepth();

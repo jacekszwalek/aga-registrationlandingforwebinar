@@ -7,11 +7,12 @@
 import { eventConfig } from '../config/event.config';
 import { withBase } from '../lib/paths';
 
+export type Version = 'v1' | 'v2' | 'v3' | 'v4';
 interface Props {
-  current: 'v1' | 'v2';
+  current: Version;
 }
 const { current } = Astro.props;
-const versions = ['v1', 'v2'] as const;
+const versions: Version[] = ['v1', 'v2', 'v3', 'v4'];
 ---
 
 {
