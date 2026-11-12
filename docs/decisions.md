@@ -1,5 +1,14 @@
 # Decyzje
 
+## v3 i v4 – kompozycja z referencji (12.11.2026)
+Na prośbę: dwa odmienne projekty mocno oparte na kompozycji ze screenów, w kolorach i krojach marki, z widocznym logo.
+
+**v3 – Tailwind.** Biały pasek z logo na środku (różowe logo na różowym pasie byłoby niewidoczne), pełnoszerokie pasy: różowe hero z pigułką „WEBINAR”, terminem, wyśrodkowanym nagłówkiem i białym przyciskiem; ramka ze zdjęciem 16:9 na granicy pasów z paskiem gradientu marki (u Tailwind pomarańcz → róż); lista 2 × 3 z pogrubionymi początkami; biała karta CTA na styku bieli i różu; opinia na różowym pasie z awatarem; bio: tekst + firmy tekstem (bez logotypów – wymóg briefu) + duże zdjęcie dosunięte do dołu; końcowy różowy pas z licznikiem dni; ciemna stopka. **Formularz w oknie dialogowym** (natywny `<dialog>`) – jak u Tailwind, każdy przycisk otwiera formularz; zdarzenie `form_open`. Brak FAQ (Tailwind go nie ma).
+
+**v4 – Unbounce.** Jasne tło w siatkę 220 px (linie `--pink-200`), dekoracyjne ikonki (kwiat, serce, zygzaki, kropki, samolocik) w różach marki, logo w lewym górnym rogu, duży nagłówek **bez wielkich liter** (jak u Unbounce), opis z prowadzącą i terminem, formularz pod spodem (duża etykieta, pole, przycisk, notka z gwiazdką o nagraniu). Po prawej okno „aplikacji” z wycinanką osoby i pływającymi kafelkami (termin, licznik dni, 0 zł / 60 min, nagranie). Niżej wyśrodkowany duży nagłówek i checklista 2 × 3, na końcu lekka stopka z logo. Brak sekcji bio, opinii i FAQ – Unbounce ich nie ma; wiarygodność niesie linijka o prowadzącej w hero.
+
+Obie: stany before/during/after, baner zgód, przyklejony przycisk, axe 0. Lighthouse mobile (lokalnie): v3 – 99, LCP 1,6 s, CLS 0,001, 108 KB; v4 – 100, LCP 1,7 s, CLS 0,001, 116 KB. Na telefonie v4 musiała dostać ciaśniejsze hero, żeby przycisk zapisu był nad banerem cookies.
+
 ## v2 – krótka squeeze page (11.11.2026)
 v1 realizowała pełną strukturę briefu i wyszła na ok. 4,7 ekranu desktopu – za dużo treści na ruch z social mediów. v2 opiera się na rekomendacjach Unbounce i przykładach Tailwind / Bandzoogle / Unbounce:
 - **Formularz z jednym polem (e-mail)** na pierwszym ekranie także na telefonie; imię usunięte (było opcjonalne). Zgoda na newsletter zostaje osobno.

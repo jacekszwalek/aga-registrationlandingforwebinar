@@ -2,7 +2,7 @@
 
 Squeeze page zapisu na bezpłatny webinar Przystani Zmiany Zawodowej. Astro (statyczny output) + TypeScript + czysty CSS.
 Etap: **prototyp** – formularz w trybie mock, integracje to TODO (patrz `docs/todo.md`).
-Dwie wersje: **v1** (`/v1/`, pełny landing z briefu) i **v2** (`/v2/`, krótka squeeze page w stylu strony-matki – wersja bieżąca). `/` przekierowuje do `/v2/` z zachowaniem query stringu.
+Cztery wersje: **v1** (`/v1/`, pełny landing z briefu), **v2** (`/v2/`, krótka squeeze page w stylu strony-matki – domyślna), **v3** (`/v3/`, kompozycja Tailwind, formularz w `<dialog>`), **v4** (`/v4/`, kompozycja Unbounce). `/` przekierowuje do `/v2/` z zachowaniem query stringu.
 
 ## Komendy
 - `npm run dev` – serwer deweloperski
@@ -18,9 +18,10 @@ Dwie wersje: **v1** (`/v1/`, pełny landing z briefu) i **v2** (`/v2/`, krótka 
 - `src/config/copy.ts` – treść (v1 + wspólna), `copy.v2.ts` – skrócona treść v2, `formMessages.ts` – komunikaty formularza
 - `src/lib/` – czyste funkcje (stan wydarzenia, kalendarz/.ics, UTM, formatowanie) z testami
 - `src/scripts/` – JS w przeglądarce: formularz, licznik, przyklejony przycisk, zgody, zdarzenia
-- `src/components/` – wspólne (Header z przełącznikiem wersji, ConsentBanner, StickyCta, DuringBanner, PhotoPlaceholder); `components/v1/`, `components/v2/`
+- `src/components/` – wspólne (Header z przełącznikiem wersji, ConsentBanner, StickyCta, DuringBanner, PhotoPlaceholder); `components/v1/` … `components/v4/`
 - `src/pages/` – `index` (przekierowanie), `v1/`, `v2/` (każda z `dziekuje/`), `webinar.ics`
-- `src/styles/` – `foundation.css` (fonty, tokeny, stany), `v1.css`, `v2.css` (wektor wyglądu: `docs/research/design-vector.md`)
+- `src/config/copy.v34.ts` – treść v3/v4
+- `src/styles/` – `foundation.css` (fonty, tokeny, stany), `v1.css`, `v2.css` (baza marki), `v3.css`/`v4.css` (importują v2.css) (wektor wyglądu: `docs/research/design-vector.md`)
 - Stany `before|during|after`: `<html data-state>` ustawiany w `<head>`; elementy mają `data-show="before during"`.
 
 ## Zasady
