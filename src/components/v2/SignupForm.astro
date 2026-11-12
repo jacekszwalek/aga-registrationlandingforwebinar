@@ -59,17 +59,25 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
 
   <p class="form-error" role="alert" hidden></p>
 
-  <p class="signup__clause">
-    {clauseBefore}{controller}{clauseAfter}
-    Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a> i Regulaminie{' '}
-    {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie</a> : <span class="todo">{TODO_MARK}</span>}.
-  </p>
+  <!-- Informacja warstwowa (RODO): krótka linijka + pełna klauzula po rozwinięciu. -->
+  <details class="signup__privacy">
+    <summary>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+      Twoje dane są bezpieczne – kto je przetwarza?
+    </summary>
+    <p>
+      {clauseBefore}{controller}{clauseAfter}
+      Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a> i Regulaminie{' '}
+      {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie</a> : <span class="todo">{TODO_MARK}</span>}.
+    </p>
+  </details>
 </form>
 
 <style>
   .signup {
     display: grid;
-    gap: 10px;
+    gap: 12px;
+    max-width: 560px;
   }
   .signup__label {
     font-weight: 600;
@@ -129,6 +137,7 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
     grid-template-columns: 22px 1fr;
     gap: 10px;
     align-items: start;
+    margin-top: 6px;
   }
   .signup__check input {
     width: 20px;
@@ -142,11 +151,34 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
     color: var(--text-muted);
     cursor: pointer;
   }
-  .signup__clause {
-    margin: 0;
-    font-size: 0.6875rem;
-    line-height: 1.5;
+  .signup__privacy {
+    font-size: 0.75rem;
     color: var(--text-muted);
+  }
+  .signup__privacy summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 32px;
+    cursor: pointer;
+    list-style: none;
+    text-decoration: underline;
+    text-decoration-color: var(--pink-200);
+    text-underline-offset: 3px;
+  }
+  .signup__privacy summary::-webkit-details-marker {
+    display: none;
+  }
+  .signup__privacy svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: var(--pink-700);
+    stroke-width: 2;
+  }
+  .signup__privacy p {
+    margin: 4px 0 0;
+    line-height: 1.5;
   }
   @media (min-width: 560px) {
     .signup__row {
