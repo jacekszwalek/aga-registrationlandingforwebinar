@@ -11,7 +11,7 @@ const axe = async (page: Page) => {
 
 // ---------------------------------------------------------------- v3 (Tailwind)
 test.describe('v3 – kompozycja Tailwind, formularz w oknie', () => {
-  const V3 = '/v3/';
+  const V3 = '/archived/v3/';
 
   test('wyśrodkowane hero na różowym pasie, przycisk na pierwszym ekranie, logo na białym tle', async ({ page }) => {
     await openAt(page, 'before', V3);
@@ -49,7 +49,7 @@ test.describe('v3 – kompozycja Tailwind, formularz w oknie', () => {
     await page.locator('#hero-email').fill('anna@example.pl');
     await page.locator('dialog button[type="submit"]').click();
     await page.clock.runFor(1000);
-    await page.waitForURL('**/v3/dziekuje/');
+    await page.waitForURL('**/archived/v3/dziekuje/');
     expect(await lastPayload(page)).toMatchObject({ email: 'anna@example.pl', newsletter: false, webinar_source: 'utm_medium=social|utm_source=facebook' });
   });
 
@@ -101,14 +101,14 @@ test.describe('v3 – kompozycja Tailwind, formularz w oknie', () => {
     expect(await axe(page)).toEqual([]);
   });
   test('axe – /v3/dziekuje/', async ({ page }) => {
-    await openAt(page, 'before', '/v3/dziekuje/');
+    await openAt(page, 'before', '/archived/v3/dziekuje/');
     expect(await axe(page)).toEqual([]);
   });
 });
 
 // ---------------------------------------------------------------- v4 (Unbounce)
 test.describe('v4 – kompozycja Unbounce', () => {
-  const V4 = '/v4/';
+  const V4 = '/archived/v4/';
 
   test('formularz na pierwszym ekranie, nagłówek bez wielkich liter, logo widoczne', async ({ page }) => {
     await dismissConsent(page);
@@ -144,7 +144,7 @@ test.describe('v4 – kompozycja Unbounce', () => {
     await page.locator('#hero-email').fill('ola@example.pl');
     await page.locator('#zapis-hero button[type="submit"]').click();
     await page.clock.runFor(1000);
-    await page.waitForURL('**/v4/dziekuje/');
+    await page.waitForURL('**/archived/v4/dziekuje/');
     expect(await lastPayload(page)).toMatchObject({ email: 'ola@example.pl', webinar_source: 'utm_source=linkedin' });
   });
 
@@ -182,7 +182,7 @@ test.describe('v4 – kompozycja Unbounce', () => {
     });
   }
   test('axe – /v4/dziekuje/', async ({ page }) => {
-    await openAt(page, 'before', '/v4/dziekuje/');
+    await openAt(page, 'before', '/archived/v4/dziekuje/');
     expect(await axe(page)).toEqual([]);
   });
 });
@@ -193,9 +193,9 @@ test.describe('przełącznik mobile/desktop', () => {
 
   test('mobile otwiera bieżącą wersję w ramce iPhone 15 (393 px szerokości) z mobilnymi breakpointami', async ({ page }) => {
     await dismissConsent(page);
-    await page.goto('/v4/?state=after');
+    await page.goto('/archived/v4/?state=after');
     await page.locator('[data-device-link="mobile"]').click();
-    await page.waitForURL(/\/podglad\/\?url=%2Fv4%2F%3Fstate%3Dafter$/);
+    await page.waitForURL(/\/podglad\/\?url=%2Farchived%2Fv4%2F%3Fstate%3Dafter$/);
     const iframe = page.locator('iframe[data-preview-frame]');
     const size = await iframe.evaluate((f) => ({ w: f.clientWidth, h: f.clientHeight }));
     // Ekran 393 × 852, z czego 47 px zajmuje pasek statusu.
@@ -211,22 +211,22 @@ test.describe('przełącznik mobile/desktop', () => {
 
   test('w ramce zmiana wersji zostaje w podglądzie, a „desktop” z niego wychodzi', async ({ page }) => {
     await dismissConsent(page);
-    await page.goto('/podglad/?url=%2Fv2%2F');
+    await page.goto('/podglad/?url=%2Farchived%2Fv2%2F');
     const frame = page.frameLocator('iframe[data-preview-frame]');
     await frame.locator('[data-version-link][data-version="v3"]').click();
-    await page.waitForURL(/\/podglad\/\?url=%2Fv3%2F$/);
+    await page.waitForURL(/\/podglad\/\?url=%2Farchived%2Fv3%2F$/);
     await expect(page.locator('[data-preview-version="v3"]')).toHaveAttribute('aria-current', 'page');
     await page.frameLocator('iframe[data-preview-frame]').locator('[data-device-link="desktop"]').click();
-    await page.waitForURL(/\/v3\/$/);
+    await page.waitForURL(/\/archived\/v3\/$/);
   });
 
   test('podgląd przyjmuje tylko ścieżki wersji tej witryny', async ({ page }) => {
     await page.goto('/podglad/?url=https%3A%2F%2Fevil.example%2F');
-    await expect(page.locator('iframe[data-preview-frame]')).toHaveAttribute('src', '/v2/');
+    await expect(page.locator('iframe[data-preview-frame]')).toHaveAttribute('src', '/');
   });
 
   test('axe – strona podglądu', async ({ page }) => {
-    await page.goto('/podglad/?url=%2Fv3%2F');
+    await page.goto('/podglad/?url=%2Farchived%2Fv3%2F');
     const r = await new AxeBuilder({ page }).withTags(tags).exclude('iframe').analyze();
     expect(r.violations.map((v) => v.id)).toEqual([]);
   });

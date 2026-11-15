@@ -2,7 +2,7 @@ import AxeBuilder from '@axe-core/playwright';
 import { devices, expect, test, type Page } from '@playwright/test';
 import { dismissConsent, isAllowedLink, isMobile, openAt, visibleText, type State } from './helpers';
 
-const V5 = '/v5/';
+const V5 = '/archived/v5/';
 const tags = ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa'];
 const submit = (page: Page) => page.locator('#zapis-hero button[type="submit"]');
 const openForm = async (page: Page) => {
@@ -40,7 +40,7 @@ test.describe('v5 – pierwszy ekran', () => {
         return { pill: s('.pill'), over: s(`.${p}__over`), h1: s('h1'), sub: s(`.${p}__sub`), cta: s(`.${p}__cta`) };
       }, prefix);
     };
-    const v3 = await styles('/v3/', 'hero3');
+    const v3 = await styles('/archived/v3/', 'hero3');
     const v5 = await styles(V5, 'hero5');
     expect(v5).toEqual(v3);
   });
@@ -84,7 +84,7 @@ test.describe('v5 – formularz', () => {
     await page.locator('label[for="hero-newsletter"]').click();
     await submit(page).click();
     await page.clock.runFor(1000);
-    await page.waitForURL('**/v5/dziekuje/');
+    await page.waitForURL('**/archived/v5/dziekuje/');
     expect(await lastPayload(page)).toMatchObject({ name: 'Anna', email: 'anna@example.pl', newsletter: true, webinar_source: 'utm_medium=social|utm_source=facebook' });
     const events = await page.evaluate(() => sessionStorage.getItem('pzz_signup'));
     expect(events).toBeTruthy();
@@ -177,7 +177,7 @@ test.describe('v5 – dostępność', () => {
     expect(r.violations.map((v) => v.id)).toEqual([]);
   });
   test('axe – /v5/dziekuje/', async ({ page }) => {
-    await openAt(page, 'before', '/v5/dziekuje/');
+    await openAt(page, 'before', '/archived/v5/dziekuje/');
     const r = await new AxeBuilder({ page }).withTags(tags).analyze();
     expect(r.violations.map((v) => v.id)).toEqual([]);
   });
@@ -202,4 +202,14 @@ test.describe('analityka po zgodzie', () => {
     const after = await page.evaluate(() => ((window as unknown as { clarity: { q: unknown[][] } }).clarity.q ?? []).map((a) => a.join(':')));
     expect(after).toEqual(expect.arrayContaining(['event:form_open', 'event:form_start', 'set:webinar_id:webinar-2026-12-03']));
   });
+});
+
+test('archiwum: stare wersje pod /archived/vN/ działają i mają noindex', async ({ page }) => {
+  for (const v of ['v1', 'v2', 'v3', 'v4', 'v5']) {
+    const res = await page.goto(`/archived/${v}/`);
+    expect(res?.status(), v).toBe(200);
+    await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
+    expect((await page.request.get(`/archived/${v}/dziekuje/`)).status()).toBe(200);
+  }
+  expect((await page.request.get('/v1/')).status()).toBe(404);
 });

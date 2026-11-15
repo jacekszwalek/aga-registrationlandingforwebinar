@@ -12,7 +12,7 @@ export const TIMES = {
 export type State = keyof typeof TIMES;
 
 /** Zamraża czas przed załadowaniem strony – stan liczy skrypt w <head>. */
-export async function openAt(page: Page, state: State, path = '/v1/') {
+export async function openAt(page: Page, state: State, path = '/archived/v1/') {
   await page.clock.install({ time: new Date(TIMES[state]) });
   await page.goto(path);
 }
@@ -29,5 +29,5 @@ export const isAllowedLink = (h: string) =>
   h.startsWith('#zapis-') ||
   h === 'https://przystanzmianyzawodowej.pl/polityka-prywatnosci/' ||
   h === 'https://przystanzmianyzawodowej.pl/regulamin-newslettera/' ||
-  /^\/v[1-5]\/$/.test(h) ||
+  /^\/archived\/v[1-5]\/$/.test(h) ||
   h.startsWith('/podglad/?url=');

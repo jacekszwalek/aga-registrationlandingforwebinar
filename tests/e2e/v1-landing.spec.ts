@@ -58,7 +58,7 @@ test.describe('trzy stany strony', () => {
 
   test('granice: 19:00 to już during, 20:30 to już after', async ({ page }) => {
     await page.clock.install({ time: new Date('2026-12-03T19:00:00+01:00') });
-    await page.goto('/v1/');
+    await page.goto('/archived/v1/');
     await expect(page.locator('html')).toHaveAttribute('data-state', 'during');
     await page.clock.setSystemTime(new Date('2026-12-03T20:30:00+01:00'));
     await page.reload();
@@ -67,7 +67,7 @@ test.describe('trzy stany strony', () => {
 
   test('wariant B nagłówka (podgląd ?v=b)', async ({ page }) => {
     await page.clock.install({ time: new Date('2026-11-20T12:00:00+01:00') });
-    await page.goto('/v1/?v=b');
+    await page.goto('/archived/v1/?v=b');
     expect(await visibleText(page.locator('h1'))).toMatch(/Utknęłaś zawodowo\?/);
   });
 });
@@ -98,7 +98,7 @@ test.describe('jeden cel – brak linków wychodzących', () => {
     expect(hrefs.filter((h) => !isAllowedLink(h))).toEqual([]);
     // Stopka prawna + przełącznik wersji prototypu (znika przy allowPreviewParams = false).
     await expect(page.locator('nav')).toHaveCount(2);
-    expect(await page.locator('header a[data-version-link]').evaluateAll((as) => as.map((a) => a.getAttribute('href')))).toEqual(['/v1/', '/v2/', '/v3/', '/v4/', '/v5/']);
+    expect(await page.locator('header a[data-version-link]').evaluateAll((as) => as.map((a) => a.getAttribute('href')))).toEqual(['/archived/v1/', '/archived/v2/', '/archived/v3/', '/archived/v4/', '/archived/v5/']);
     expect(await page.locator('header a').count()).toBe(7); // + podgląd mobile/desktop
   });
 });
