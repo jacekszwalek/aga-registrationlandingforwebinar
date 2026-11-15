@@ -56,11 +56,11 @@ test.describe('trzy stany strony', () => {
     await expect(page.locator('#testimonials-title')).toBeVisible();
   });
 
-  test('granice: 19:00 to już during, 20:00 to już after', async ({ page }) => {
+  test('granice: 19:00 to już during, 20:30 to już after', async ({ page }) => {
     await page.clock.install({ time: new Date('2026-12-03T19:00:00+01:00') });
     await page.goto('/v1/');
     await expect(page.locator('html')).toHaveAttribute('data-state', 'during');
-    await page.clock.setSystemTime(new Date('2026-12-03T20:00:00+01:00'));
+    await page.clock.setSystemTime(new Date('2026-12-03T20:30:00+01:00'));
     await page.reload();
     await expect(page.locator('html')).toHaveAttribute('data-state', 'after');
   });
@@ -98,8 +98,8 @@ test.describe('jeden cel – brak linków wychodzących', () => {
     expect(hrefs.filter((h) => !isAllowedLink(h))).toEqual([]);
     // Stopka prawna + przełącznik wersji prototypu (znika przy allowPreviewParams = false).
     await expect(page.locator('nav')).toHaveCount(2);
-    expect(await page.locator('header a[data-version-link]').evaluateAll((as) => as.map((a) => a.getAttribute('href')))).toEqual(['/v1/', '/v2/', '/v3/', '/v4/']);
-    expect(await page.locator('header a').count()).toBe(6); // + podgląd mobile/desktop
+    expect(await page.locator('header a[data-version-link]').evaluateAll((as) => as.map((a) => a.getAttribute('href')))).toEqual(['/v1/', '/v2/', '/v3/', '/v4/', '/v5/']);
+    expect(await page.locator('header a').count()).toBe(7); // + podgląd mobile/desktop
   });
 });
 
@@ -109,5 +109,5 @@ test('plik .ics generowany z konfiguracji', async ({ request }) => {
   expect(res.headers()['content-type']).toContain('text/calendar');
   const body = await res.text();
   expect(body).toContain('DTSTART:20261203T180000Z');
-  expect(body).toContain('DTEND:20261203T190000Z');
+  expect(body).toContain('DTEND:20261203T193000Z');
 });

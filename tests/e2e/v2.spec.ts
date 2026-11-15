@@ -21,7 +21,7 @@ test.describe('v2 – wejście i pierwszy ekran', () => {
     // Konkrety wydarzenia w różowej karcie zamiast dużego portretu.
     const card = page.locator('aside.event');
     await expect(card).toBeVisible();
-    await expect(card).toContainText('Online, 60 minut');
+    await expect(card).toContainText('Online, 90 minut');
     await expect(card).toContainText('Nagranie dla zapisanych');
   });
 
