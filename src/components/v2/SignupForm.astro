@@ -67,8 +67,8 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
     </summary>
     <p>
       {clauseBefore}{controller}{clauseAfter}
-      Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a> i Regulaminie{' '}
-      {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie</a> : <span class="todo">{TODO_MARK}</span>}.
+      Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a> i{' '}
+      {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie newslettera</a> : <>Regulaminie <span class="todo">{TODO_MARK}</span></>}.
     </p>
   </details>
 </form>
