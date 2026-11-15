@@ -35,7 +35,7 @@
 | 2 | Platforma webinaru (Zoom/Meet/…) i sposób dołączenia w stanie `during` | `event.config.ts` → `platform`, `copy.during` | TODO |
 | 3 | Odpowiedź FAQ „Czy będzie oferta sprzedażowa?” | `copy.ts` → `faq` | TODO |
 | 4 | Zdjęcia Agnieszki – jest jedno (1500×2000), kadry w `src/assets/photos/`; przydałoby się zdjęcie z przezroczystym tłem do v4 i większa rozdzielczość | `HostPhoto.astro` | częściowo |
-| 5 | **Zgoda autorek** opinii (Agnieszka – Handlowiec, Wiola – PM, Klaudia Rozmarynowska) na publikację na tym landingu; cytaty dosłowne z /wyzwanie2/ | `copy.ts` → `testimonials` | TODO – wymagana zgoda |
+| 5 | **Zgoda autorek** opinii (Maria – od 15.11.2026, pierwsza; Agnieszka – Handlowiec, Klaudia Rozmarynowska; opinia Wioli usunięta 15.11.2026) na publikację na tym landingu; cytaty dosłowne | `copy.ts` → `testimonials` | TODO – wymagana zgoda |
 | 6 | Regulamin: regulamin newslettera https://przystanzmianyzawodowej.pl/regulamin-newslettera/ | `event.config.ts` → `site.termsUrl` | zrobione |
 | 7 | Link do bezpłatnej konsultacji | `event.config.ts` → `site.consultationUrl` | TBC |
 | 8 | Dane administratora w stopce i klauzuli (obecnie ze stopki strony macierzystej, tylko na potrzeby mockupu) | `event.config.ts` → `controller` | TBC przy wydaniu |

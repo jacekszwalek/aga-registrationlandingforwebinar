@@ -67,7 +67,7 @@ test.describe('v5 – formularz', () => {
     await openForm(page);
     await expect(page.locator('#hero-name')).toBeFocused();
     await submit(page).click();
-    await expect(page.locator('#hero-name-error')).toHaveText('Wpisz swoje imię – tak się do Ciebie zwrócę w mailu.');
+    await expect(page.locator('#hero-name-error')).toHaveText('Wpisz swoje imię, tak się do Ciebie zwrócę w mailu.');
     await expect(page.locator('#hero-email-error')).toBeVisible();
     await expect(page.locator('#hero-name')).toBeFocused();
     await page.locator('#hero-name').fill('Anna');
@@ -110,19 +110,19 @@ test.describe('v5 – treść', () => {
     await expect(page.locator('.frame5 .stripe')).toBeAttached();
     const card = page.locator('.event5__card');
     for (const t of ['3\u00a0grudnia\u00a02026, czwartek, 19:00', 'Online, 90\u00a0min', 'Arkusz do pracy', 'Nagranie dla zapisanych']) await expect(card).toContainText(t);
-    await expect(card).toContainText('Prowadzi Agnieszka Baranowska – psycholog i coach');
+    await expect(card).toContainText('Prowadzi Agnieszka Baranowska, psycholog i coach');
     await expect(card.locator('.event5__photo img')).toHaveCount(1);
     expect(await card.locator('.event5__photo').evaluate((e) => getComputedStyle(e).borderRadius)).toBe('50%');
     await expect(page.getByText('Więcej o Agnieszce')).toHaveCount(0);
   });
 
-  test('sekcje: 5 punktów, 3 kroki, opinie, 7 pytań, licznik', async ({ page }) => {
+  test('sekcje: 5 punktów, 3 kroki, opinie, 6 pytań, licznik', async ({ page }) => {
     await openAt(page, 'before', V5);
     await expect(page.locator('.pains5__list li')).toHaveCount(5);
     await expect(page.locator('.struct5__steps li')).toHaveCount(3);
     expect(await page.locator('.struct5__num').allInnerTexts()).toEqual(['01', '02', '03']);
     await expect(page.locator('.quotes5__more')).toBeAttached();
-    await expect(page.locator('.faq5 details')).toHaveCount(7);
+    await expect(page.locator('.faq5 details')).toHaveCount(6);
     expect(await visibleText(page.locator('[data-countdown] [data-unit="days"]'))).toBe('13');
   });
 
@@ -243,4 +243,15 @@ test('og:logo i logo organizacji (Schema.org)', async ({ page, request }) => {
   const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
   expect(ld).toMatchObject({ '@type': 'Organization', name: 'Przystań Zmiany Zawodowej', logo: 'https://przystanzmianyzawodowej.pl/webinar/logo.png' });
   expect((await request.get('/logo.png')).ok()).toBe(true);
+});
+
+test('bez półpauz i pauz w treści; stopka bez danych administratora', async ({ page }) => {
+  for (const url of ['/', '/dziekuje/']) {
+    await page.goto(url);
+    const text = await page.evaluate(() => document.body.innerText + ' ' + document.title + ' ' +
+      [...document.querySelectorAll('meta[content], img[alt]')].map((e) => e.getAttribute('content') ?? e.getAttribute('alt')).join(' '));
+    expect(text, url).not.toMatch(/[–—]/);
+  }
+  await expect(page.locator('footer')).not.toContainText('NIP');
+  await expect(page.locator('footer a', { hasText: 'Polityka prywatności' })).toBeVisible();
 });
