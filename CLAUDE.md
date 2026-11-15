@@ -34,7 +34,8 @@ Cztery wersje: **v1** (`/v1/`, pełny landing z briefu), **v2** (`/v2/`, krótka
 - Żadnych skryptów stron trzecich przed zgodą (testy `v1-consent-a11y.spec.ts`, `v2.spec.ts`). Pola formularza ≥16 px, cele dotykowe ≥44 px.
 - Brakujące dane oznaczaj wyłącznie `[DO UZUPEŁNIENIA]` (`TODO_MARK`) i dopisz do `docs/todo.md`.
 - Ścieżki zawsze przez `withBase()` z `src/lib/paths.ts` – strona działa też pod podkatalogiem GitHub Pages.
-- Sekrety (np. `MAILERLITE_API_KEY`) tylko w zmiennych środowiskowych hostingu – nigdy w repo.
+- Sekrety (np. klucz API MailerLite) tylko na hostingu (zmienna `MAILERLITE_API_KEY` albo plik `~/integrations-keys/.mailerlite-api-key` w katalogu domowym, poza `public_html`) – nigdy w repo.
+- MailerLite: zasady grup i zgód w `docs/mailerlite-standard.md`; zapis z landingu przez `public/api/subscribe.php` (tryb `api` w wydaniu).
 
 ## Git
 - Gałąź robocza: `feat/landing-v1` (kolejne: `feat/…`, `fix/…`), PR do `main`.

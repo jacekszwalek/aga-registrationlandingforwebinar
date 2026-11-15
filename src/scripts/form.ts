@@ -104,12 +104,14 @@ async function send(payload: SignupPayload): Promise<void> {
     if (!res.ok || data?.success === false) throw new Error(`MailerLite ${res.status}`);
     return;
   }
-  const res = await fetch(withBase('api/subscribe'), {
+  // Tryb 'api': skrypt PHP na hostingu zapisuje osobę przez API MailerLite (public/api/subscribe.php).
+  const res = await fetch(withBase('api/subscribe.php'), {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = (await res.json().catch(() => null)) as { ok?: boolean } | null;
+  if (!res.ok || !data?.ok) throw new Error(`HTTP ${res.status}`);
 }
 
 function bindForm(form: HTMLFormElement): void {
