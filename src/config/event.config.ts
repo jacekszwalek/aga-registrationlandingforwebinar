@@ -30,18 +30,32 @@ export interface EventConfig {
   /** Pozwala podejrzeć stany i warianty parametrami ?state= i ?v= (tylko prototyp). */
   allowPreviewParams: boolean;
   form: {
-    /** 'mock' – nic nie jest wysyłane; 'api' – POST do /api/subscribe (etap integracji). */
-    mode: 'mock' | 'api';
+    /**
+     * 'mock' – nic nie jest wysyłane (prototyp);
+     * 'mailerlite' – zapis prosto do formularza MailerLite (bez serwera i bez klucza API, działa na GitHub Pages);
+     * 'api' – POST do własnej funkcji /api/subscribe (wariant z serwerem, np. Cloudflare).
+     */
+    mode: 'mock' | 'mailerlite' | 'api';
   };
   mailerlite: {
+    /** Publiczny numer konta MailerLite (widoczny w kodzie osadzenia formularza). */
+    accountId: string;
+    /** ID formularzy MailerLite: przed/w trakcie webinaru → rejestracja, po webinarze → nagranie. */
+    forms: { registration: string | null; recording: string | null };
+    /** ID grupy newslettera (pole wyboru grupy w formularzu MailerLite) – wysyłane tylko przy zaznaczonej zgodzie. */
+    newsletterGroupId: string | null;
     groups: { registration: string; recording: string; newsletter: string };
   };
   analytics: {
-    /** Dopóki false, żadne skrypty analityczne nie są ładowane nawet po zgodzie. */
+    /** Wyłącznik awaryjny: false = żadnych skryptów analitycznych, nawet po zgodzie. */
     enabled: boolean;
+    /** GA4 i Meta Pixel ładują się (po zgodzie) tylko na tych domenach – podgląd nie zaśmieca danych produkcyjnych. */
+    productionHosts: string[];
     ga4Id: string;
     metaPixelId: string;
     clarityId: string | null;
+    /** Clarity także na podglądzie (GitHub Pages), żeby od razu sprawdzić nagrania i mapy kliknięć. */
+    clarityOnPreview: boolean;
   };
   site: {
     url: string;
@@ -71,13 +85,19 @@ export const eventConfig: EventConfig = {
   allowPreviewParams: true,
   form: { mode: 'mock' },
   mailerlite: {
+    accountId: '1427944',
+    // TODO: ID nowych formularzy MailerLite (panel MailerLite → Forms → Embedded forms) – patrz docs/wdrozenie.md.
+    forms: { registration: null, recording: null },
+    newsletterGroupId: null,
     groups: { registration: TODO_MARK, recording: TODO_MARK, newsletter: TODO_MARK },
   },
   analytics: {
-    enabled: false,
+    enabled: true,
+    productionHosts: ['webinar.przystanzmianyzawodowej.pl'],
     ga4Id: 'G-GV74S860P0',
     metaPixelId: '2031514730971566',
-    clarityId: null,
+    clarityId: 'ze0k15awef',
+    clarityOnPreview: true,
   },
   site: {
     url: 'https://webinar.przystanzmianyzawodowej.pl',

@@ -2,6 +2,7 @@ import { formMessages } from '../config/formMessages';
 import { eventConfig } from '../config/event.config';
 import { extractUtm, serializeUtm } from '../lib/utm';
 import { withBase } from '../lib/paths';
+import { mailerLiteBody, mailerLiteEndpoint } from '../lib/mailerlite';
 import { track, trackOnce } from './track';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -84,6 +85,23 @@ async function send(payload: SignupPayload): Promise<void> {
     await new Promise((r) => setTimeout(r, 600));
     const fail = eventConfig.allowPreviewParams && new URLSearchParams(location.search).get('mock') === 'fail';
     if (fail) throw new Error('mock network error');
+    return;
+  }
+  if (eventConfig.form.mode === 'mailerlite') {
+    const ml = eventConfig.mailerlite;
+    const formId = payload.state === 'after' ? ml.forms.recording : ml.forms.registration;
+    if (!formId) throw new Error('Brak ID formularza MailerLite w event.config.ts');
+    const res = await fetch(mailerLiteEndpoint({ accountId: ml.accountId, formId }), {
+      method: 'POST',
+      body: mailerLiteBody({
+        email: payload.email,
+        name: payload.name,
+        webinarSource: payload.webinar_source,
+        newsletterGroupId: payload.newsletter ? ml.newsletterGroupId : null,
+      }),
+    });
+    const data = (await res.json().catch(() => null)) as { success?: boolean } | null;
+    if (!res.ok || data?.success === false) throw new Error(`MailerLite ${res.status}`);
     return;
   }
   const res = await fetch(withBase('api/subscribe'), {
