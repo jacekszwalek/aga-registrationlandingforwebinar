@@ -14,12 +14,14 @@ Stan na 11.11.2026. Prototyp działa bez tych elementów; w kodzie i na stronie 
 | 7 | Link do bezpłatnej konsultacji | `event.config.ts` → `site.consultationUrl` | TBC |
 | 8 | Dane administratora w stopce i klauzuli (obecnie ze stopki strony macierzystej, tylko na potrzeby mockupu) | `event.config.ts` → `controller` | TBC przy wydaniu |
 | 9 | Weryfikacja prawna treści zgód, klauzuli i banera cookies | `copy.ts` | TODO przed wydaniem |
-| 10 | Microsoft Clarity – czy używamy; jeśli tak, ID | `event.config.ts` → `analytics.clarityId` | decyzja |
+| 10 | Microsoft Clarity `ze0k15awef` – wdrożone (po zgodzie); w panelu Clarity wpisać adres strony | `event.config.ts` → `analytics.clarityId` | zrobione |
 | 11 | Test A/B nagłówka: przełącznik w konfiguracji (jest) czy podział 50/50 na brzegu (funkcja Cloudflare) | `headlineVariant` | decyzja |
 
 - Skrócenie treści zgody na newsletter (np. „Chcę też dostawać newsletter z poradami, wydarzeniami i ofertami. Mogę wycofać zgodę w każdej chwili.”) – tylko po akceptacji prawnej.
 - Wybór wersji (v1/v2) do dalszego rozwoju; przed wydaniem usunąć przełącznik i przekierowanie z `/`.
 - v1: CLS 0,275 w Lighthouse mobile (przekracza budżet 0,1) – do poprawy, jeśli v1 zostanie.
+
+**Instrukcja wdrożenia krok po kroku (subdomena, MailerLite, GA4, Clarity): [`docs/wdrozenie.md`](wdrozenie.md).**
 
 ## Integracje (kolejne etapy)
 - **MailerLite**: identyfikatory grup (rejestracja, nagranie, newsletter), pole `webinar_source`, ustawienie double opt-in; funkcja `/api/subscribe` (walidacja, honeypot, grupy wg stanu, newsletter tylko przy zgodzie); przełączenie `form.mode` na `'api'`; zapis do newslettera z `/dziekuje/`.

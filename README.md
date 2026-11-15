@@ -33,6 +33,9 @@ Przełącznik „Wersja v1 · v2 · v3 · v4” w prawym górnym rogu zachowuje 
 
 Każdy push do `main` uruchamia workflow `pages.yml`: build z `BASE_PATH=/aga-registrationlandingforwebinar` i publikacja na gałęzi `gh-pages`. Jednorazowo w repo: *Settings → Pages → Build and deployment → Source: Deploy from a branch → `gh-pages` / `(root)`*. Strona ma `noindex` (`site.indexable = false`).
 
+## Wdrożenie na subdomenę
+Krok po kroku (DNS w webd.pl, GitHub Pages, formularze MailerLite, GA4, Clarity): [`docs/wdrozenie.md`](docs/wdrozenie.md).
+
 ## Zmiana terminu
 Edytuj **tylko** `src/config/event.config.ts` → `sessions` (ISO z przesunięciem: `+01:00` zimą, `+02:00` latem). Data w nadtytule, szczegółach, liczniku, `.ics` i Kalendarzu Google wylicza się sama; strona sama przełącza stany `before → during → after`.
 
