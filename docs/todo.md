@@ -27,7 +27,6 @@ Stan na 11.11.2026. Prototyp działa bez tych elementów; w kodzie i na stronie 
 - **MailerLite**: identyfikatory grup (rejestracja, nagranie, newsletter), pole `webinar_source`, ustawienie double opt-in; funkcja `/api/subscribe` (walidacja, honeypot, grupy wg stanu, newsletter tylko przy zgodzie); przełączenie `form.mode` na `'api'`; zapis do newslettera z `/dziekuje/`.
 - **Hosting**: konto Cloudflare Pages, podpięcie repo (preview dla PR), zmienna `MAILERLITE_API_KEY`, rekord DNS w webd.pl (patrz README).
 - **Analityka**: `analytics.enabled = true` dopiero na produkcji (GA4 `G-GV74S860P0`, Meta Pixel `2031514730971566`); weryfikacja zdarzeń w GA4 DebugView i Meta Events Manager.
-- **Meta**: obraz OG 1200×630 (nagłówek, data, zdjęcie) – po otrzymaniu zdjęć.
 - **Lighthouse CI**: asercje budżetu w GitHub Actions (wydajność ≥95, LCP <2,5 s, CLS <0,1, TBT <200 ms, a11y 100, ≤300 KB).
 - **Przeglądarki w aplikacjach**: testy z UA Facebooka i LinkedIna.
 - **Przed wydaniem**: `allowPreviewParams = false` (wyłącza `?state=`, `?v=`, `?mock=fail`).
