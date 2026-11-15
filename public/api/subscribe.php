@@ -8,7 +8,7 @@
  * Pole „Pierwsze wydarzenie” ustawiane tylko kontaktom nowym w bazie (u istniejących nie jest nadpisywane).
  * Bez maila potwierdzającego (double opt-in wyłączony – decyzja 15.11.2026); zapisujemy datę i IP zapisu.
  *
- * Klucz API: zmienna środowiskowa MAILERLITE_API_KEY albo plik ~/.mailerlite-api-key (poza public_html).
+ * Klucz API: zmienna MAILERLITE_API_KEY albo plik ~/integrations-keys/.mailerlite-api-key (katalog domowy, poza public_html).
  * Nigdy w repozytorium. Konfiguracja grup: api/event.json (generowany z src/config/event.config.ts).
  */
 declare(strict_types=1);
@@ -37,8 +37,19 @@ function api_key(): string
     if ($key !== '') {
         return $key;
     }
-    $file = getenv('MAILERLITE_API_KEY_FILE') ?: dirname(__DIR__, 3) . '/.mailerlite-api-key';
-    return is_readable($file) ? trim((string) file_get_contents($file)) : '';
+    // Katalog domowy konta = 3 poziomy nad public_html/webinar/api (poza public_html – niedostępny z WWW).
+    $home = dirname(__DIR__, 3);
+    $candidates = array_filter([
+        getenv('MAILERLITE_API_KEY_FILE') ?: null,
+        $home . '/integrations-keys/.mailerlite-api-key', // ustawione 15.11.2026 (cPanel: /integrations-keys/)
+        $home . '/.mailerlite-api-key',
+    ]);
+    foreach ($candidates as $file) {
+        if (is_readable($file)) {
+            return trim((string) file_get_contents($file));
+        }
+    }
+    return '';
 }
 
 /** Wywołanie API MailerLite. Zwraca [kod HTTP, odpowiedź jako tablica]. */
@@ -138,7 +149,7 @@ if ($origin === '' || !in_array($origin, $allowed, true)) {
 }
 
 if (api_key() === '') {
-    error_log('pzz subscribe: brak klucza MailerLite (MAILERLITE_API_KEY lub ~/.mailerlite-api-key)');
+    error_log('pzz subscribe: brak klucza MailerLite (MAILERLITE_API_KEY lub ~/integrations-keys/.mailerlite-api-key)');
     respond(503, ['ok' => false, 'error' => 'not_configured']);
 }
 

@@ -35,7 +35,7 @@ Formularz na stronie → `https://przystanzmianyzawodowej.pl/webinar/api/subscri
 
 Zabezpieczenia: tylko żądania ze strony (nagłówek Origin), limit 6 zapisów / 10 min z IP, pole-pułapka na boty, walidacja e-maila i imienia.
 
-**Klucz API** (jednorazowo): MailerLite → *Integrations → API → Generate new token* (nazwa np. `landing-webinar-zapisy`) → w cPanelu *Menedżer plików* utwórz w **katalogu domowym** (nie w `public_html`!) plik `.mailerlite-api-key` z samym tokenem, uprawnienia `600`. Skrypt czyta też zmienną `MAILERLITE_API_KEY`, jeśli hosting ją ustawia. Nigdy w repozytorium.
+**Klucz API** (jednorazowo): MailerLite → *Integrations → API → Generate new token* (nazwa np. `landing-webinar-zapisy`) → w cPanelu *Menedżer plików* w **katalogu domowym** (nie w `public_html`!) plik `integrations-keys/.mailerlite-api-key` z samym tokenem, uprawnienia `600` (stan od 15.11.2026; skrypt sprawdza też `~/.mailerlite-api-key`). Skrypt czyta też zmienną `MAILERLITE_API_KEY`, jeśli hosting ją ustawia. Nigdy w repozytorium.
 
 ## Nowe wydarzenie – krok po kroku
 1. **Identyfikator**: `RRRR-MM-DD-krotka-nazwa` (np. `2027-03-12-…`) i nazwa do MailerLite: `RRRR-MM-DD - pełny tytuł`.

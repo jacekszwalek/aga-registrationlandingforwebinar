@@ -108,7 +108,7 @@ Szkice nie są zaplanowane ani wysłane. Automatyzacji z mailami nie da się zbu
 ## TODO – pozostałe zadania
 
 ### Pilne – przed startem promocji webinaru 3.12
-1. **Klucz API na serwerze** – MailerLite → *Integrations → API → Generate new token* „landing-webinar-zapisy” → cPanel → *Menedżer plików* → katalog domowy (poziom wyżej niż `public_html`) → *+ Plik* `.mailerlite-api-key` → wklej sam token → zapisz → uprawnienia `600`. Daj znać – zmerguję PR, zrobię testowy zapis na produkcji i usunę testowy kontakt.
+1. ~~**Klucz API na serwerze**~~ – zrobione: `~/integrations-keys/.mailerlite-api-key` (katalog domowy konta, poza `public_html`; sprawdzone – z WWW 404). Skrypt czyta tę ścieżkę.
 2. **Automatyzacja A1** – *Automations → Create → From scratch* → nazwa „2026-12-03 - Zostać… - podziękowanie” → wyzwalacz *When subscriber joins a group* → grupa „2026-12-03 - … - rejestracja” → krok *Email* → temat i treść z `docs/maile/A1.html` (nadawca: Przystań Zmiany Zawodowej, kontakt@przystanzmianyzawodowej.pl) → *Publish*.
 3. **Automatyzacja A2** – jak wyżej, grupa „… - nagranie”, treść `A2.html`; link do nagrania uzupełnić przed 4.12 (włączyć dopiero z linkiem).
 4. **Link ClickMeeting** – wpisać w K2 i K3 (przycisk i tekst), potem **zaplanować** K1–K3 (*Campaigns → Drafts*).

@@ -27,7 +27,7 @@ Stan na 15.11.2026. Kod jest gotowy na każdy z kroków; brakuje danych i ustawi
 Dopóki sekretów nie ma, workflow kończy się komunikatem „Ustaw sekrety FTP…” i niczego nie wysyła.
 
 ## 2. MailerLite – zapis przez API
-Od 15.11.2026 landing zapisuje osoby przez `api/subscribe.php` (PHP na webd + API MailerLite): grupy wydarzenia, „Uczestnicy wydarzeń”, „Interakcja RRRR”, „Webinar”, „Zgoda marketingowa” (tylko z checkboxem), pola imię / `webinar_source` / „Pierwsze wydarzenie”, bez maila potwierdzającego. Klucz API: plik `~/.mailerlite-api-key` poza `public_html` (instrukcja i standard: [`mailerlite-standard.md`](mailerlite-standard.md), TODO: [`mailerlite-raport-wdrozenia.md`](mailerlite-raport-wdrozenia.md)).
+Od 15.11.2026 landing zapisuje osoby przez `api/subscribe.php` (PHP na webd + API MailerLite): grupy wydarzenia, „Uczestnicy wydarzeń”, „Interakcja RRRR”, „Webinar”, „Zgoda marketingowa” (tylko z checkboxem), pola imię / `webinar_source` / „Pierwsze wydarzenie”, bez maila potwierdzającego. Klucz API: plik `~/integrations-keys/.mailerlite-api-key` (katalog domowy, poza `public_html`, niedostępny z WWW) (instrukcja i standard: [`mailerlite-standard.md`](mailerlite-standard.md), TODO: [`mailerlite-raport-wdrozenia.md`](mailerlite-raport-wdrozenia.md)).
 
 ## 3. GA4 (`G-GV74S860P0`, ta sama usługa co strona główna)
 Landing jest na tej samej domenie co strona główna (ten sam strumień GA4) – bez konfiguracji cross-domain. Skrypt ładuje się tylko na hostach z `productionHosts` (`przystanzmianyzawodowej.pl`, subdomena, podgląd github.io) i dopiero po zgodzie (Consent Mode v2, domyślnie odmowa).
