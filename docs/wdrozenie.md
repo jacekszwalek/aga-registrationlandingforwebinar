@@ -2,22 +2,24 @@
 
 Stan na 15.11.2026. Kod jest gotowy na każdy z kroków; brakuje danych i ustawień w panelach (oznaczone **TY**).
 
-## Architektura (bez serwera i bez WordPressa)
-- Strona: statyczny build Astro na **GitHub Pages** z własną domeną `webinar.przystanzmianyzawodowej.pl` (bez Cloudflare).
-- Zapis: formularz na stronie wysyła dane **prosto do formularza MailerLite** (publiczny endpoint osadzonych formularzy, konto `1427944`). Nie potrzeba klucza API, funkcji serverless ani zmian w wp-admin. Grupę, mail potwierdzający i automatyzacje ustawia się w MailerLite.
-- Analityka po zgodzie na cookies: Clarity (już działa), GA4 i Meta Pixel (włączą się same na subdomenie).
+## Architektura
+- **Produkcja**: `https://webinar.przystanzmianyzawodowej.pl` – pliki na hostingu **webd.pl** w `public_html/webinar`. Strona główna = v5, `/dziekuje/`, `/webinar.ics` (bez wersji v1–v4 i przełącznika).
+- **Wdrażanie automatyczne**: każdy push do `main` → GitHub Actions (`.github/workflows/deploy-webd.yml`) buduje wydanie (`npm run build:release`) i wysyła je przez **FTPS** do `public_html/webinar`. Wgrywa tylko zmienione pliki.
+- **Podgląd** wszystkich wersji (v1–v5 z przełącznikiem): GitHub Pages `https://jacekszwalek.github.io/aga-registrationlandingforwebinar/` (`pages.yml`).
+- Zapis: formularz wysyła dane **prosto do nowego formularza MailerLite** (konto `1427944`) – bez serwera i klucza API.
+- Analityka po zgodzie na cookies: GA4, Meta Pixel, Clarity.
 
-## 1. Subdomena (GitHub Pages)
-1. **TY – DNS w webd.pl**, strefa `przystanzmianyzawodowej.pl`, nowy rekord:
+## 1. Subdomena na webd.pl + automatyczne wdrażanie (TY, jednorazowo)
+1. **cPanel → Domeny → Utwórz nową domenę**: `webinar.przystanzmianyzawodowej.pl`, **odznacz** „Share document root”, katalog główny: `public_html/webinar`. cPanel sam doda rekord DNS (strefa jest na webd).
+2. **cPanel → SSL/TLS Status**: zaznacz `webinar.przystanzmianyzawodowej.pl` → *Run AutoSSL* (darmowy certyfikat; zwykle kilka minut).
+3. **cPanel → Konta FTP → Dodaj konto FTP**: login np. `deploy-webinar`, katalog **`public_html/webinar`** (konto ma dostęp tylko do tego katalogu), silne hasło z generatora. Zanotuj pełny login (np. `deploy-webinar@przystanzmianyzawodowej.pl`) i serwer FTP z sekcji *Configure FTP Client* (np. `wn06.webd.pl` albo `ftp.przystanzmianyzawodowej.pl`).
+4. **GitHub → repo → Settings → Secrets and variables → Actions → New repository secret** – trzy sekrety (hasła nie wklejaj na czacie):
+   - `FTP_SERVER` – serwer FTP z kroku 3,
+   - `FTP_USERNAME` – pełny login FTP,
+   - `FTP_PASSWORD` – hasło konta FTP.
+5. Daj znać – zmerguję PR i uruchomię pierwsze wdrożenie (albo: *Actions → Wdrożenie na webd → Run workflow*). Każda kolejna zmiana w `main` wdraża się sama.
 
-   | Typ | Nazwa | Wartość | TTL |
-   |---|---|---|---|
-   | CNAME | `webinar` | `jacekszwalek.github.io.` | 3600 |
-
-   Nie ruszaj pozostałych rekordów (strona główna i poczta zostają bez zmian).
-2. **TY – GitHub**: repo → *Settings → Pages → Custom domain* → `webinar.przystanzmianyzawodowej.pl` → *Save*. Gdy pojawi się „DNS check successful”, zaznacz *Enforce HTTPS* (certyfikat wystawia się do ok. godziny).
-3. **JA – zaraz po kroku 2**: build bez podkatalogu (`BASE_PATH=/`), plik `CNAME`, wybór wersji na stronie głównej, wyłączenie przełącznika wersji i parametrów podglądu, `indexable = true`. Uwaga: od kroku 2 adres `jacekszwalek.github.io/aga-registrationlandingforwebinar/` przekierowuje na subdomenę, więc krok 3 robimy od razu.
-4. Opcjonalnie (zalecane): *GitHub → Settings (konto) → Pages → Add a domain* i rekord TXT, który GitHub poda – weryfikacja domeny chroni przed przejęciem subdomeny.
+Dopóki sekretów nie ma, workflow kończy się komunikatem „Ustaw sekrety FTP…” i niczego nie wysyła.
 
 ## 2. MailerLite – nowe formularze (TY, panel MailerLite)
 **Nowe, osobne formularze i grupy** dla webinaru 3.12.2026 – nie używaj formularza poprzedniego webinaru (`QntRwj` z /wyzwanie2/), żeby zapisy, statystyki formularza i automatyzacje się nie mieszały. W nazwach dodaj datę (np. „Webinar 2026-12-03 – rejestracja”).
