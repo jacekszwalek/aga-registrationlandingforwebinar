@@ -236,3 +236,11 @@ test('Open Graph: krótki tytuł z datą; strona podziękowania udostępnia stro
   await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://webinar.przystanzmianyzawodowej.pl/');
   await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://webinar.przystanzmianyzawodowej.pl/dziekuje/');
 });
+
+test('og:logo i logo organizacji (Schema.org)', async ({ page, request }) => {
+  await page.goto('/');
+  await expect(page.locator('meta[property="og:logo"]')).toHaveAttribute('content', 'https://webinar.przystanzmianyzawodowej.pl/logo.png');
+  const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
+  expect(ld).toMatchObject({ '@type': 'Organization', name: 'Przystań Zmiany Zawodowej', logo: 'https://webinar.przystanzmianyzawodowej.pl/logo.png' });
+  expect((await request.get('/logo.png')).ok()).toBe(true);
+});

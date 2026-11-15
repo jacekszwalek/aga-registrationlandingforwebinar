@@ -29,6 +29,16 @@ const ogUrl = new URL(withBase(ogPath), Astro.site ?? eventConfig.site.url).toSt
 // Archiwum wersji (/archived/…) nigdy nie trafia do wyszukiwarek – dostępne tylko z adresu.
 // Absolutny URL z domeny produkcyjnej – Facebook/LinkedIn pobierają obraz zawsze z subdomeny.
 const ogImage = `${eventConfig.site.url.replace(/\/$/, '')}/og-image.png`;
+const siteRoot = eventConfig.site.url.replace(/\/$/, '');
+const ogLogo = `${siteRoot}/logo.png`;
+// Schema.org Organization – standardowy sposób przekazania logo (Google); og:logo to tag niestandardowy.
+const orgJsonLd = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: eventConfig.controller.brand,
+  url: 'https://przystanzmianyzawodowej.pl/',
+  logo: ogLogo,
+});
 const ogImageAlt = 'Bezpłatny webinar „Zostać, zmienić pracę czy pójść własną drogą?” – 3 grudnia 2026, 19:00, online, 90 min. Przystań Zmiany Zawodowej.';
 const robotsNoindex = noindex || !eventConfig.site.indexable || path.startsWith('archived/');
 ---
@@ -56,6 +66,9 @@ const robotsNoindex = noindex || !eventConfig.site.indexable || path.startsWith(
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={ogImageAlt} />
+    <!-- og:logo – niestandardowy (poza specyfikacją ogp.me); Facebook/LinkedIn go pomijają, część narzędzi go czyta. -->
+    <meta property="og:logo" content={ogLogo} />
+    <script type="application/ld+json" set:html={orgJsonLd} />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={ogTitle} />
     <meta name="twitter:description" content={ogDescription} />
