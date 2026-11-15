@@ -5,20 +5,20 @@
  * karta CTA na styku bieli i różu, opinia na pasie, bio z dużym zdjęciem, końcowy pas CTA.
  * Formularz w oknie dialogowym otwieranym przez każdy przycisk.
  */
-import '../../styles/v3.css';
-import Base from '../../layouts/Base.astro';
-import Header from '../../components/Header.astro';
-import DuringBanner from '../../components/DuringBanner.astro';
-import HostPhoto from '../../components/HostPhoto.astro';
-import FormDialog from '../../components/v3/FormDialog.astro';
-import Footer from '../../components/v3/Footer.astro';
-import StickyCta from '../../components/StickyCta.astro';
-import ConsentBanner from '../../components/ConsentBanner.astro';
-import { copy } from '../../config/copy';
-import { copyV3, learnItems } from '../../config/copy.v34';
-import { eventConfig } from '../../config/event.config';
-import { parseSessions } from '../../lib/eventState';
-import { formatDate, formatTime } from '../../lib/format';
+import '../../../styles/v3.css';
+import Base from '../../../layouts/Base.astro';
+import Header from '../../../components/Header.astro';
+import DuringBanner from '../../../components/DuringBanner.astro';
+import HostPhoto from '../../../components/HostPhoto.astro';
+import FormDialog from '../../../components/v3/FormDialog.astro';
+import Footer from '../../../components/v3/Footer.astro';
+import StickyCta from '../../../components/StickyCta.astro';
+import ConsentBanner from '../../../components/ConsentBanner.astro';
+import { copy } from '../../../config/copy';
+import { copyV3, learnItems } from '../../../config/copy.v34';
+import { eventConfig } from '../../../config/event.config';
+import { parseSessions } from '../../../lib/eventState';
+import { formatDate, formatTime } from '../../../lib/format';
 
 const [first] = parseSessions(eventConfig.sessions);
 const date = formatDate(first.start);
@@ -30,7 +30,7 @@ const initials = quote.author
   .join('');
 ---
 
-<Base title={copy.meta.title} description={copy.meta.description} path="v3/">
+<Base title={copy.meta.title} description={copy.meta.description} path="archived/v3/">
   <Header version="v3" centered />
   <DuringBanner />
   <main id="main">
@@ -151,11 +151,11 @@ const initials = quote.author
     </section>
   </main>
   <Footer />
-  <FormDialog thanks="v3/dziekuje/" />
+  <FormDialog thanks="archived/v3/dziekuje/" />
   <StickyCta />
   <ConsentBanner />
   <script>
-    import '../../scripts/landing';
+    import '../../../scripts/landing';
   </script>
 </Base>
 

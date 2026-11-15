@@ -20,7 +20,7 @@ const META_EVENTS: Record<string, string> = { generate_lead: 'Lead' };
 
 export function context(): Params {
   const d = document.documentElement;
-  const version = (location.pathname.match(/\/(v\d)\//) || [])[1] ?? 'root';
+  const version = (location.pathname.match(/\/(v\d)\//) || [])[1] ?? 'home';
   return { webinar_id: eventConfig.id, landing_version: version, event_state: d.dataset.state, headline_variant: d.dataset.variant };
 }
 

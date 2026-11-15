@@ -1,21 +1,21 @@
 ---
-import '../../styles/v4.css';
-import Base from '../../layouts/Base.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/v4/Footer.astro';
-import ConsentBanner from '../../components/ConsentBanner.astro';
-import { copy } from '../../config/copy';
-import { eventConfig, TODO_MARK } from '../../config/event.config';
-import { googleCalendarUrl } from '../../lib/calendar';
-import { calendarEventFromConfig } from '../../lib/calendarEvent';
-import { formatDate, formatTimeRange } from '../../lib/format';
-import { withBase } from '../../lib/paths';
+import '../../../styles/v1.css';
+import Base from '../../../layouts/Base.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/v1/Footer.astro';
+import ConsentBanner from '../../../components/ConsentBanner.astro';
+import { copy } from '../../../config/copy';
+import { eventConfig, TODO_MARK } from '../../../config/event.config';
+import { googleCalendarUrl } from '../../../lib/calendar';
+import { calendarEventFromConfig } from '../../../lib/calendarEvent';
+import { formatDate, formatTimeRange } from '../../../lib/format';
+import { withBase } from '../../../lib/paths';
 
 const t = copy.thankYou;
 const cal = calendarEventFromConfig();
 ---
 
-<Base title={t.metaTitle} description={copy.meta.description} noindex path="v4/dziekuje/">
+<Base title={t.metaTitle} description={copy.meta.description} noindex path="archived/v1/dziekuje/">
   <script is:inline slot="head">
     (function () {
       var d = document.documentElement;
@@ -30,7 +30,7 @@ const cal = calendarEventFromConfig();
       d.dataset.nl = nl;
     })();
   </script>
-  <Header version="v4" />
+  <Header version="v1" />
   <main id="main" class="ty">
     <div class="container ty__inner">
       <section class="card ty__hero" aria-labelledby="ty-title">
@@ -99,7 +99,7 @@ const cal = calendarEventFromConfig();
   <ConsentBanner />
 
   <script>
-    import '../../scripts/thankyou';
+    import '../../../scripts/thankyou';
   </script>
 </Base>
 

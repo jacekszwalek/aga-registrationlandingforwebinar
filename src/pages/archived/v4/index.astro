@@ -5,27 +5,27 @@
  * zdjęciem-wycinanką i pływającymi kafelkami faktów. Niżej wyśrodkowany nagłówek
  * i checklista 2 × 3, na końcu lekka stopka.
  */
-import '../../styles/v4.css';
-import Base from '../../layouts/Base.astro';
-import Header from '../../components/Header.astro';
-import DuringBanner from '../../components/DuringBanner.astro';
-import Doodles from '../../components/v4/Doodles.astro';
-import HostPhoto from '../../components/HostPhoto.astro';
-import SignupForm from '../../components/v4/SignupForm.astro';
-import Footer from '../../components/v4/Footer.astro';
-import StickyCta from '../../components/StickyCta.astro';
-import ConsentBanner from '../../components/ConsentBanner.astro';
-import { copy } from '../../config/copy';
-import { copyV4, learnItems } from '../../config/copy.v34';
-import { eventConfig } from '../../config/event.config';
-import { parseSessions } from '../../lib/eventState';
-import { formatDate, formatTime, formatTimeRange } from '../../lib/format';
+import '../../../styles/v4.css';
+import Base from '../../../layouts/Base.astro';
+import Header from '../../../components/Header.astro';
+import DuringBanner from '../../../components/DuringBanner.astro';
+import Doodles from '../../../components/v4/Doodles.astro';
+import HostPhoto from '../../../components/HostPhoto.astro';
+import SignupForm from '../../../components/v4/SignupForm.astro';
+import Footer from '../../../components/v4/Footer.astro';
+import StickyCta from '../../../components/StickyCta.astro';
+import ConsentBanner from '../../../components/ConsentBanner.astro';
+import { copy } from '../../../config/copy';
+import { copyV4, learnItems } from '../../../config/copy.v34';
+import { eventConfig } from '../../../config/event.config';
+import { parseSessions } from '../../../lib/eventState';
+import { formatDate, formatTime, formatTimeRange } from '../../../lib/format';
 
 const [first] = parseSessions(eventConfig.sessions);
 const date = formatDate(first.start);
 ---
 
-<Base title={copy.meta.title} description={copy.meta.description} path="v4/">
+<Base title={copy.meta.title} description={copy.meta.description} path="archived/v4/">
   <div class="grid-bg top4">
     <Header version="v4" transparent />
     <DuringBanner />
@@ -95,7 +95,7 @@ const date = formatDate(first.start);
   <StickyCta />
   <ConsentBanner />
   <script>
-    import '../../scripts/landing';
+    import '../../../scripts/landing';
   </script>
 </Base>
 

@@ -167,7 +167,7 @@ function bindForm(form: HTMLFormElement): void {
       } catch {
         /* brak sessionStorage – strona podziękowania pokaże wariant domyślny */
       }
-      location.assign(withBase(form.dataset.thanks || 'v2/dziekuje/'));
+      location.assign(withBase(form.dataset.thanks || 'dziekuje/'));
     } catch {
       track('form_error', { form: formId, field: 'network', reason: 'network' });
       formError.textContent = formMessages.network;

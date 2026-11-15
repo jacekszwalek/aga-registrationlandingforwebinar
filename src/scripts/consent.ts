@@ -42,7 +42,7 @@ function loadClarity(id: string): void {
     } as Q);
   injectScript(`https://www.clarity.ms/tag/${id}`);
   const d = document.documentElement;
-  const version = (location.pathname.match(/\/(v\d)\//) || [])[1] ?? 'root';
+  const version = (location.pathname.match(/\/(v\d)\//) || [])[1] ?? 'home';
   w.clarity('consent'); // zgoda została już udzielona – inaczej skrypt by się nie załadował
   w.clarity('set', 'webinar_id', eventConfig.id);
   w.clarity('set', 'landing_version', version);
