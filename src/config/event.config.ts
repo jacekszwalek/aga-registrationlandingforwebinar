@@ -39,7 +39,7 @@ export interface EventConfig {
     /**
      * 'mock' – nic nie jest wysyłane (prototyp);
      * 'mailerlite' – zapis prosto do formularza MailerLite (bez serwera i bez klucza API, działa na GitHub Pages);
-     * 'api' – POST do własnej funkcji /api/subscribe (wariant z serwerem, np. Cloudflare).
+     * 'api' – POST do public/api/subscribe.php na hostingu (PHP + API MailerLite; klucz poza repo) – wydanie.
      */
     mode: 'mock' | 'mailerlite' | 'api';
   };
@@ -48,9 +48,26 @@ export interface EventConfig {
     accountId: string;
     /** ID formularzy MailerLite: przed/w trakcie webinaru → rejestracja, po webinarze → nagranie. */
     forms: { registration: string | null; recording: string | null };
-    /** ID grupy newslettera (pole wyboru grupy w formularzu MailerLite) – wysyłane tylko przy zaznaczonej zgodzie. */
+    /** ID grupy „Zgoda marketingowa” – tylko przy zaznaczonym checkboxie (tryb 'mailerlite'). */
     newsletterGroupId: string | null;
-    groups: { registration: string; recording: string; newsletter: string };
+    /** Nazwa wydarzenia w MailerLite (wpisywana w pole „Pierwsze wydarzenie” nowych kontaktów). */
+    eventName: string;
+    /** Klucz pola „Pierwsze wydarzenie” – ustawiane tylko kontaktom nowym w bazie. */
+    firstEventField: string;
+    /** Grupa roczna „Interakcja RRRR” – skrypt sam znajduje albo tworzy grupę na bieżący rok. */
+    interactionGroupPrefix: string;
+    groups: {
+      /** Grupa wydarzenia – zapis przed webinarem i w trakcie. */
+      registration: string;
+      /** Grupa wydarzenia – zapis po webinarze (po nagranie). */
+      recording: string;
+      /** „Zgoda marketingowa” – tylko po zaznaczeniu checkboxa. */
+      consent: string;
+      /** „Uczestnicy wydarzeń” – stała grupa zbiorcza (historia). */
+      participants: string;
+      /** Grupa rodzaju wydarzenia, np. „Webinar”. */
+      eventType: string;
+    };
   };
   analytics: {
     /** Wyłącznik awaryjny: false = żadnych skryptów analitycznych, nawet po zgodzie. */
@@ -93,13 +110,23 @@ export const eventConfig: EventConfig = {
   recording: { available: true, url: null },
   headlineVariant: 'A',
   allowPreviewParams: !RELEASE,
-  form: { mode: 'mock' },
+  // Wydanie (przystanzmianyzawodowej.pl/webinar/): zapis przez api/subscribe.php. Podgląd i testy: mock.
+  form: { mode: RELEASE ? 'api' : 'mock' },
   mailerlite: {
     accountId: '1427944',
-    // TODO: ID nowych formularzy MailerLite (panel MailerLite → Forms → Embedded forms) – patrz docs/wdrozenie.md.
+    // Tryb 'api' nie używa formularzy MailerLite (zapis przez API). Konwencja: docs/mailerlite-standard.md.
     forms: { registration: null, recording: null },
-    newsletterGroupId: null,
-    groups: { registration: TODO_MARK, recording: TODO_MARK, newsletter: TODO_MARK },
+    newsletterGroupId: '204236857906562074',
+    eventName: '2026-12-03 - Zostać, zmienić pracę czy pójść własną drogą?',
+    firstEventField: 'pierwsze_wydarzenie',
+    interactionGroupPrefix: 'Interakcja ',
+    groups: {
+      registration: '203786228197229581', // 2026-12-03 - Zostać, zmienić pracę czy pójść własną drogą? - rejestracja
+      recording: '204219029769946640', // 2026-12-03 - Zostać, zmienić pracę czy pójść własną drogą? - nagranie
+      consent: '204236857906562074', // Zgoda marketingowa
+      participants: '204236858271466618', // Uczestnicy wydarzeń
+      eventType: '204236859214136535', // Webinar
+    },
   },
   analytics: {
     enabled: true,

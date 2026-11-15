@@ -4,23 +4,8 @@
 
 **Wdrożone:** landing pod **`https://przystanzmianyzawodowej.pl/webinar/`** (webd, `public_html/webinar`, base `/webinar/`; subdomena przekierowuje 301), automatyczne wdrażanie FTPS z GitHub Actions, GA4 (kluczowe zdarzenie `generate_lead`, wymiary `webinar_id` i `landing_version`), Clarity (adres strony), og:image i tagi Open Graph.
 
-### MailerLite – częściowo, wstrzymane
-| Element | Stan | ID |
-|---|---|---|
-| Konto | bez zmian | `1427944` |
-| Grupa rejestracji | jest (dawna „GRUDNIOWY WEBINAR”, obecnie „2026-12-03-zostac-zmienic-wlasna-droga – rejestracja”) – **do przemianowania** na nową konwencję | `203786228197229581` |
-| Grupa nagrania | jest („2026-12-03-zostac-zmienic-wlasna-droga – nagranie”) – **do przemianowania** | `204219029769946640` |
-| Grupa newslettera | „Przystań Zmiany Zawodowej” | `165601664184616321` |
-| Pole `webinar_source` | istniało wcześniej (`{$webinar_source}`) | – |
-| Formularz rejestracji (przed/w trakcie) | **nie utworzony** (kreator otwarty, niezapisany) | – |
-| Formularz nagrania (po webinarze) | **nie utworzony** | – |
-
-**Konwencja nazw w MailerLite** (zwykły dywiz):
-- grupy: `2026-12-03 - Zostać, zmienić pracę czy pójść własną drogą? - rejestracja` / `… - nagranie`
-- formularze: `2026-12-03 - Zostać, zmienić pracę czy pójść własną drogą? - formularz rejestracji` / `… - formularz nagrania`
-- `webinar_id` / `webinar_source` zostają techniczne: `2026-12-03-zostac-zmienic-wlasna-droga`.
-
-**Po utworzeniu formularzy – zmiany w `event.config.ts`** (celowo jeszcze niezrobione): `mailerlite.forms.registration`, `mailerlite.forms.recording`, `mailerlite.newsletterGroupId = '165601664184616321'`, `mailerlite.groups.*` (nazwy), `form.mode = 'mailerlite'`, potem testowy zapis na `https://przystanzmianyzawodowej.pl/webinar/`. **Do tego czasu formularz na stronie nic nie zapisuje – bez reklam.**
+### MailerLite – wdrożone 15.11.2026 (czeka na klucz API na serwerze)
+Struktura grup, zgody i zapis przez API: [`mailerlite-standard.md`](mailerlite-standard.md); co zrobiono i **pełna lista TODO** (klucz API, automatyzacje A1/A2, link ClickMeeting, e-book, przekierowanie /wyzwanie2/): [`mailerlite-raport-wdrozenia.md`](mailerlite-raport-wdrozenia.md). **Do wgrania klucza API formularz na stronie nic nie zapisuje – bez reklam.**
 
 ### SSL – rozwiązane przeniesieniem na podstronę
 - Subdomena miała tylko self-signed (pakiet Mini bez AutoSSL), więc landing przeniesiono na `https://przystanzmianyzawodowej.pl/webinar/` – ważny Positive SSL (Sectigo) domeny głównej (abonament do 03.08.2027, klucz do 18.02.2027 – **przypilnować odnowienia**).
@@ -50,7 +35,7 @@
 **Instrukcja wdrożenia krok po kroku (hosting, MailerLite, GA4, Clarity): [`docs/wdrozenie.md`](wdrozenie.md).**
 
 ## Integracje (kolejne etapy)
-- **MailerLite**: patrz „Stan na 15.11.2026” – formularze, wpisanie ID, `form.mode = 'mailerlite'` (bez serwera i klucza API), decyzja o double opt-in, automatyzacje maili, zapis do newslettera z `/dziekuje/`.
+- **MailerLite**: tryb `api` (`public/api/subscribe.php`) – TODO w [`mailerlite-raport-wdrozenia.md`](mailerlite-raport-wdrozenia.md).
 - **Hosting**: zrobione – `https://przystanzmianyzawodowej.pl/webinar/` (webd.pl, `public_html/webinar`) + wdrażanie FTPS z GitHub Actions.
 - **Analityka**: włączona po zgodzie na cookies (GA4 `G-GV74S860P0`, Meta Pixel `2031514730971566`, Clarity `ze0k15awef`); do zrobienia: weryfikacja zdarzeń w GA4 DebugView i Meta Events Manager po starcie zapisów.
 - **Lighthouse CI**: asercje budżetu w GitHub Actions (wydajność ≥95, LCP <2,5 s, CLS <0,1, TBT <200 ms, a11y 100, ≤300 KB).

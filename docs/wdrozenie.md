@@ -8,7 +8,7 @@ Stan na 15.11.2026. Kod jest gotowy na każdy z kroków; brakuje danych i ustawi
 - Ryzyka: w WordPressie nie może powstać strona/wpis o slugu `webinar`; wtyczki cache/security WP mogą ingerować w podkatalog. Strona główna = v5, `/dziekuje/`, `/webinar.ics`; stare wersje w archiwum pod `/archived/v1/` … `/archived/v5/` – dostępne tylko z adresu, z `noindex`, bez przełącznika.
 - **Wdrażanie automatyczne**: każdy push do `main` → GitHub Actions (`.github/workflows/deploy-webd.yml`) buduje wydanie (`npm run build:release`) i wysyła je przez **FTPS** do `public_html/webinar`. Wgrywa tylko zmienione pliki.
 - **Podgląd** wszystkich wersji (v1–v5 z przełącznikiem): GitHub Pages `https://jacekszwalek.github.io/aga-registrationlandingforwebinar/` (`pages.yml`).
-- Zapis: formularz wysyła dane **prosto do nowego formularza MailerLite** (konto `1427944`) – bez serwera i klucza API.
+- Zapis: formularz wysyła dane do `api/subscribe.php`, który zapisuje osobę przez API MailerLite (konto `1427944`).
 - Analityka po zgodzie na cookies: GA4, Meta Pixel, Clarity.
 
 ## 1. Katalog na webd.pl + automatyczne wdrażanie (zrobione)
@@ -26,23 +26,8 @@ Stan na 15.11.2026. Kod jest gotowy na każdy z kroków; brakuje danych i ustawi
 
 Dopóki sekretów nie ma, workflow kończy się komunikatem „Ustaw sekrety FTP…” i niczego nie wysyła.
 
-## 2. MailerLite – nowe formularze (TY, panel MailerLite)
-
-> **Stan 15.11.2026:** grupy gotowe (rejestracja `203786228197229581`, nagranie `204219029769946640`, newsletter „Przystań Zmiany Zawodowej” `165601664184616321`), pole `webinar_source` istnieje. **Formularzy jeszcze nie ma** – szczegóły i konwencja nazw w [`docs/todo.md`](todo.md#mailerlite--częściowo-wstrzymane). Nazwy grup i formularzy w MailerLite: `2026-12-03 - Zostać, zmienić pracę czy pójść własną drogą? - rejestracja` / `- nagranie` / `- formularz rejestracji` / `- formularz nagrania`.
-**Nowe, osobne formularze i grupy** dla webinaru 3.12.2026 – nie używaj formularza poprzedniego webinaru (`QntRwj` z /wyzwanie2/), żeby zapisy, statystyki formularza i automatyzacje się nie mieszały. W nazwach dodaj datę (np. „Webinar 2026-12-03 – rejestracja”).
-1. *Subscribers → Groups*: utwórz `Webinar 3.12.2026 – rejestracja` i `Webinar 3.12.2026 – nagranie`; sprawdź, która grupa to newsletter.
-2. *Subscribers → Fields*: dodaj pole tekstowe `webinar_source` (trafią tam UTM-y, np. `utm_medium=social|utm_source=facebook`).
-3. *Forms → Embedded forms → Create form* „Webinar 3.12 – rejestracja”:
-   - grupa: `Webinar 3.12.2026 – rejestracja`;
-   - pola: Email (wymagane), Name (wymagane), `webinar_source` (może być ukryte – wygląd formularza MailerLite nie ma znaczenia, używamy własnego);
-   - blok **Interest groups / wybór grup** z jedną pozycją: grupa newslettera (dzięki temu zgoda z checkboxa dopisze osobę do newslettera tylko po zaznaczeniu);
-   - double opt-in: decyzja – włączony = mail z potwierdzeniem przed zapisem (mniej zapisów, czystsza lista);
-   - zapisz i opublikuj.
-4. Drugi formularz „Webinar 3.12 – nagranie” – to samo, grupa `… – nagranie` (używany automatycznie po webinarze).
-5. **Przekaż mi**: numeryczne ID obu formularzy i ID grupy newslettera. ID formularza jest w kodzie osadzenia *HTML* (`…/jsonp/1427944/forms/<ID>/subscribe`) albo w adresie edytora formularza. To dane publiczne, nie hasła.
-6. *Automations*: po dołączeniu do grupy „rejestracja” – mail z linkiem do spotkania, przypomnienie dzień wcześniej i godzinę przed; dla „nagranie” i po webinarze – mail z linkiem do niepublicznego filmu YouTube.
-
-Po podaniu ID ustawię `form.mode = 'mailerlite'` i zrobię testowy zapis. W mailach i automatyzacjach linkuj do `https://przystanzmianyzawodowej.pl/webinar/` (przeniesienie nie wymaga zmian w MailerLite).
+## 2. MailerLite – zapis przez API
+Od 15.11.2026 landing zapisuje osoby przez `api/subscribe.php` (PHP na webd + API MailerLite): grupy wydarzenia, „Uczestnicy wydarzeń”, „Interakcja RRRR”, „Webinar”, „Zgoda marketingowa” (tylko z checkboxem), pola imię / `webinar_source` / „Pierwsze wydarzenie”, bez maila potwierdzającego. Klucz API: plik `~/.mailerlite-api-key` poza `public_html` (instrukcja i standard: [`mailerlite-standard.md`](mailerlite-standard.md), TODO: [`mailerlite-raport-wdrozenia.md`](mailerlite-raport-wdrozenia.md)).
 
 ## 3. GA4 (`G-GV74S860P0`, ta sama usługa co strona główna)
 Landing jest na tej samej domenie co strona główna (ten sam strumień GA4) – bez konfiguracji cross-domain. Skrypt ładuje się tylko na hostach z `productionHosts` (`przystanzmianyzawodowej.pl`, subdomena, podgląd github.io) i dopiero po zgodzie (Consent Mode v2, domyślnie odmowa).
