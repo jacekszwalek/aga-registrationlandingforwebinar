@@ -1,5 +1,12 @@
 # Decyzje
 
+## v5 – iteracja 2 (15.11.2026)
+- **Pierwszy ekran 1:1 jak v3** (wymóg): pigułka „WEBINAR”, termin, tytuł, opis i biały przycisk – te same kroje, rozmiary, interlinie i odstępy (test porównuje style v3 i v5).
+- **Formularz w okienku** (`<dialog>` z v3) z wymaganym imieniem i e-mailem, zgodą na newsletter i kłódką; otwiera go każdy przycisk (hero, licznik, przyklejony). Fokus startuje w polu imienia.
+- **Zamiast zdjęcia z v3 – karta z podsumowaniem** (termin, online 90 min, arkusz, nagranie + prowadząca w kółku) w tym samym miejscu: na granicy pasów, z paskiem gradientu.
+- **Osobny formularz i rozdzielne dane**: zapis trafia do nowego formularza MailerLite (nie do formularza poprzedniego webinaru `QntRwj` z /wyzwanie2/); każde zdarzenie GA4/Meta/Clarity ma `webinar_id = webinar-2026-12-03` i `landing_version`.
+- Poprawka we wszystkich wersjach: klauzula „i Regulaminie Regulaminie” → „i Regulaminie newslettera”.
+
 ## v5 – treść z 15.11.2026, układ v2, wygląd v3
 - **Pierwszy ekran telefonu = cała oferta**: termin, tytuł, opis i formularz (imię + e-mail, oba wymagane, zgoda na newsletter, kłódka z informacją o danych) na różowym pasie z v3, bez zdjęcia. Mieści się na iPhonie 15 (393 × 659 w Safari): kłódka kończy się na 620 px. Na iPhonie SE (568 px) mieści się do przycisku.
 - **Baner cookies pojawia się po pierwszym przewinięciu** (tylko v5) – inaczej przykryłby formularz. Do zgody nic się nie ładuje (Consent Mode – odmowa), więc zgoda nie jest pomijana.

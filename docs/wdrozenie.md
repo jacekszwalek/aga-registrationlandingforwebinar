@@ -20,6 +20,7 @@ Stan na 15.11.2026. Kod jest gotowy na każdy z kroków; brakuje danych i ustawi
 4. Opcjonalnie (zalecane): *GitHub → Settings (konto) → Pages → Add a domain* i rekord TXT, który GitHub poda – weryfikacja domeny chroni przed przejęciem subdomeny.
 
 ## 2. MailerLite – nowe formularze (TY, panel MailerLite)
+**Nowe, osobne formularze i grupy** dla webinaru 3.12.2026 – nie używaj formularza poprzedniego webinaru (`QntRwj` z /wyzwanie2/), żeby zapisy, statystyki formularza i automatyzacje się nie mieszały. W nazwach dodaj datę (np. „Webinar 2026-12-03 – rejestracja”).
 1. *Subscribers → Groups*: utwórz `Webinar 3.12.2026 – rejestracja` i `Webinar 3.12.2026 – nagranie`; sprawdź, która grupa to newsletter.
 2. *Subscribers → Fields*: dodaj pole tekstowe `webinar_source` (trafią tam UTM-y, np. `utm_medium=social|utm_source=facebook`).
 3. *Forms → Embedded forms → Create form* „Webinar 3.12 – rejestracja”:
@@ -41,7 +42,7 @@ Zdarzenia wysyłane ze strony: `page_view`, `scroll_50`, `scroll_90`, `form_star
 
 **TY – w GA4:**
 1. *Administracja → Wyświetlanie danych → Zdarzenia*: oznacz `generate_lead` jako **kluczowe zdarzenie**.
-2. *Administracja → Definicje niestandardowe*: wymiary o zakresie zdarzenia `headline_variant`, `event_state`, `form`, `field`, `reason`.
+2. *Administracja → Definicje niestandardowe*: wymiary o zakresie zdarzenia `webinar_id` (rozdziela ten webinar od poprzednich), `landing_version`, `headline_variant`, `event_state`, `form`, `field`, `reason`.
 3. *Eksploracje → Eksploracja ścieżki (lejek)*, kroki: `page_view` (adres zawiera `webinar.`) → `form_start` → `form_submit_attempt` → `generate_lead`; podział wg `session_source` / `utm_*` (z linków) i `headline_variant`.
 4. Opcjonalnie: filtr ruchu wewnętrznego (Twoje IP).
 
