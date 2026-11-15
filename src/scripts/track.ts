@@ -26,6 +26,8 @@ export function track(name: string, params: Params = {}): void {
   const payload = { ...context(), ...params };
   (window.__events ??= []).push({ name, ...payload });
   window.gtag?.('event', name, payload);
+  // Clarity: to samo zdarzenie jako „smart event” – nagrania da się filtrować po kroku lejka.
+  window.clarity?.('event', name);
   const meta = META_EVENTS[name];
   if (meta) window.fbq?.('track', meta, payload);
   else window.fbq?.('trackCustom', name, payload);

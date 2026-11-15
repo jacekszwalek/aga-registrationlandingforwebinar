@@ -28,28 +28,57 @@ function injectScript(src: string): void {
 }
 
 let loaded = false;
-/** Ładuje skrypty stron trzecich – wyłącznie po zgodzie i tylko gdy analityka jest włączona w konfiguracji. */
+
+const isProduction = () => eventConfig.analytics.productionHosts.includes(location.hostname);
+
+/** Microsoft Clarity – oficjalny loader (kolejka + skrypt) z tagami do filtrowania nagrań. */
+function loadClarity(id: string): void {
+  type Q = ((...args: unknown[]) => void) & { q?: unknown[] };
+  const w = window as unknown as { clarity?: Q };
+  w.clarity =
+    w.clarity ||
+    (function (...args: unknown[]) {
+      (w.clarity!.q = w.clarity!.q || []).push(args);
+    } as Q);
+  injectScript(`https://www.clarity.ms/tag/${id}`);
+  const d = document.documentElement;
+  const version = (location.pathname.match(/\/(v\d)\//) || [])[1] ?? 'root';
+  w.clarity('consent'); // zgoda została już udzielona – inaczej skrypt by się nie załadował
+  w.clarity('set', 'landing_version', version);
+  w.clarity('set', 'event_state', d.dataset.state || '');
+  w.clarity('set', 'headline_variant', d.dataset.variant || '');
+  w.clarity('set', 'environment', isProduction() ? 'production' : 'preview');
+}
+
+/**
+ * Ładuje skrypty stron trzecich – wyłącznie po zgodzie.
+ * GA4 i Meta Pixel tylko na domenie produkcyjnej (podgląd nie zaśmieca danych),
+ * Clarity także na podglądzie, jeśli clarityOnPreview = true.
+ */
 function loadThirdParty(): void {
-  if (loaded || !eventConfig.analytics.enabled) return;
+  const a = eventConfig.analytics;
+  if (loaded || !a.enabled) return;
   loaded = true;
-  const { ga4Id, metaPixelId, clarityId } = eventConfig.analytics;
-  injectScript(`https://www.googletagmanager.com/gtag/js?id=${ga4Id}`);
-  window.gtag?.('js', new Date());
-  window.gtag?.('config', ga4Id);
 
-  // Meta Pixel – standardowy loader w wersji bez inline eval.
-  const fbq = function (...args: unknown[]) {
-    (fbq as unknown as { queue: unknown[] }).queue.push(args);
-  } as unknown as Window['fbq'] & { queue: unknown[]; loaded: boolean; version: string; callMethod?: unknown };
-  fbq.queue = [];
-  fbq.loaded = true;
-  fbq.version = '2.0';
-  window.fbq = fbq;
-  injectScript('https://connect.facebook.net/en_US/fbevents.js');
-  window.fbq?.('init', metaPixelId);
-  window.fbq?.('track', 'PageView');
+  if (isProduction()) {
+    injectScript(`https://www.googletagmanager.com/gtag/js?id=${a.ga4Id}`);
+    window.gtag?.('js', new Date());
+    window.gtag?.('config', a.ga4Id);
 
-  if (clarityId) injectScript(`https://www.clarity.ms/tag/${clarityId}`);
+    // Meta Pixel – standardowy loader w wersji bez inline eval.
+    const fbq = function (...args: unknown[]) {
+      (fbq as unknown as { queue: unknown[] }).queue.push(args);
+    } as unknown as Window['fbq'] & { queue: unknown[]; loaded: boolean; version: string; callMethod?: unknown };
+    fbq.queue = [];
+    fbq.loaded = true;
+    fbq.version = '2.0';
+    window.fbq = fbq;
+    injectScript('https://connect.facebook.net/en_US/fbevents.js');
+    window.fbq?.('init', a.metaPixelId);
+    window.fbq?.('track', 'PageView');
+  }
+
+  if (a.clarityId && (isProduction() || a.clarityOnPreview)) loadClarity(a.clarityId);
   document.dispatchEvent(new CustomEvent('pzz:analytics-ready'));
 }
 
