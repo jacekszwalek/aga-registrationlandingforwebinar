@@ -11,7 +11,7 @@ Stan na 15.11.2026. Kod jest gotowy na każdy z kroków; brakuje danych i ustawi
 
 ## 1. Subdomena na webd.pl + automatyczne wdrażanie (TY, jednorazowo)
 1. **cPanel → Domeny → Utwórz nową domenę**: `webinar.przystanzmianyzawodowej.pl`, **odznacz** „Share document root”, katalog główny: `public_html/webinar`. cPanel sam doda rekord DNS (strefa jest na webd).
-2. **cPanel → SSL/TLS Status**: zaznacz `webinar.przystanzmianyzawodowej.pl` → *Run AutoSSL* (darmowy certyfikat; zwykle kilka minut).
+2. **Certyfikat SSL** – na pakiecie **Mini** cPanel nie ma AutoSSL (jest od pakietu Large), subdomena ma teraz certyfikat self-signed. Opcje i stan: [`docs/todo.md` → SSL](todo.md#ssl--nierozwiązane-blokuje-start).
 3. **cPanel → Konta FTP → Dodaj konto FTP**: login np. `deploy-webinar`, katalog **`public_html/webinar`** (konto ma dostęp tylko do tego katalogu), silne hasło z generatora. Zanotuj pełny login (np. `deploy-webinar@przystanzmianyzawodowej.pl`) i serwer FTP z sekcji *Configure FTP Client* (np. `wn06.webd.pl` albo `ftp.przystanzmianyzawodowej.pl`).
 4. **GitHub → repo → Settings → Secrets and variables → Actions → New repository secret** – trzy sekrety (hasła nie wklejaj na czacie):
    - `FTP_SERVER` – serwer FTP z kroku 3,
@@ -22,6 +22,8 @@ Stan na 15.11.2026. Kod jest gotowy na każdy z kroków; brakuje danych i ustawi
 Dopóki sekretów nie ma, workflow kończy się komunikatem „Ustaw sekrety FTP…” i niczego nie wysyła.
 
 ## 2. MailerLite – nowe formularze (TY, panel MailerLite)
+
+> **Stan 15.11.2026:** grupy gotowe (rejestracja `203786228197229581`, nagranie `204219029769946640`, newsletter „Przystań Zmiany Zawodowej” `165601664184616321`), pole `webinar_source` istnieje. **Formularzy jeszcze nie ma** – szczegóły i konwencja nazw w [`docs/todo.md`](todo.md#mailerlite--częściowo-wstrzymane). Nazwy grup i formularzy w MailerLite: `2026-12-03 - Zostać, zmienić pracę czy pójść własną drogą? - rejestracja` / `- nagranie` / `- formularz rejestracji` / `- formularz nagrania`.
 **Nowe, osobne formularze i grupy** dla webinaru 3.12.2026 – nie używaj formularza poprzedniego webinaru (`QntRwj` z /wyzwanie2/), żeby zapisy, statystyki formularza i automatyzacje się nie mieszały. W nazwach dodaj datę (np. „Webinar 2026-12-03 – rejestracja”).
 1. *Subscribers → Groups*: utwórz `Webinar 3.12.2026 – rejestracja` i `Webinar 3.12.2026 – nagranie`; sprawdź, która grupa to newsletter.
 2. *Subscribers → Fields*: dodaj pole tekstowe `webinar_source` (trafią tam UTM-y, np. `utm_medium=social|utm_source=facebook`).
