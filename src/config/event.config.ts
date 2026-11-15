@@ -63,8 +63,8 @@ export interface EventConfig {
 export const eventConfig: EventConfig = {
   name: 'Bezpłatny webinar Przystani Zmiany Zawodowej',
   timeZone: 'Europe/Warsaw',
-  // TODO: termin i format (jedno spotkanie) do potwierdzenia.
-  sessions: [{ start: '2026-12-03T19:00:00+01:00', end: '2026-12-03T20:00:00+01:00' }],
+  // Jedno spotkanie, 90 minut (potwierdzone 15.11.2026).
+  sessions: [{ start: '2026-12-03T19:00:00+01:00', end: '2026-12-03T20:30:00+01:00' }],
   platform: TODO_MARK,
   recording: { available: true, url: null },
   headlineVariant: 'A',
@@ -83,7 +83,7 @@ export const eventConfig: EventConfig = {
     url: 'https://webinar.przystanzmianyzawodowej.pl',
     indexable: false,
     privacyPolicyUrl: 'https://przystanzmianyzawodowej.pl/polityka-prywatnosci/',
-    termsUrl: null,
+    termsUrl: 'https://przystanzmianyzawodowej.pl/regulamin-newslettera/',
     consultationUrl: null,
   },
   // Dane ze stopki strony macierzystej – tylko na potrzeby prototypu, do potwierdzenia przy wydaniu.
