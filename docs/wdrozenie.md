@@ -3,7 +3,7 @@
 Stan na 15.11.2026. Kod jest gotowy na każdy z kroków; brakuje danych i ustawień w panelach (oznaczone **TY**).
 
 ## Architektura
-- **Produkcja**: `https://webinar.przystanzmianyzawodowej.pl` – pliki na hostingu **webd.pl** w `public_html/webinar`. Strona główna = v5, `/dziekuje/`, `/webinar.ics` (bez wersji v1–v4 i przełącznika).
+- **Produkcja**: `https://webinar.przystanzmianyzawodowej.pl` – pliki na hostingu **webd.pl** w `public_html/webinar`. Strona główna = v5, `/dziekuje/`, `/webinar.ics`; stare wersje `/v1/`–`/v5/` na razie zostają (bez przełącznika).
 - **Wdrażanie automatyczne**: każdy push do `main` → GitHub Actions (`.github/workflows/deploy-webd.yml`) buduje wydanie (`npm run build:release`) i wysyła je przez **FTPS** do `public_html/webinar`. Wgrywa tylko zmienione pliki.
 - **Podgląd** wszystkich wersji (v1–v5 z przełącznikiem): GitHub Pages `https://jacekszwalek.github.io/aga-registrationlandingforwebinar/` (`pages.yml`).
 - Zapis: formularz wysyła dane **prosto do nowego formularza MailerLite** (konto `1427944`) – bez serwera i klucza API.
