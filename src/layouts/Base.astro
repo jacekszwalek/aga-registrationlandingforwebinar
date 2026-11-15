@@ -24,12 +24,13 @@ const buildState = getEventStatus(Date.now(), sessions).state;
 const sessionsMs = sessions.map((s) => [s.start, s.end]);
 const variant = eventConfig.headlineVariant;
 const allowPreview = eventConfig.allowPreviewParams;
-const canonical = new URL(withBase(path), Astro.site ?? eventConfig.site.url).toString();
-const ogUrl = new URL(withBase(ogPath), Astro.site ?? eventConfig.site.url).toString();
-// Archiwum wersji (/archived/…) nigdy nie trafia do wyszukiwarek – dostępne tylko z adresu.
-// Absolutny URL z domeny produkcyjnej – Facebook/LinkedIn pobierają obraz zawsze z subdomeny.
-const ogImage = `${eventConfig.site.url.replace(/\/$/, '')}/og-image.png`;
-const siteRoot = eventConfig.site.url.replace(/\/$/, '');
+// Adresy absolutne zawsze z produkcji (https://przystanzmianyzawodowej.pl/webinar) – niezależnie od
+// tego, gdzie stoi build (podgląd na GitHub Pages, localhost). Facebook/LinkedIn pobierają obraz z produkcji.
+const siteRoot = eventConfig.site.url.replace(/\/+$/, '');
+const absolute = (p: string) => `${siteRoot}/${p.replace(/^\/+/, '')}`;
+const canonical = absolute(path);
+const ogUrl = absolute(ogPath);
+const ogImage = absolute('og-image.png');
 const ogLogo = `${siteRoot}/logo.png`;
 // Schema.org Organization – standardowy sposób przekazania logo (Google); og:logo to tag niestandardowy.
 const orgJsonLd = JSON.stringify({
@@ -40,6 +41,7 @@ const orgJsonLd = JSON.stringify({
   logo: ogLogo,
 });
 const ogImageAlt = 'Bezpłatny webinar „Zostać, zmienić pracę czy pójść własną drogą?” – 3 grudnia 2026, 19:00, online, 90 min. Przystań Zmiany Zawodowej.';
+// Archiwum wersji (/archived/…) nigdy nie trafia do wyszukiwarek – dostępne tylko z adresu.
 const robotsNoindex = noindex || !eventConfig.site.indexable || path.startsWith('archived/');
 ---
 

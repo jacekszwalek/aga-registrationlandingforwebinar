@@ -47,7 +47,7 @@ h1{font:500 64px/1 Flode,sans-serif;color:#951d5b;text-transform:uppercase;margi
   <p class="date">3 grudnia 2026<i>·</i>19:00</p>
   <p class="meta">online · 90&nbsp;min</p>
 </div>
-<p class="url">webinar.przystanzmianyzawodowej.pl</p>
+<p class="url">przystanzmianyzawodowej.pl/webinar</p>
 </body></html>`;
 
 const browser = await chromium.launch();

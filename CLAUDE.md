@@ -9,6 +9,7 @@ Cztery wersje: **v1** (`/v1/`, pełny landing z briefu), **v2** (`/v2/`, krótka
 - `npm run build` – `astro check` + build do `dist/`
 - `npm run serve` – serwer statyczny `dist/` na :4321 (używany też przez Playwright; `astro preview` w Astro 7 przechodzi w tło)
 - `npm run build:pages` – build pod GitHub Pages (`/aga-registrationlandingforwebinar/`)
+- `npm run build:release` – wydanie na https://przystanzmianyzawodowej.pl/webinar/ (base `/webinar/`, kontrola ścieżek `scripts/check-base.mjs`); wdraża `deploy-webd.yml` po pushu do `main`
 - `npm run test:unit` – Vitest (`tests/unit`)
 - `PW_NO_WEBKIT=1 npm run test:e2e` – Playwright lokalnie bez WebKita; na CI bez zmiennej
 - `npm run screenshots` – zrzuty referencyjne do `docs/screenshots/` (wymaga `npm run serve`)
