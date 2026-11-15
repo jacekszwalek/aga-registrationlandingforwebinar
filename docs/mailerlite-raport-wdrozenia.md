@@ -2,6 +2,34 @@
 
 Decyzje użytkownika z 15.11.2026 (punkty 1–7) i ich wykonanie. Audyt wyjściowy: [`mailerlite-raport.pdf`](mailerlite-raport.pdf). Standard na przyszłość: [`mailerlite-standard.md`](mailerlite-standard.md). Wszystkie zmiany przez API zapisane w logu sesji; żadna grupa ani kontakt (poza moimi kontaktami testowymi) nie zostały usunięte.
 
+## ⚠️ WAŻNE – nie zapomnieć
+
+1. **Nie usuwaj formularzy MailerLite – archiwizuj je.** Formularz przechowuje listę osób, które się przez niego zapisały; usunięcie formularza = utrata tej listy. Po wydarzeniu zmień tylko nazwę na `ARCHIWUM - …` i zdejmij formularz ze stron.
+2. **Uczestników konkretnego wydarzenia bierzesz z formularza** – *Forms → formularz → subskrybenci* (albo API `GET /forms/{id}/subscribers`). Dlatego zasada: **jedno wydarzenie = jeden formularz**, a źródło ruchu rozróżnia pole `webinar_source` (nie osobne formularze jak przy wyzwaniu META/IG/LI…).
+   - **Wyjątek – webinar 3.12 i kolejne zapisy z landingu:** zapis idzie przez API (`api/subscribe.php`), bez formularza MailerLite (decyzja D5). Tu listą uczestników jest **grupa wydarzenia** („2026-12-03 - … - rejestracja” i „- nagranie”). Dlatego **przed usunięciem grupy wydarzenia zawsze eksportuj ją do CSV** (pkt 3) – inaczej lista uczestników tego wydarzenia przepadnie.
+3. **Usuwanie grup wydarzeń – ok. 2 miesiące po wydarzeniu** (pełna procedura: [`mailerlite-standard.md`](mailerlite-standard.md#usuwanie-grup-wydarzeń-ok-2-miesiące-po-wydarzeniu)):
+   - **kiedy:** wszystkie maile o wydarzeniu wyszły, nagranie nie jest już promowane, automatyzacje wydarzenia wyłączone;
+   - **sprawdź przed usunięciem:** (a) żadna włączona automatyzacja nie używa grupy, (b) brak zaplanowanych kampanii do grupy, (c) żaden segment jej nie używa, (d) każdy z grupy jest też w „Uczestnicy wydarzeń”, (e) **eksport CSV** grupy zapisany na Dysku Google w „MailerLite – archiwum wydarzeń”;
+   - **jak:** *Subscribers → Groups* → „…” przy grupie → *Delete* → potwierdź (kontakty zostają, znika tylko naklejka);
+   - **gdzie zostaje historia:** „Uczestnicy wydarzeń”, „Interakcja RRRR”, grupa rodzaju („Webinar”), pole „Pierwsze wydarzenie”, plik CSV z eksportu, GA4.
+4. **Marketing tylko do „Zgody marketingowej”.** Nigdy do `ARCHIWUM - …`, „Uczestnicy wydarzeń”, „Interakcja …”, „Webinar” ani grup wydarzeń. Nie wysyłaj maili z prośbą o zgodę osobom bez zgody.
+5. **Klucz API** leży w `~/integrations-keys/.mailerlite-api-key` (katalog domowy konta, poza `public_html`, z WWW → 404). Nie przenoś go do `public_html` i nie wklejaj nigdzie indziej. Token audytowy „audyt-claude-2026-11” usunąć po zakończeniu prac (TODO 14).
+6. **Przed startem promocji webinaru 3.12** muszą być gotowe: automatyzacja A1, link ClickMeeting w K2/K3 i zaplanowane K1–K3, test zapisu na własny adres (TODO 2–5).
+
+**Skąd te notatki (prośby Jacka, 15.11.2026):**
+
+| Prośba | W raporcie |
+|---|---|
+| „zapisz mi koniecznie ten komentarz o usuwaniu i archiwizowaniu formularzy jako WAŻNE oraz o tym, ze uczestnikow wydarzenia mozna wziąć z formularza” (19:42) | pkt 1–2 tej sekcji (+ `mailerlite-ustalenia.md`) |
+| „na koniec tej pracy zrobimy podsumowanie, wyjaśnienie decyzji - np. macierz ADR/ADL, raport i instrukcję do tworzenia kolejnych wydarzen i formularzy” (19:42) | ADL: `mailerlite-ustalenia.md`; raport: ten plik; instrukcja: `mailerlite-standard.md` |
+| „zrób listę TODO wszystkich pozostałych zadań i dopisz zadania, które są potrzebne, np. jak ogarnąć maile do osób z e-booka (…) – z konkretnymi krokami” (20:43) | TODO 1–15, e-book: TODO 6–10 |
+| „W podsumowaniu opisz usuwanie grup wydarzeń: kiedy (ok. 2 miesiące po wydarzeniu), jak krok po kroku, co sprawdzić przed usunięciem i gdzie zostaje historia uczestników” (20:43) | pkt 3 tej sekcji (+ standard) |
+| „pełną listę zmian podaj w raporcie” (20:43, blok B) | sekcja 4 |
+| „W raporcie zostaw dane: 166 osób (25% kontaktów) nigdy nie kliknęło linku potwierdzającego, przy wyzwaniu 42 ze 113 (37%)” (20:43) | „Dane, które uzasadniają decyzje” |
+| „Na koniec zrób podsumowanie: co zostało wykonane i dlaczego, plus lista TODO” (20:43) | sekcje 1–7 + TODO |
+| „Zweryfikuj przez API i uwzględnij w raporcie” (20:57, formularz e-booka) | sekcja 5 |
+| wynik testu na produkcji i miejsce klucza (21:09) | sekcja 7, pkt 5 tej sekcji, TODO 1 |
+
 ## Dane, które uzasadniają decyzje
 - **166 osób (25% kontaktów) nigdy nie kliknęło linku potwierdzającego** (double opt-in) – nie dostały żadnego maila. Przy wyzwaniu listopadowym **42 ze 113 (37%)**: zapisały się, ale nie dostały linków do spotkań. → Double opt-in w formularzach wydarzeń wyłączony (w Polsce nie jest wymagany prawnie; zapisujemy datę i IP zapisu jako dowód).
 - Checkbox newslettera w 7 formularzach wyzwania nie miał nazwy pola – zaznaczenie nigdy nie trafiło do MailerLite.
@@ -90,7 +118,9 @@ Skrypt robi dokładnie to, co w decyzji: grupy (wydarzenia, Uczestnicy wydarzeń
 | Pełny przepływ w przeglądarce (landing → /dziekuje/) | zapis z UTM-ami z linku, przekierowanie, brak błędów ✅ |
 | Obcy Origin / brak Origin / zły e-mail / brak imienia / pole-pułapka | 403 / 403 / 422 / 422 / 200 bez zapisu ✅ |
 
-Formularz MailerLite utworzony przez API na próbę (pusty, nieużyty) – usunięty. **Na produkcji skrypt ruszy, gdy wgrasz klucz API** (TODO). Do tego czasu landing zostaje w trybie bez zapisu (mock) – PR czeka na klucz.
+Formularz MailerLite utworzony przez API na próbę (pusty, nieużyty) – usunięty.
+
+**Produkcja (15.11.2026, ok. 21:12)** – PR #14 zmergowany i wdrożony; zapis przez prawdziwy formularz na https://przystanzmianyzawodowej.pl/webinar/ (link z UTM-ami, zaznaczona zgoda): przekierowanie na `/webinar/dziekuje/`, skrypt 200; kontakt **aktywny** (bez maila potwierdzającego), grupy: „2026-12-03 - … - rejestracja”, „Uczestnicy wydarzeń”, „Interakcja 2026”, „Webinar”, „Zgoda marketingowa”; pola: imię, `webinar_source`, „Pierwsze wydarzenie” ✅. Zapis bez nagłówka Origin → 403 ✅. Testowy kontakt usunięty; żaden mail nie wyszedł (A1 jeszcze nie istnieje).
 
 **Komunikacja** (na wzór poprzednich wydarzeń: podziękowanie automatycznie, reszta kampaniami do grupy):
 
