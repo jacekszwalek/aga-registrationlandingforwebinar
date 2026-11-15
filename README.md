@@ -24,6 +24,7 @@ https://jacekszwalek.github.io/aga-registrationlandingforwebinar/ → przekierow
 - **v2** (bieżąca): https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v2/ – krótka squeeze page w stylu strony-matki
 - **v1**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v1/ – pierwszy, pełny landing z briefu
 - **v3**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v3/ – kompozycja Tailwind (pasy, wyśrodkowane hero, formularz w oknie)
+- **v5**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v5/ – treść z 15.11, układ v2, wygląd v3 (formularz z imieniem na pierwszym ekranie)
 - **v4**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v4/ – kompozycja Unbounce (siatka, ikonki, kafelki wokół zdjęcia)
 
 Ikona telefonu w przełączniku otwiera `/podglad/` – bieżącą wersję w ramce iPhone'a 15 (szerokość 393 px, czyli prawdziwe breakpointy mobilne strony; pasek statusu 47 px, strona 393 × 805). W ramce przełączanie wersji zostaje w podglądzie, ikona monitora wraca do widoku desktop.
