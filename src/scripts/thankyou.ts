@@ -1,13 +1,19 @@
 /** Strona podziękowania (v1 i v2): konwersja po zgodzie, kalendarz, newsletter, udostępnianie. */
 import { initConsent, hasConsent } from './consent';
+import { eventConfig } from '../config/event.config';
 import { track } from './track';
 import { referralUrl } from '../lib/utm';
 import { withBase } from '../lib/paths';
 
 initConsent();
 
+// Dopóki formularz działa w trybie mock (nic nie zapisuje), na produkcji nie liczymy konwersji –
+// inaczej GA4 i Meta dostałyby fałszywe „Lead”.
+const fakeLead = eventConfig.form.mode === 'mock' && eventConfig.analytics.productionHosts.includes(location.hostname);
+
 // Konwersja: tylko raz na zapis i tylko po zgodzie na cookies.
 const fireLead = () => {
+  if (fakeLead) return;
   try {
     const s = JSON.parse(sessionStorage.getItem('pzz_signup') || 'null');
     if (!s?.lead) return;

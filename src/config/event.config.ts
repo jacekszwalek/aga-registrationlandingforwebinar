@@ -79,6 +79,9 @@ export interface EventConfig {
   };
 }
 
+/** Build wydania na subdomenę (PUBLIC_RELEASE=1): bez przełącznika wersji i parametrów podglądu. */
+const RELEASE = import.meta.env?.PUBLIC_RELEASE === '1';
+
 export const eventConfig: EventConfig = {
   name: 'Bezpłatny webinar Przystani Zmiany Zawodowej',
   id: 'webinar-2026-12-03',
@@ -88,7 +91,7 @@ export const eventConfig: EventConfig = {
   platform: TODO_MARK,
   recording: { available: true, url: null },
   headlineVariant: 'A',
-  allowPreviewParams: true,
+  allowPreviewParams: !RELEASE,
   form: { mode: 'mock' },
   mailerlite: {
     accountId: '1427944',
@@ -99,7 +102,8 @@ export const eventConfig: EventConfig = {
   },
   analytics: {
     enabled: true,
-    productionHosts: ['webinar.przystanzmianyzawodowej.pl'],
+    // Analityka od 15.11.2026 także na podglądzie GitHub Pages (do czasu startu subdomeny) – w GA4 filtr po hostName.
+    productionHosts: ['webinar.przystanzmianyzawodowej.pl', 'jacekszwalek.github.io'],
     ga4Id: 'G-GV74S860P0',
     metaPixelId: '2031514730971566',
     clarityId: 'ze0k15awef',

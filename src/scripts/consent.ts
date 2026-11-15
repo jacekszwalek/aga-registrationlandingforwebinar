@@ -48,7 +48,7 @@ function loadClarity(id: string): void {
   w.clarity('set', 'landing_version', version);
   w.clarity('set', 'event_state', d.dataset.state || '');
   w.clarity('set', 'headline_variant', d.dataset.variant || '');
-  w.clarity('set', 'environment', isProduction() ? 'production' : 'preview');
+  w.clarity('set', 'environment', location.hostname);
 }
 
 /**

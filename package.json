@@ -11,7 +11,8 @@
     "test": "npm run test:unit && npm run test:e2e",
     "screenshots": "node scripts/screenshots.mjs",
     "serve": "node scripts/serve.mjs",
-    "build:pages": "SITE_URL=https://jacekszwalek.github.io BASE_PATH=/aga-registrationlandingforwebinar npm run build"
+    "build:pages": "SITE_URL=https://jacekszwalek.github.io BASE_PATH=/aga-registrationlandingforwebinar npm run build",
+    "build:release": "SITE_URL=https://webinar.przystanzmianyzawodowej.pl BASE_PATH=/ PUBLIC_RELEASE=1 npm run build && echo webinar.przystanzmianyzawodowej.pl > dist/CNAME && touch dist/.nojekyll"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.12",
