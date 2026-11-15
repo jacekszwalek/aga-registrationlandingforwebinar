@@ -20,10 +20,13 @@ import { copyV2 } from '../../config/copy.v2';
 import { copyV5 } from '../../config/copy.v5';
 import { eventConfig } from '../../config/event.config';
 import { parseSessions } from '../../lib/eventState';
-import { formatTime } from '../../lib/format';
+import { formatDate, formatTime } from '../../lib/format';
 
 const [first] = parseSessions(eventConfig.sessions);
-const numericDate = new Intl.DateTimeFormat('pl-PL', { day: 'numeric', month: 'numeric', year: 'numeric', timeZone: 'Europe/Warsaw' }).format(first.start);
+const NBSP = '\u00a0';
+// „3 grudnia 2026” z twardymi spacjami – data nigdy nie łamie się między wierszami.
+const longDate = formatDate(first.start).replace(/ /g, NBSP);
+const weekday = new Intl.DateTimeFormat('pl-PL', { weekday: 'long', timeZone: 'Europe/Warsaw' }).format(first.start);
 const time = formatTime(first.start);
 const minutes = Math.round((first.end - first.start) / 60000);
 const iso = new Date(first.start).toISOString();
@@ -39,7 +42,7 @@ const description = `${copyV5.hero.description}`;
     <section class="band hero5" aria-labelledby="hero-title">
       <div class="container hero5__inner">
         <p class="hero5__over" data-show="before during">
-          <time datetime={iso}>{numericDate}</time> · {time} · {minutes} min · online
+          <time datetime={iso}>{longDate}</time> · {time} · {minutes}{NBSP}min · online
         </p>
         <p class="hero5__over" data-show="after">Nagranie · bez limitu czasu</p>
         <h1 id="hero-title">
@@ -59,7 +62,7 @@ const description = `${copyV5.hero.description}`;
           <ul class="event5__facts" role="list">
             <li data-show="before during">
               <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
-              <span><time datetime={iso}>{numericDate}</time>, {time}</span>
+              <span><time datetime={iso}>{longDate}</time>, {weekday}, {time}</span>
             </li>
             <li>
               <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>
@@ -166,7 +169,7 @@ const description = `${copyV5.hero.description}`;
           <span data-show="after">{copyV5.final.after}</span>
         </h2>
         <div data-show="before" data-countdown>
-          <p class="final5__date">Start: <time datetime={iso}>{numericDate}, {time}</time></p>
+          <p class="final5__date">Start: <time datetime={iso}>{longDate}, {weekday}, {time}</time></p>
           <div class="final5__grid" aria-hidden="true">
             <div><span data-unit="days">–</span><small data-label="days">dni</small></div>
             <div><span data-unit="hours">–</span><small data-label="hours">godz.</small></div>

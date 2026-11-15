@@ -18,7 +18,7 @@ export const copyV5 = {
     submitAfter: 'Wyślij mi nagranie',
   },
   facts: {
-    online: 'Online, 90 min',
+    online: 'Online, 90\u00a0min',
     worksheet: 'Arkusz do pracy',
     recording: 'Nagranie dla zapisanych',
   },
