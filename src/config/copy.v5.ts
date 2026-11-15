@@ -11,6 +11,12 @@ export const copyV5 = {
     afterDescription:
       'Zostaw imię i e-mail, a wyślę Ci link do nagrania. Obejrzysz je, kiedy chcesz – bez limitu czasu.',
   },
+  /** Podgląd linku (Facebook, LinkedIn, WhatsApp): krótki tytuł z datą + opis. */
+  share: {
+    title: 'Zostać, zmienić pracę czy pójść własną drogą? Bezpłatny webinar 3 grudnia 2026',
+    description:
+      'Bezpłatny webinar online z Agnieszką Baranowską – 3 grudnia 2026, 19:00, 90 min. Uporządkuj pomysły i świadomie wybierz kierunek zawodowy.',
+  },
   form: {
     nameLabel: 'Imię',
     emailLabel: 'E-mail',

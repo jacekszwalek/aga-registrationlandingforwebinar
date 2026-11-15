@@ -5,6 +5,7 @@ import Header from '../Header.astro';
 import Footer from '../v3/Footer.astro';
 import ConsentBanner from '../ConsentBanner.astro';
 import { copy } from '../../config/copy';
+import { copyV5 } from '../../config/copy.v5';
 import { eventConfig, TODO_MARK } from '../../config/event.config';
 import { googleCalendarUrl } from '../../lib/calendar';
 import { calendarEventFromConfig } from '../../lib/calendarEvent';
@@ -19,7 +20,15 @@ const t = copy.thankYou;
 const cal = calendarEventFromConfig();
 ---
 
-<Base title={t.metaTitle} description={copy.meta.description} noindex path={path}>
+<Base
+  title={t.metaTitle}
+  description={copyV5.share.description}
+  noindex
+  path={path}
+  ogTitle={copyV5.share.title}
+  ogDescription={copyV5.share.description}
+  ogPath={path.replace(/dziekuje\/$/, '')}
+>
   <script is:inline slot="head">
     (function () {
       var d = document.documentElement;

@@ -225,3 +225,14 @@ test('podgląd linku: og:image 1200×630 z subdomeny i karta Twittera', async ({
   expect(img.ok()).toBe(true);
   expect(img.headers()['content-type']).toContain('image/png');
 });
+
+test('Open Graph: krótki tytuł z datą; strona podziękowania udostępnia stronę zapisu', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'Zostać, zmienić pracę czy pójść własną drogą? Bezpłatny webinar 3 grudnia 2026');
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://webinar.przystanzmianyzawodowej.pl/');
+  await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /3 grudnia 2026, 19:00, 90 min/);
+  await page.goto('/dziekuje/');
+  await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /Bezpłatny webinar 3 grudnia 2026/);
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://webinar.przystanzmianyzawodowej.pl/');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://webinar.przystanzmianyzawodowej.pl/dziekuje/');
+});
