@@ -1,0 +1,4 @@
+# /_astro/ – pliki z hashem w nazwie: można je trzymać w cache bez końca
+<IfModule mod_headers.c>
+  Header set Cache-Control "public, max-age=31536000, immutable"
+</IfModule>

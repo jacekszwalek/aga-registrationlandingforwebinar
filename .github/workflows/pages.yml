@@ -1,7 +1,8 @@
 name: Podgląd na GitHub Pages
 
-# Wydanie na https://webinar.przystanzmianyzawodowej.pl (GitHub Pages z własną domeną, plik CNAME):
-# strona główna = v5, bez przełącznika wersji. Publikacja na gałęzi gh-pages.
+# PODGLĄD prototypu (wszystkie wersje v1–v5 z przełącznikiem) pod
+# https://jacekszwalek.github.io/aga-registrationlandingforwebinar/ – gałąź gh-pages.
+# Produkcja (webinar.przystanzmianyzawodowej.pl na webd.pl): deploy-webd.yml.
 on:
   push:
     branches: [main]
@@ -24,10 +25,11 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build:release
+      - run: npm run build:pages
       - name: Publikacja na gałęzi gh-pages
         working-directory: dist
         run: |
+          touch .nojekyll
           git init -q -b gh-pages
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
