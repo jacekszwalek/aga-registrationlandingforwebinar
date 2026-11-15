@@ -17,6 +17,11 @@ export interface EventSession {
 export interface EventConfig {
   /** Nazwa wydarzenia – zawsze „webinar”, nigdy „wyzwanie”. */
   name: string;
+  /**
+   * Identyfikator TEGO webinaru – trafia do każdego zdarzenia GA4/Clarity/Meta (parametr webinar_id)
+   * i do nazw formularzy/grup MailerLite, żeby dane nie mieszały się z poprzednimi edycjami.
+   */
+  id: string;
   timeZone: 'Europe/Warsaw';
   sessions: EventSession[];
   /** Platforma, na której odbywa się webinar (np. Zoom) – TODO. */
@@ -76,6 +81,7 @@ export interface EventConfig {
 
 export const eventConfig: EventConfig = {
   name: 'Bezpłatny webinar Przystani Zmiany Zawodowej',
+  id: 'webinar-2026-12-03',
   timeZone: 'Europe/Warsaw',
   // Jedno spotkanie, 90 minut (potwierdzone 15.11.2026).
   sessions: [{ start: '2026-12-03T19:00:00+01:00', end: '2026-12-03T20:30:00+01:00' }],

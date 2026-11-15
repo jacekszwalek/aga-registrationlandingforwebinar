@@ -1,3 +1,4 @@
+import { eventConfig } from '../config/event.config';
 /**
  * Jedno wejście dla zdarzeń analitycznych. Zdarzenia trafiają do kolejki dataLayer
  * (Consent Mode v2 – GA4 przetworzy je dopiero po zgodzie) oraz do window.__events,
@@ -19,7 +20,8 @@ const META_EVENTS: Record<string, string> = { generate_lead: 'Lead' };
 
 export function context(): Params {
   const d = document.documentElement;
-  return { event_state: d.dataset.state, headline_variant: d.dataset.variant };
+  const version = (location.pathname.match(/\/(v\d)\//) || [])[1] ?? 'root';
+  return { webinar_id: eventConfig.id, landing_version: version, event_state: d.dataset.state, headline_variant: d.dataset.variant };
 }
 
 export function track(name: string, params: Params = {}): void {

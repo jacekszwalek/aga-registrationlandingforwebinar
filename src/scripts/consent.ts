@@ -44,6 +44,7 @@ function loadClarity(id: string): void {
   const d = document.documentElement;
   const version = (location.pathname.match(/\/(v\d)\//) || [])[1] ?? 'root';
   w.clarity('consent'); // zgoda została już udzielona – inaczej skrypt by się nie załadował
+  w.clarity('set', 'webinar_id', eventConfig.id);
   w.clarity('set', 'landing_version', version);
   w.clarity('set', 'event_state', d.dataset.state || '');
   w.clarity('set', 'headline_variant', d.dataset.variant || '');
