@@ -1,0 +1,185 @@
+---
+/**
+ * Formularz v5 na różowym pasie hero: imię i e-mail (oba wymagane), zgoda na newsletter,
+ * warstwowa informacja o danych (kłódka). Logika wspólna: src/scripts/form.ts.
+ * Zwarty, żeby cały mieścił się na pierwszym ekranie telefonu.
+ */
+import { copy } from '../../config/copy';
+import { copyV5 } from '../../config/copy.v5';
+import { eventConfig } from '../../config/event.config';
+
+const f = copyV5.form;
+const controller = `${eventConfig.controller.name} (${eventConfig.controller.brand})`;
+const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
+---
+
+<form class="f5" id="zapis-hero" data-form-id="hero" data-mode={eventConfig.form.mode} data-thanks="v5/dziekuje/" aria-label="Zapis na webinar" novalidate>
+  <div class="f5__fields">
+    <div class="f5__field">
+      <label for="hero-name">{f.nameLabel}</label>
+      <input id="hero-name" name="name" type="text" autocomplete="given-name" maxlength="60" required aria-required="true" enterkeyhint="next" aria-describedby="hero-name-error" />
+      <p class="f5__error" id="hero-name-error" hidden></p>
+    </div>
+    <div class="f5__field">
+      <label for="hero-email">{f.emailLabel}</label>
+      <input id="hero-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" enterkeyhint="send" required aria-required="true" aria-describedby="hero-email-error" />
+      <p class="f5__error" id="hero-email-error" hidden></p>
+    </div>
+  </div>
+
+  <div class="hp" aria-hidden="true">
+    <label for="hero-website">Zostaw to pole puste</label>
+    <input id="hero-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <p class="form-error" role="alert" hidden></p>
+
+  <button class="btn btn--white f5__submit" type="submit">
+    <span class="btn__label" data-show="before during">{f.submit}</span>
+    <span class="btn__label" data-show="after">{f.submitAfter}</span>
+    <span class="btn__loading" hidden>{copy.form.loading}</span>
+  </button>
+
+  <div class="f5__check">
+    <input id="hero-newsletter" name="newsletter" type="checkbox" value="yes" />
+    <label for="hero-newsletter">{copy.form.newsletter}</label>
+  </div>
+
+  <details class="f5__privacy">
+    <summary>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+      Twoje dane są bezpieczne – kto je przetwarza?
+    </summary>
+    <p>
+      {clauseBefore}{controller}{clauseAfter}
+      Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a>
+      {eventConfig.site.termsUrl && (
+        <>
+          {' '}i <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie newslettera</a>
+        </>
+      )}.
+    </p>
+  </details>
+</form>
+
+<style>
+  .f5 {
+    display: grid;
+    gap: 10px;
+    width: 100%;
+    max-width: 560px;
+    margin-inline: auto;
+    text-align: left;
+  }
+  .f5__fields {
+    display: grid;
+    gap: 8px;
+  }
+  .f5__field {
+    display: grid;
+    gap: 3px;
+  }
+  label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+  input[type='text'],
+  input[type='email'] {
+    width: 100%;
+    min-height: 46px;
+    padding: 10px 14px;
+    font: 400 16px/1.4 var(--font-body); /* ≥16 px – bez auto-zoomu na iOS */
+    color: var(--text);
+    background: var(--white);
+    border: 2px solid var(--white);
+    border-radius: 4px;
+  }
+  input[aria-invalid='true'] {
+    border-color: var(--ink);
+    background: #fff7f8;
+  }
+  .f5__error {
+    margin: 0;
+    font-size: 0.8125rem;
+    font-weight: 600;
+  }
+  .f5__error::before {
+    content: '! ';
+  }
+  .form-error {
+    margin: 0;
+    padding: 8px 12px;
+    border-radius: 4px;
+    background: var(--white);
+    color: #b00020;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .hp {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+  .f5__submit {
+    min-height: 50px;
+  }
+  .f5__check {
+    display: grid;
+    grid-template-columns: 20px 1fr;
+    gap: 8px;
+    align-items: start;
+  }
+  .f5__check input {
+    width: 18px;
+    height: 18px;
+    margin: 1px 0 0;
+    accent-color: var(--ink);
+  }
+  .f5__check label {
+    font-size: 0.6875rem;
+    font-weight: 400;
+    line-height: 1.45;
+    cursor: pointer;
+  }
+  .f5__privacy {
+    font-size: 0.75rem;
+  }
+  .f5__privacy summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 28px;
+    cursor: pointer;
+    list-style: none;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .f5__privacy summary::-webkit-details-marker {
+    display: none;
+  }
+  .f5__privacy svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+  }
+  .f5__privacy p {
+    margin: 4px 0 0;
+    line-height: 1.5;
+  }
+  .f5 a {
+    color: var(--white);
+  }
+  @media (min-width: 640px) {
+    .f5__fields {
+      grid-template-columns: 1fr 1.4fr;
+      gap: 12px;
+    }
+    .f5 {
+      gap: 12px;
+    }
+  }
+</style>

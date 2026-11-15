@@ -1,0 +1,9 @@
+/*
+ * v5 – układ treści z v2, wygląd z v3 (różowy pas hero, wyśrodkowane nagłówki, ciemna stopka).
+ * Baza: v3.css → v2.css → foundation.css.
+ */
+@import './v3.css';
+
+.band :focus-visible {
+  box-shadow: 0 0 0 3px var(--pink-700), 0 0 0 6px var(--white);
+}
