@@ -288,7 +288,7 @@ const description = `${copyV5.hero.description}`;
   }
   .event5__host {
     display: flex;
-    align-items: center;
+    align-items: flex-start; /* telefon: zdjęcie przy górnej krawędzi tekstu */
     gap: 16px;
     margin-top: 20px;
     padding-top: 20px;
@@ -485,6 +485,9 @@ const description = `${copyV5.hero.description}`;
     }
     .event5__card {
       padding: 28px 36px;
+    }
+    .event5__host {
+      align-items: center;
     }
     .struct5__steps {
       grid-template-columns: repeat(3, 1fr);
