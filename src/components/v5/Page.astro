@@ -41,7 +41,7 @@ const [quote, ...moreQuotes] = copy.testimonials.items;
 const description = `${copyV5.hero.description}`;
 ---
 
-<Base title={`${copyV5.hero.headline} | Bezpłatny webinar – Przystań Zmiany Zawodowej`} description={description} path={path} ogTitle={copyV5.share.title} ogDescription={copyV5.share.description}>
+<Base title={`${copyV5.hero.headline} | Bezpłatny webinar | Przystań Zmiany Zawodowej`} description={description} path={path} ogTitle={copyV5.share.title} ogDescription={copyV5.share.description}>
   <Header version="v5" centered />
   <DuringBanner />
   <main id="main">
@@ -135,7 +135,7 @@ const description = `${copyV5.hero.description}`;
           <svg class="quotes5__icon" viewBox="0 0 32 24" aria-hidden="true"><path d="M0 24V14C0 6 4 1 12 0l1 4c-4 1-6 4-6 8h6v12zm18 0V14c0-8 4-13 12-14l1 4c-4 1-6 4-6 8h6v12z"></path></svg>
           <figure>
             <blockquote><p>{quote.quote}</p></blockquote>
-            <figcaption><strong>{quote.author}</strong>, {quote.role}</figcaption>
+            <figcaption><strong>{quote.author}</strong>{quote.role && `, ${quote.role}`}</figcaption>
           </figure>
           <details class="more quotes5__more">
             <summary>{copyV2.testimonials.moreSummary}</summary>
@@ -144,7 +144,7 @@ const description = `${copyV5.hero.description}`;
                 moreQuotes.map((t) => (
                   <figure class="quotes5__extra">
                     <blockquote><p>{t.quote}</p></blockquote>
-                    <figcaption><strong>{t.author}</strong>, {t.role}</figcaption>
+                    <figcaption><strong>{t.author}</strong>{t.role && `, ${t.role}`}</figcaption>
                   </figure>
                 ))
               }
@@ -183,10 +183,10 @@ const description = `${copyV5.hero.description}`;
         <div data-show="before" data-countdown>
           <p class="final5__date">Start: <time datetime={iso}>{longDate}, {weekday}, {time}</time></p>
           <div class="final5__grid" aria-hidden="true">
-            <div><span data-unit="days">–</span><small data-label="days">dni</small></div>
-            <div><span data-unit="hours">–</span><small data-label="hours">godz.</small></div>
-            <div><span data-unit="minutes">–</span><small data-label="minutes">min</small></div>
-            <div><span data-unit="seconds">–</span><small data-label="seconds">sek.</small></div>
+            <div><span data-unit="days">-</span><small data-label="days">dni</small></div>
+            <div><span data-unit="hours">-</span><small data-label="hours">godz.</small></div>
+            <div><span data-unit="minutes">-</span><small data-label="minutes">min</small></div>
+            <div><span data-unit="seconds">-</span><small data-label="seconds">sek.</small></div>
           </div>
         </div>
         <button type="button" class="btn btn--white" data-open-form="final">
@@ -198,7 +198,7 @@ const description = `${copyV5.hero.description}`;
     </section>
   </main>
   <Footer />
-  <FormDialog thanks={thanks} withName lead="Podaj imię i e-mail – wyślę Ci link do spotkania i przypomnienie." />
+  <FormDialog thanks={thanks} withName lead="Podaj imię i e-mail, a wyślę Ci link do spotkania i przypomnienie." />
   <StickyCta />
   <ConsentBanner defer />
   <script>

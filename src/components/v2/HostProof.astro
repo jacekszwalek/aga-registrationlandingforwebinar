@@ -29,7 +29,7 @@ const [first, ...rest] = copy.testimonials.items;
       <svg class="quote__icon" viewBox="0 0 32 24" aria-hidden="true"><path d="M0 24V14C0 6 4 1 12 0l1 4c-4 1-6 4-6 8h6v12zm18 0V14c0-8 4-13 12-14l1 4c-4 1-6 4-6 8h6v12z"></path></svg>
       <figure class="quote__main">
         <blockquote><p>{first.quote}</p></blockquote>
-        <figcaption><strong>{first.author}</strong>, {first.role}</figcaption>
+        <figcaption><strong>{first.author}</strong>{first.role && `, ${first.role}`}</figcaption>
       </figure>
       <details class="more quote__more">
         <summary>{copyV2.testimonials.moreSummary}</summary>
@@ -38,7 +38,7 @@ const [first, ...rest] = copy.testimonials.items;
             rest.map((t) => (
               <figure class="quote__extra">
                 <blockquote><p>{t.quote}</p></blockquote>
-                <figcaption><strong>{t.author}</strong>, {t.role}</figcaption>
+                <figcaption><strong>{t.author}</strong>{t.role && `, ${t.role}`}</figcaption>
               </figure>
             ))
           }

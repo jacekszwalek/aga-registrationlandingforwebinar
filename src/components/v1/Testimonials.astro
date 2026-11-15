@@ -16,7 +16,7 @@ const c = copy.testimonials;
               </blockquote>
               <figcaption>
                 <strong>{t.author}</strong>
-                <span>{t.role}</span>
+                {t.role && <span>{t.role}</span>}
               </figcaption>
             </figure>
           </li>

@@ -14,7 +14,7 @@ interface Props {
   /** Zdanie pod nagłówkiem okna (przed webinarem). */
   lead?: string;
 }
-const { thanks, withName = false, lead = 'Podaj e-mail – wyślę Ci link do spotkania i przypomnienie.' } = Astro.props;
+const { thanks, withName = false, lead = 'Podaj e-mail, a wyślę Ci link do spotkania i przypomnienie.' } = Astro.props;
 const controller = `${eventConfig.controller.name} (${eventConfig.controller.brand})`;
 const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
 ---
@@ -66,7 +66,7 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
     <details class="fdialog__privacy">
       <summary>
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
-        Twoje dane są bezpieczne – kto je przetwarza?
+        Twoje dane są bezpieczne. Kto je przetwarza?
       </summary>
       <p>
         {clauseBefore}{controller}{clauseAfter}

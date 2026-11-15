@@ -22,7 +22,7 @@
 - **Pierwszy ekran telefonu = cała oferta**: termin, tytuł, opis i formularz (imię + e-mail, oba wymagane, zgoda na newsletter, kłódka z informacją o danych) na różowym pasie z v3, bez zdjęcia. Mieści się na iPhonie 15 (393 × 659 w Safari): kłódka kończy się na 620 px. Na iPhonie SE (568 px) mieści się do przycisku.
 - **Baner cookies pojawia się po pierwszym przewinięciu** (tylko v5) – inaczej przykryłby formularz. Do zgody nic się nie ładuje (Consent Mode – odmowa), więc zgoda nie jest pomijana.
 - **Karta wydarzenia na styku pasów** (kompozycja v3): termin, 90 min online, arkusz do pracy, nagranie + prowadząca ze zdjęciem w kółku. Pełne bio usunięte.
-- Sekcje: „Czujesz, że…” (5 punktów), struktura 01 JA / 02 MOŻLIWOŚCI / 03 WYBÓR, opinie jak w v2, 7 pytań FAQ, licznik w różowym pasie z przyciskiem do formularza (kafelki licznika w `--pink-800`, bo jasne dawały 4,18:1).
+- Sekcje: „Czujesz, że…” (5 punktów), struktura 01 JA / 02 MOŻLIWOŚCI / 03 WYBÓR, opinie jak w v2, 6 pytań FAQ (od 15.11.2026 bez „Czy podczas webinaru znajdę gotowy pomysł na siebie?”), licznik w różowym pasie z przyciskiem do formularza (kafelki licznika w `--pink-800`, bo jasne dawały 4,18:1).
 - Zmiany globalne: webinar trwa 90 minut (19:00–20:30) – zaktualizowane wszystkie wersje i `.ics`; regulamin = regulamin newslettera (link w klauzulach i stopkach). Imię wymagane tam, gdzie pole ma `required` (tylko v5).
 - Lighthouse mobile (lokalnie): wydajność 99, LCP 1,7 s, CLS 0,001, 119 KB, dostępność 100.
 

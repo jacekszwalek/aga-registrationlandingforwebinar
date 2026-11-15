@@ -14,7 +14,7 @@ export function formatTime(ms: number): string {
 
 /** „19:00–20:00” */
 export function formatTimeRange(s: ParsedSession): string {
-  return `${formatTime(s.start)}–${formatTime(s.end)}`;
+  return `${formatTime(s.start)}-${formatTime(s.end)}`;
 }
 
 export function durationMinutes(s: ParsedSession): number {
