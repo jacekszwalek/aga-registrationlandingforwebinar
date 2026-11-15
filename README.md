@@ -1,6 +1,6 @@
 # Landing rejestracyjny – webinar Przystani Zmiany Zawodowej
 
-Squeeze page zapisu na bezpłatny webinar (docelowo `webinar.przystanzmianyzawodowej.pl`).
+Squeeze page zapisu na bezpłatny webinar pod adresem **https://przystanzmianyzawodowej.pl/webinar/**.
 **Stan: prototyp/mockup** – formularz niczego nie wysyła, integracje opisane w [`docs/todo.md`](docs/todo.md).
 
 ## Uruchomienie
@@ -42,21 +42,12 @@ Edytuj **tylko** `src/config/event.config.ts` → `sessions` (ISO z przesunięci
 ## Po webinarze: nagranie
 Link do niepublicznego filmu YouTube **nie trafia na stronę**. Wpisz go w automatyzacji MailerLite dla grupy „nagranie” (i ewentualnie w `recording.url` dla porządku). Strona w stanie `after` zbiera zapisy na nagranie.
 
-## Wdrożenie (TODO – Cloudflare Pages)
-1. Załóż konto Cloudflare, *Workers & Pages → Create → Pages → Connect to Git*, wybierz to repo.
-2. Build: `npm run build`, katalog wyjściowy: `dist`, zmienna `NODE_VERSION=22`.
-3. Każdy PR dostaje adres preview `*.pages.dev`.
-4. *Settings → Variables and Secrets*: dodaj `MAILERLITE_API_KEY` jako **Secret** (Production i Preview). Klucz wygenerujesz w MailerLite: *Integrations → API*. Nie wpisuj go do repo ani do plików `.env`.
-5. *Custom domains → Set up a domain*: `webinar.przystanzmianyzawodowej.pl`.
-
-### Rekord DNS w webd.pl
-W panelu webd.pl, w strefie DNS domeny `przystanzmianyzawodowej.pl`, dodaj:
-
-| Typ | Nazwa | Wartość | TTL |
-|---|---|---|---|
-| CNAME | `webinar` | `<nazwa-projektu>.pages.dev` | 3600 |
-
-Wartość podaje Cloudflare w kroku 5. Po propagacji (zwykle do godziny) Cloudflare sam wystawi certyfikat HTTPS. Nie zmieniaj rekordów domeny głównej.
+## Wdrożenie
+- **Produkcja**: https://przystanzmianyzawodowej.pl/webinar/ – pliki w `public_html/webinar` na webd.pl (podkatalog obok WordPressa, ważny certyfikat domeny głównej).
+- Każdy push do `main` → `.github/workflows/deploy-webd.yml`: `npm run build:release` (base `/webinar/`, `PUBLIC_RELEASE=1`, kontrola ścieżek `scripts/check-base.mjs`) → FTPS.
+- Stara subdomena `webinar.przystanzmianyzawodowej.pl` przekierowuje 301 na podstronę (reguła w `deploy/htaccess-root`).
+- Podgląd wszystkich wersji: GitHub Pages (`npm run build:pages`).
+- Szczegóły: [`docs/wdrozenie.md`](docs/wdrozenie.md).
 
 ## MailerLite (TODO)
 Trzy grupy: rejestracja, nagranie, newsletter. Ich ID wpisz w `event.config.ts → mailerlite.groups`, a `form.mode` zmień na `'api'`. Pole `webinar_source` (tekst) dostaje UTM-y w formacie `utm_campaign=…|utm_medium=…|utm_source=…`.

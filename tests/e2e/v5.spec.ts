@@ -184,7 +184,7 @@ test.describe('v5 – dostępność', () => {
 });
 
 test.describe('analityka po zgodzie', () => {
-  test('podgląd: tylko Clarity (ze0k15awef) z tagami; GA4 i Pixel wyłącznie na subdomenie', async ({ page }) => {
+  test('podgląd: tylko Clarity (ze0k15awef) z tagami; GA4 i Pixel wyłącznie na produkcji', async ({ page }) => {
     const requests: string[] = [];
     await page.route(/clarity\.ms|googletagmanager\.com|facebook\.net/, (r) => {
       requests.push(r.request().url());
@@ -214,9 +214,9 @@ test('archiwum: stare wersje pod /archived/vN/ działają i mają noindex', asyn
   expect((await page.request.get('/v1/')).status()).toBe(404);
 });
 
-test('podgląd linku: og:image 1200×630 z subdomeny i karta Twittera', async ({ page, request }) => {
+test('podgląd linku: og:image 1200×630 z adresu produkcyjnego i karta Twittera', async ({ page, request }) => {
   await page.goto('/');
-  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://webinar.przystanzmianyzawodowej.pl/og-image.png');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://przystanzmianyzawodowej.pl/webinar/og-image.png');
   await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
   await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
   await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', /3 grudnia 2026/);
@@ -229,18 +229,18 @@ test('podgląd linku: og:image 1200×630 z subdomeny i karta Twittera', async ({
 test('Open Graph: krótki tytuł z datą; strona podziękowania udostępnia stronę zapisu', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', 'Zostać, zmienić pracę czy pójść własną drogą? Bezpłatny webinar 3 grudnia 2026');
-  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://webinar.przystanzmianyzawodowej.pl/');
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://przystanzmianyzawodowej.pl/webinar/');
   await expect(page.locator('meta[property="og:description"]')).toHaveAttribute('content', /3 grudnia 2026, 19:00, 90 min/);
   await page.goto('/dziekuje/');
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute('content', /Bezpłatny webinar 3 grudnia 2026/);
-  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://webinar.przystanzmianyzawodowej.pl/');
-  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://webinar.przystanzmianyzawodowej.pl/dziekuje/');
+  await expect(page.locator('meta[property="og:url"]')).toHaveAttribute('content', 'https://przystanzmianyzawodowej.pl/webinar/');
+  await expect(page.locator('link[rel="canonical"]')).toHaveAttribute('href', 'https://przystanzmianyzawodowej.pl/webinar/dziekuje/');
 });
 
 test('og:logo i logo organizacji (Schema.org)', async ({ page, request }) => {
   await page.goto('/');
-  await expect(page.locator('meta[property="og:logo"]')).toHaveAttribute('content', 'https://webinar.przystanzmianyzawodowej.pl/logo.png');
+  await expect(page.locator('meta[property="og:logo"]')).toHaveAttribute('content', 'https://przystanzmianyzawodowej.pl/webinar/logo.png');
   const ld = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
-  expect(ld).toMatchObject({ '@type': 'Organization', name: 'Przystań Zmiany Zawodowej', logo: 'https://webinar.przystanzmianyzawodowej.pl/logo.png' });
+  expect(ld).toMatchObject({ '@type': 'Organization', name: 'Przystań Zmiany Zawodowej', logo: 'https://przystanzmianyzawodowej.pl/webinar/logo.png' });
   expect((await request.get('/logo.png')).ok()).toBe(true);
 });

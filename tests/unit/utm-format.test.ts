@@ -21,7 +21,7 @@ describe('UTM', () => {
     expect(serializeUtm({})).toBe('');
   });
   it('link polecający ma utm_source=referral i nie przenosi cudzych UTM-ów', () => {
-    const u = new URL(referralUrl('https://webinar.przystanzmianyzawodowej.pl/?utm_source=facebook#zapis'));
+    const u = new URL(referralUrl('https://przystanzmianyzawodowej.pl/webinar/?utm_source=facebook#zapis'));
     expect(u.searchParams.get('utm_source')).toBe('referral');
     expect(u.hash).toBe('');
   });

@@ -6,7 +6,7 @@ const event: CalendarEvent = {
   title: 'Bezpłatny webinar Przystani Zmiany Zawodowej',
   description: 'Link wyślę mailem; do zobaczenia, Agnieszka',
   location: 'Online – link w mailu',
-  url: 'https://webinar.przystanzmianyzawodowej.pl',
+  url: 'https://przystanzmianyzawodowej.pl/webinar/',
   sessions: parseSessions([{ start: '2026-12-03T19:00:00+01:00', end: '2026-12-03T20:00:00+01:00' }]),
   uidPrefix: '2026-12-03-zostac-zmienic-wlasna-droga',
 };

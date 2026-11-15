@@ -1,7 +1,7 @@
-name: Wdrożenie na webd (webinar.przystanzmianyzawodowej.pl)
+name: Wdrożenie na webd (przystanzmianyzawodowej.pl/webinar)
 
 # Produkcja: build wydania (strona główna = v5, bez przełącznika wersji) wgrywany przez FTPS
-# do katalogu subdomeny na hostingu webd.pl (public_html/webinar).
+# do public_html/webinar na hostingu webd.pl = https://przystanzmianyzawodowej.pl/webinar/ (base '/webinar/').
 # Wymaga sekretów repozytorium: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD (konto FTP ograniczone do public_html/webinar).
 on:
   push:

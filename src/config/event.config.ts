@@ -104,14 +104,15 @@ export const eventConfig: EventConfig = {
   analytics: {
     enabled: true,
     // Analityka od 15.11.2026 także na podglądzie GitHub Pages (do czasu startu subdomeny) – w GA4 filtr po hostName.
-    productionHosts: ['webinar.przystanzmianyzawodowej.pl', 'jacekszwalek.github.io'],
+    // przystanzmianyzawodowej.pl/webinar/ = produkcja; subdomena tylko przekierowuje (301), github.io = podgląd.
+    productionHosts: ['przystanzmianyzawodowej.pl', 'webinar.przystanzmianyzawodowej.pl', 'jacekszwalek.github.io'],
     ga4Id: 'G-GV74S860P0',
     metaPixelId: '2031514730971566',
     clarityId: 'ze0k15awef',
     clarityOnPreview: true,
   },
   site: {
-    url: 'https://webinar.przystanzmianyzawodowej.pl',
+    url: 'https://przystanzmianyzawodowej.pl/webinar/',
     indexable: false,
     privacyPolicyUrl: 'https://przystanzmianyzawodowej.pl/polityka-prywatnosci/',
     termsUrl: 'https://przystanzmianyzawodowej.pl/regulamin-newslettera/',

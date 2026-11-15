@@ -1,10 +1,17 @@
-# webinar.przystanzmianyzawodowej.pl – statyczna strona (Astro), hosting webd.pl (Apache/LiteSpeed)
+# https://przystanzmianyzawodowej.pl/webinar/ – statyczna strona (Astro), hosting webd.pl (Apache/LiteSpeed).
+# Katalog public_html/webinar: podstrona domeny głównej (WordPress w public_html) i zarazem document root
+# subdomeny webinar.przystanzmianyzawodowej.pl. Własny RewriteEngine wyłącza tu reguły WordPressa.
 DirectoryIndex index.html
 Options -Indexes
 
 # Wymuszenie HTTPS
 <IfModule mod_rewrite.c>
   RewriteEngine On
+  # Stara subdomena → podstrona domeny głównej (ważny certyfikat). Zastępuje przekierowanie z cPanelu,
+  # które i tak trafiłoby do tego pliku i byłoby nadpisywane przy każdym wdrożeniu.
+  RewriteCond %{HTTP_HOST} ^webinar\.przystanzmianyzawodowej\.pl$ [NC]
+  RewriteRule ^(.*)$ https://przystanzmianyzawodowej.pl/webinar/$1 [L,R=301]
+
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP:X-Forwarded-Proto} !=https
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

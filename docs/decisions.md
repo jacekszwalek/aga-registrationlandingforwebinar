@@ -1,8 +1,15 @@
 # Decyzje
 
+## Adres: podstrona /webinar/ zamiast subdomeny (15.11.2026)
+- Produkcja: **https://przystanzmianyzawodowej.pl/webinar/**. Powód: subdomena miała tylko certyfikat self-signed (pakiet webd Mini bez AutoSSL), a domena główna ma ważny Positive SSL (Sectigo) – podstrona dostaje go za darmo.
+- Ten sam katalog `public_html/webinar` (konto FTP i workflow bez zmian); build wydania ma `base: '/webinar/'`, `site: 'https://przystanzmianyzawodowej.pl'`. `scripts/check-base.mjs` przerywa build, jeśli jakakolwiek ścieżka bezwzględna nie zaczyna się od `/webinar/` (wcześniej `/_astro/*` dawało 404).
+- `canonical`, `og:url`, `og:image`, `og:logo`, `.ics` i Kalendarz Google zawsze z `eventConfig.site.url` (adres produkcyjny), niezależnie od miejsca builda.
+- Przekierowanie subdomeny 301 jest w naszym `.htaccess` (warunek na `HTTP_HOST`), nie w cPanelu – cPanel zapisałby je do `public_html/webinar/.htaccess`, który wdrożenie nadpisuje. Własny `RewriteEngine On` w podkatalogu wyłącza tam reguły WordPressa.
+- `productionHosts`: `przystanzmianyzawodowej.pl` (+ subdomena na czas przekierowania, + github.io). GA4 bez zmian (ta sama usługa i strumień) – raporty filtrować po ścieżce `/webinar/`.
+
 ## Identyfikator webinaru i obraz OG (15.11.2026)
 - **Konwencja identyfikatora**: `RRRR-MM-DD-krotka-nazwa` – ten webinar: `2026-12-03-zostac-zmienic-wlasna-droga`. Trafia do `webinar_id` (GA4, Meta, Clarity), `webinar_source`, nazw grup i formularzy MailerLite oraz UID w `webinar.ics`.
-- **og:image** `public/og-image.png` 1200×630, generator `scripts/og-image.mjs`. Tytuł i data w środkowym kwadracie 630×630, bo WhatsApp/Messenger kadrują do 1:1; boki to tylko dekoracja. Meta: `og:image` (absolutny URL z subdomeny), wymiary, `alt`, `twitter:card = summary_large_image`.
+- **og:image** `public/og-image.png` 1200×630, generator `scripts/og-image.mjs`. Tytuł i data w środkowym kwadracie 630×630, bo WhatsApp/Messenger kadrują do 1:1; boki to tylko dekoracja. Meta: `og:image` (absolutny URL z adresu produkcyjnego), wymiary, `alt`, `twitter:card = summary_large_image`.
 
 ## v5 – iteracja 2 (15.11.2026)
 - **Pierwszy ekran 1:1 jak v3** (wymóg): pigułka „WEBINAR”, termin, tytuł, opis i biały przycisk – te same kroje, rozmiary, interlinie i odstępy (test porównuje style v3 i v5).

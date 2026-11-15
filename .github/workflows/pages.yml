@@ -2,7 +2,7 @@ name: Podgląd na GitHub Pages
 
 # PODGLĄD prototypu (wszystkie wersje v1–v5 z przełącznikiem) pod
 # https://jacekszwalek.github.io/aga-registrationlandingforwebinar/ – gałąź gh-pages.
-# Produkcja (webinar.przystanzmianyzawodowej.pl na webd.pl): deploy-webd.yml.
+# Produkcja (przystanzmianyzawodowej.pl/webinar na webd.pl): deploy-webd.yml.
 on:
   push:
     branches: [main]

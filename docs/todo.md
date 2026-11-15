@@ -2,7 +2,7 @@
 
 ## Stan na 15.11.2026 (handoff z sesji Cowork)
 
-**Wdrożone:** subdomena `webinar.przystanzmianyzawodowej.pl` na webd (`public_html/webinar`), automatyczne wdrażanie FTPS z GitHub Actions, GA4 (kluczowe zdarzenie `generate_lead`, wymiary `webinar_id` i `landing_version`), Clarity (adres strony), og:image i tagi Open Graph.
+**Wdrożone:** landing pod **`https://przystanzmianyzawodowej.pl/webinar/`** (webd, `public_html/webinar`, base `/webinar/`; subdomena przekierowuje 301), automatyczne wdrażanie FTPS z GitHub Actions, GA4 (kluczowe zdarzenie `generate_lead`, wymiary `webinar_id` i `landing_version`), Clarity (adres strony), og:image i tagi Open Graph.
 
 ### MailerLite – częściowo, wstrzymane
 | Element | Stan | ID |
@@ -20,19 +20,13 @@
 - formularze: `2026-12-03 - Zostać, zmienić pracę czy pójść własną drogą? - formularz rejestracji` / `… - formularz nagrania`
 - `webinar_id` / `webinar_source` zostają techniczne: `2026-12-03-zostac-zmienic-wlasna-droga`.
 
-**Po utworzeniu formularzy – zmiany w `event.config.ts`** (celowo jeszcze niezrobione): `mailerlite.forms.registration`, `mailerlite.forms.recording`, `mailerlite.newsletterGroupId = '165601664184616321'`, `mailerlite.groups.*` (nazwy), `form.mode = 'mailerlite'`, potem testowy zapis na produkcji. **Do tego czasu formularz na stronie nic nie zapisuje – bez reklam.**
+**Po utworzeniu formularzy – zmiany w `event.config.ts`** (celowo jeszcze niezrobione): `mailerlite.forms.registration`, `mailerlite.forms.recording`, `mailerlite.newsletterGroupId = '165601664184616321'`, `mailerlite.groups.*` (nazwy), `form.mode = 'mailerlite'`, potem testowy zapis na `https://przystanzmianyzawodowej.pl/webinar/`. **Do tego czasu formularz na stronie nic nie zapisuje – bez reklam.**
 
-### SSL – nierozwiązane (blokuje start)
-- Subdomena ma certyfikat **self-signed** z cPanelu (ważny do 15.11.2027) → przeglądarki pokazują ostrzeżenie.
-- Domena główna ma **płatny Positive SSL (Sectigo)** od webd, tylko `przystanzmianyzawodowej.pl` + `www` (abonament do 03.08.2027).
-- Pakiet hostingu `agieness` = **Mini**; darmowy AutoSSL webd jest dopiero od pakietu **Large** – dlatego w cPanelu nie ma „Run AutoSSL”.
-- Opcje (decyzja TY):
-  1. zgłoszenie do supportu webd (treść gotowa, niewysłana) – zapytać o darmowy Let's Encrypt dla subdomeny na pakiecie Mini;
-  2. pakiet Large – ok. 329,90 zł/rok (AutoSSL dla wszystkich (sub)domen);
-  3. osobny płatny certyfikat dla subdomeny;
-  4. ręczny Let's Encrypt co 90 dni – niezalecane (łatwo przegapić odnowienie).
-  - Do rozważenia technicznie (bez kosztów, ale zmienia hosting/DNS): (a) subdomena jako CNAME do GitHub Pages – darmowy, automatycznie odnawiany certyfikat, pliki poza webd; (b) Cloudflare (darmowy plan) jako proxy – wymaga przeniesienia DNS całej domeny.
-- Logowanie do cPanelu: „Logowanie za pośrednictwem WebdID” (poprzednia sesja wygasła).
+### SSL – rozwiązane przeniesieniem na podstronę
+- Subdomena miała tylko self-signed (pakiet Mini bez AutoSSL), więc landing przeniesiono na `https://przystanzmianyzawodowej.pl/webinar/` – ważny Positive SSL (Sectigo) domeny głównej (abonament do 03.08.2027, klucz do 18.02.2027 – **przypilnować odnowienia**).
+- Zgłoszenie do supportu webd – niepotrzebne (niewysłane).
+- Po wdrożeniu: sprawdzić, czy `https://webinar.przystanzmianyzawodowej.pl` / `http://…` przekierowuje 301 na podstronę (reguła w `deploy/htaccess-root`; w cPanelu nic nie ustawiać). Nie publikować adresu subdomeny.
+- W WordPressie nie tworzyć strony/wpisu o slugu `webinar`.
 
 ## Dane do potwierdzenia
 | # | Co | Gdzie w kodzie | Status |
@@ -53,11 +47,11 @@
 - Wersje: stroną główną jest v5; v1–v5 w archiwum `/archived/vN/` (noindex, tylko z adresu).
 - v1: CLS 0,275 w Lighthouse mobile (przekracza budżet 0,1) – do poprawy, jeśli v1 zostanie.
 
-**Instrukcja wdrożenia krok po kroku (subdomena, MailerLite, GA4, Clarity): [`docs/wdrozenie.md`](wdrozenie.md).**
+**Instrukcja wdrożenia krok po kroku (hosting, MailerLite, GA4, Clarity): [`docs/wdrozenie.md`](wdrozenie.md).**
 
 ## Integracje (kolejne etapy)
 - **MailerLite**: patrz „Stan na 15.11.2026” – formularze, wpisanie ID, `form.mode = 'mailerlite'` (bez serwera i klucza API), decyzja o double opt-in, automatyzacje maili, zapis do newslettera z `/dziekuje/`.
-- **Hosting**: zrobione – webd.pl (`public_html/webinar`) + wdrażanie FTPS z GitHub Actions; brakuje tylko zaufanego certyfikatu SSL (wyżej).
+- **Hosting**: zrobione – `https://przystanzmianyzawodowej.pl/webinar/` (webd.pl, `public_html/webinar`) + wdrażanie FTPS z GitHub Actions.
 - **Analityka**: włączona po zgodzie na cookies (GA4 `G-GV74S860P0`, Meta Pixel `2031514730971566`, Clarity `ze0k15awef`); do zrobienia: weryfikacja zdarzeń w GA4 DebugView i Meta Events Manager po starcie zapisów.
 - **Lighthouse CI**: asercje budżetu w GitHub Actions (wydajność ≥95, LCP <2,5 s, CLS <0,1, TBT <200 ms, a11y 100, ≤300 KB).
 - **Przeglądarki w aplikacjach**: testy z UA Facebooka i LinkedIna.
