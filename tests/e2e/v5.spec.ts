@@ -10,7 +10,8 @@ const lastPayload = (page: Page) => page.evaluate(() => JSON.parse(sessionStorag
 test.describe('v5 – pierwszy ekran', () => {
   test('termin, tytuł, opis i treść briefu', async ({ page }) => {
     await openAt(page, 'before', V5);
-    expect(await visibleText(page.locator('.hero5__over').first())).toMatch(/3\u00a0grudnia\u00a02026 · 19:00 · 90\u00a0min · online/i);
+    // Surowy tekst (bez normalizacji białych znaków) – sprawdza twarde spacje.
+    expect(await page.locator('.hero5__over').first().evaluate((e) => e.textContent!.trim().replace(/\s*\n\s*/g, ' '))).toBe('3\u00a0grudnia\u00a02026 · 19:00 · 90\u00a0min · online');
     expect((await visibleText(page.locator('h1'))).toLowerCase()).toBe('zostać, zmienić pracę czy pójść własną drogą?');
     await expect(page.locator('.hero5__desc').first()).toContainText('Pokażę Ci, jak uporządkować swoje pomysły i możliwości');
     await expect(page.locator('.hero5 img')).toHaveCount(0); // bez zdjęcia pod nagłówkiem
