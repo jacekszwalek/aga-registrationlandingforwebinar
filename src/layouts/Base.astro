@@ -9,9 +9,15 @@ interface Props {
   description: string;
   noindex?: boolean;
   path?: string;
+  /** Tytuł do podglądu linku (krótszy niż <title>); domyślnie = title. */
+  ogTitle?: string;
+  /** Opis do podglądu linku; domyślnie = description. */
+  ogDescription?: string;
+  /** Ścieżka, na którą ma prowadzić udostępniony link (np. strona podziękowania → strona zapisu). */
+  ogPath?: string;
 }
 
-const { title, description, noindex = false, path = '/' } = Astro.props;
+const { title, description, noindex = false, path = '/', ogTitle = title, ogDescription = description, ogPath = path } = Astro.props;
 const sessions = parseSessions(eventConfig.sessions);
 // Stan liczony przy budowaniu (fallback bez JS); skrypt niżej koryguje go w przeglądarce.
 const buildState = getEventStatus(Date.now(), sessions).state;
@@ -19,6 +25,7 @@ const sessionsMs = sessions.map((s) => [s.start, s.end]);
 const variant = eventConfig.headlineVariant;
 const allowPreview = eventConfig.allowPreviewParams;
 const canonical = new URL(withBase(path), Astro.site ?? eventConfig.site.url).toString();
+const ogUrl = new URL(withBase(ogPath), Astro.site ?? eventConfig.site.url).toString();
 // Archiwum wersji (/archived/…) nigdy nie trafia do wyszukiwarek – dostępne tylko z adresu.
 // Absolutny URL z domeny produkcyjnej – Facebook/LinkedIn pobierają obraz zawsze z subdomeny.
 const ogImage = `${eventConfig.site.url.replace(/\/$/, '')}/og-image.png`;
@@ -39,9 +46,9 @@ const robotsNoindex = noindex || !eventConfig.site.indexable || path.startsWith(
     <meta property="og:type" content="website" />
     <meta property="og:locale" content="pl_PL" />
     <meta property="og:site_name" content="Przystań Zmiany Zawodowej" />
-    <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:url" content={canonical} />
+    <meta property="og:title" content={ogTitle} />
+    <meta property="og:description" content={ogDescription} />
+    <meta property="og:url" content={ogUrl} />
     <!-- Obraz podglądu linku (Facebook, LinkedIn, Messenger) – public/og-image.png, generator: scripts/og-image.mjs -->
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:secure_url" content={ogImage} />
@@ -50,8 +57,8 @@ const robotsNoindex = noindex || !eventConfig.site.indexable || path.startsWith(
     <meta property="og:image:height" content="630" />
     <meta property="og:image:alt" content={ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:title" content={ogTitle} />
+    <meta name="twitter:description" content={ogDescription} />
     <meta name="twitter:image" content={ogImage} />
     <link rel="icon" type="image/png" sizes="32x32" href={withBase("favicon-32.png")} />
     <link rel="apple-touch-icon" href={withBase("apple-touch-icon.png")} />
