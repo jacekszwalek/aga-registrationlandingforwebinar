@@ -151,3 +151,24 @@ test.describe('v5 – dostępność', () => {
     expect(r.violations.map((v) => v.id)).toEqual([]);
   });
 });
+
+test.describe('analityka po zgodzie', () => {
+  test('podgląd: tylko Clarity (ze0k15awef) z tagami; GA4 i Pixel wyłącznie na subdomenie', async ({ page }) => {
+    const requests: string[] = [];
+    await page.route(/clarity\.ms|googletagmanager\.com|facebook\.net/, (r) => {
+      requests.push(r.request().url());
+      return r.fulfill({ status: 200, contentType: 'text/javascript', body: '' });
+    });
+    await openAt(page, 'before', V5);
+    await page.evaluate(() => window.scrollBy(0, 400));
+    expect(requests).toEqual([]);
+    await page.getByRole('button', { name: 'Akceptuję' }).click();
+    await expect.poll(() => requests).toEqual(['https://www.clarity.ms/tag/ze0k15awef']);
+    const queue = await page.evaluate(() => ((window as unknown as { clarity: { q: unknown[][] } }).clarity.q ?? []).map((a) => a.join(':')));
+    expect(queue).toEqual(expect.arrayContaining(['consent', 'set:landing_version:v5', 'set:environment:preview']));
+    // Zdarzenia lejka trafiają też do Clarity.
+    await page.locator('#hero-name').focus();
+    const after = await page.evaluate(() => ((window as unknown as { clarity: { q: unknown[][] } }).clarity.q ?? []).map((a) => a.join(':')));
+    expect(after).toContain('event:form_start');
+  });
+});
