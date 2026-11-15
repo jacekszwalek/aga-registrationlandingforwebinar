@@ -196,7 +196,7 @@ test.describe('analityka po zgodzie', () => {
     await page.getByRole('button', { name: 'Akceptuję' }).click();
     await expect.poll(() => requests).toEqual(['https://www.clarity.ms/tag/ze0k15awef']);
     const queue = await page.evaluate(() => ((window as unknown as { clarity: { q: unknown[][] } }).clarity.q ?? []).map((a) => a.join(':')));
-    expect(queue).toEqual(expect.arrayContaining(['consent', 'set:landing_version:v5', 'set:environment:preview']));
+    expect(queue).toEqual(expect.arrayContaining(['consent', 'set:landing_version:v5', 'set:environment:localhost']));
     // Zdarzenia lejka trafiają też do Clarity.
     await page.locator('.hero5__cta').click();
     const after = await page.evaluate(() => ((window as unknown as { clarity: { q: unknown[][] } }).clarity.q ?? []).map((a) => a.join(':')));

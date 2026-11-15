@@ -7,9 +7,19 @@ const lastPayload = (page: Page) => page.evaluate(() => JSON.parse(sessionStorag
 const submit = (page: Page) => page.locator('#zapis-hero button[type="submit"]');
 
 test.describe('v2 – wejście i pierwszy ekran', () => {
-  test('adres główny przekierowuje do v2 z zachowaniem UTM-ów', async ({ page }) => {
+  test('adres główny to v5 (bez przekierowania), zapis prowadzi na /dziekuje/', async ({ page }) => {
+    await dismissConsent(page);
+    await page.clock.install({ time: new Date('2026-11-20T12:00:00+01:00') });
     await page.goto('/?utm_source=linkedin&utm_medium=social');
-    await page.waitForURL('**/v2/?utm_source=linkedin&utm_medium=social');
+    await expect(page).toHaveURL(/\/\?utm_source=linkedin&utm_medium=social$/);
+    await expect(page.locator('.hero5')).toBeVisible();
+    await page.locator('.hero5__cta').click();
+    await page.locator('#hero-name').fill('Anna');
+    await page.locator('#hero-email').fill('anna@example.pl');
+    await page.locator('#zapis-hero button[type="submit"]').click();
+    await page.clock.runFor(1000);
+    await page.waitForURL(/\/dziekuje\/$/);
+    expect(new URL(page.url()).pathname).toBe('/dziekuje/');
   });
 
   test('H1 i przycisk zapisu na pierwszym ekranie – także na telefonie', async ({ page }) => {
