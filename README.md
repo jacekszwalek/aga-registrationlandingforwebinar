@@ -24,6 +24,7 @@ https://jacekszwalek.github.io/aga-registrationlandingforwebinar/ → przekierow
 - **v2** (bieżąca): https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v2/ – krótka squeeze page w stylu strony-matki
 - **v1**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v1/ – pierwszy, pełny landing z briefu
 - **v3**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v3/ – kompozycja Tailwind (pasy, wyśrodkowane hero, formularz w oknie)
+- **v5**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v5/ – treść z 15.11, układ v2, wygląd v3 (formularz z imieniem na pierwszym ekranie)
 - **v4**: https://jacekszwalek.github.io/aga-registrationlandingforwebinar/v4/ – kompozycja Unbounce (siatka, ikonki, kafelki wokół zdjęcia)
 
 Ikona telefonu w przełączniku otwiera `/podglad/` – bieżącą wersję w ramce iPhone'a 15 (szerokość 393 px, czyli prawdziwe breakpointy mobilne strony; pasek statusu 47 px, strona 393 × 805). W ramce przełączanie wersji zostaje w podglądzie, ikona monitora wraca do widoku desktop.
@@ -31,6 +32,9 @@ Ikona telefonu w przełączniku otwiera `/podglad/` – bieżącą wersję w ram
 Przełącznik „Wersja v1 · v2 · v3 · v4” w prawym górnym rogu zachowuje parametry adresu (np. `?state=after`).
 
 Każdy push do `main` uruchamia workflow `pages.yml`: build z `BASE_PATH=/aga-registrationlandingforwebinar` i publikacja na gałęzi `gh-pages`. Jednorazowo w repo: *Settings → Pages → Build and deployment → Source: Deploy from a branch → `gh-pages` / `(root)`*. Strona ma `noindex` (`site.indexable = false`).
+
+## Wdrożenie na subdomenę
+Krok po kroku (DNS w webd.pl, GitHub Pages, formularze MailerLite, GA4, Clarity): [`docs/wdrozenie.md`](docs/wdrozenie.md).
 
 ## Zmiana terminu
 Edytuj **tylko** `src/config/event.config.ts` → `sessions` (ISO z przesunięciem: `+01:00` zimą, `+02:00` latem). Data w nadtytule, szczegółach, liczniku, `.ics` i Kalendarzu Google wylicza się sama; strona sama przełącza stany `before → during → after`.

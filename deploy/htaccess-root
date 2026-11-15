@@ -1,0 +1,36 @@
+# webinar.przystanzmianyzawodowej.pl – statyczna strona (Astro), hosting webd.pl (Apache/LiteSpeed)
+DirectoryIndex index.html
+Options -Indexes
+
+# Wymuszenie HTTPS
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteCond %{HTTPS} !=on
+  RewriteCond %{HTTP:X-Forwarded-Proto} !=https
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+</IfModule>
+
+AddType text/calendar .ics
+AddType font/woff2 .woff2
+AddType image/avif .avif
+AddType image/webp .webp
+
+# Kompresja
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript text/javascript text/calendar image/svg+xml
+</IfModule>
+
+<IfModule mod_headers.c>
+  # HTML zawsze świeży (zmiany widać od razu po wdrożeniu)
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# Pliki stanu wdrożenia FTP nie są publiczne
+<Files ".ftp-deploy-sync-state.json">
+  Require all denied
+</Files>

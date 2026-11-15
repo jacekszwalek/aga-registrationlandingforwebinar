@@ -19,7 +19,8 @@ const sessionsMs = sessions.map((s) => [s.start, s.end]);
 const variant = eventConfig.headlineVariant;
 const allowPreview = eventConfig.allowPreviewParams;
 const canonical = new URL(withBase(path), Astro.site ?? eventConfig.site.url).toString();
-const robotsNoindex = noindex || !eventConfig.site.indexable;
+// Archiwum wersji (/archived/…) nigdy nie trafia do wyszukiwarek – dostępne tylko z adresu.
+const robotsNoindex = noindex || !eventConfig.site.indexable || path.startsWith('archived/');
 ---
 
 <!doctype html>

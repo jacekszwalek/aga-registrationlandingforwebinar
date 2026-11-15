@@ -9,8 +9,12 @@ import { eventConfig, TODO_MARK } from '../../config/event.config';
 
 interface Props {
   thanks: string;
+  /** v5: wymagane pole imienia nad e-mailem. */
+  withName?: boolean;
+  /** Zdanie pod nagłówkiem okna (przed webinarem). */
+  lead?: string;
 }
-const { thanks } = Astro.props;
+const { thanks, withName = false, lead = 'Podaj e-mail – wyślę Ci link do spotkania i przypomnienie.' } = Astro.props;
 const controller = `${eventConfig.controller.name} (${eventConfig.controller.brand})`;
 const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
 ---
@@ -24,10 +28,19 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
     <span data-show="before during">Zarezerwuj miejsce</span>
     <span data-show="after">Wyślij mi nagranie</span>
   </h2>
-  <p class="fdialog__lead" data-show="before during">Podaj e-mail – wyślę Ci link do spotkania i przypomnienie.</p>
+  <p class="fdialog__lead" data-show="before during">{lead}</p>
   <p class="fdialog__lead" data-show="after">{copy.after.newsletterLine}</p>
 
   <form class="fdialog__form" id="zapis-hero" data-form-id="dialog" data-mode={eventConfig.form.mode} data-thanks={thanks} aria-label="Zapis na webinar" novalidate>
+    {
+      withName && (
+        <>
+          <label class="fdialog__label" for="hero-name">Imię</label>
+          <input id="hero-name" name="name" type="text" autocomplete="given-name" maxlength="60" required aria-required="true" enterkeyhint="next" aria-describedby="hero-name-error" />
+          <p class="fdialog__error" id="hero-name-error" hidden />
+        </>
+      )
+    }
     <label class="fdialog__label" for="hero-email">{copyV2.form.emailLabel}</label>
     <input id="hero-email" name="email" type="email" autocomplete="email" inputmode="email" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder={copyV2.form.emailPlaceholder} required aria-required="true" aria-describedby="hero-email-error" />
     <p class="fdialog__error" id="hero-email-error" hidden></p>
@@ -51,11 +64,14 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
     </button>
 
     <details class="fdialog__privacy">
-      <summary>Twoje dane są bezpieczne – kto je przetwarza?</summary>
+      <summary>
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+        Twoje dane są bezpieczne – kto je przetwarza?
+      </summary>
       <p>
         {clauseBefore}{controller}{clauseAfter}
-        Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a> i Regulaminie{' '}
-        {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie</a> : <span class="todo">{TODO_MARK}</span>}.
+        Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a> i{' '}
+        {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie newslettera</a> : <>Regulaminie <span class="todo">{TODO_MARK}</span></>}.
       </p>
     </details>
   </form>
@@ -119,7 +135,8 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
     font-size: 0.9375rem;
     color: var(--ink);
   }
-  input[type='email'] {
+  input[type='email'],
+  input[type='text'] {
     width: 100%;
     min-height: 54px;
     padding: 12px 16px;
@@ -167,12 +184,26 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
     color: var(--text-muted);
   }
   .fdialog__privacy summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
     min-height: 32px;
     padding-top: 6px;
+    list-style: none;
     cursor: pointer;
     text-decoration: underline;
     text-decoration-color: var(--pink-200);
     text-underline-offset: 3px;
+  }
+  .fdialog__privacy summary::-webkit-details-marker {
+    display: none;
+  }
+  .fdialog__privacy svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: var(--pink-700);
+    stroke-width: 2;
   }
   .fdialog__privacy p {
     margin: 4px 0 0;

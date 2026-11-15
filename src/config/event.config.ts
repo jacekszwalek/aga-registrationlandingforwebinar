@@ -17,6 +17,11 @@ export interface EventSession {
 export interface EventConfig {
   /** Nazwa wydarzenia – zawsze „webinar”, nigdy „wyzwanie”. */
   name: string;
+  /**
+   * Identyfikator TEGO webinaru – trafia do każdego zdarzenia GA4/Clarity/Meta (parametr webinar_id)
+   * i do nazw formularzy/grup MailerLite, żeby dane nie mieszały się z poprzednimi edycjami.
+   */
+  id: string;
   timeZone: 'Europe/Warsaw';
   sessions: EventSession[];
   /** Platforma, na której odbywa się webinar (np. Zoom) – TODO. */
@@ -30,18 +35,32 @@ export interface EventConfig {
   /** Pozwala podejrzeć stany i warianty parametrami ?state= i ?v= (tylko prototyp). */
   allowPreviewParams: boolean;
   form: {
-    /** 'mock' – nic nie jest wysyłane; 'api' – POST do /api/subscribe (etap integracji). */
-    mode: 'mock' | 'api';
+    /**
+     * 'mock' – nic nie jest wysyłane (prototyp);
+     * 'mailerlite' – zapis prosto do formularza MailerLite (bez serwera i bez klucza API, działa na GitHub Pages);
+     * 'api' – POST do własnej funkcji /api/subscribe (wariant z serwerem, np. Cloudflare).
+     */
+    mode: 'mock' | 'mailerlite' | 'api';
   };
   mailerlite: {
+    /** Publiczny numer konta MailerLite (widoczny w kodzie osadzenia formularza). */
+    accountId: string;
+    /** ID formularzy MailerLite: przed/w trakcie webinaru → rejestracja, po webinarze → nagranie. */
+    forms: { registration: string | null; recording: string | null };
+    /** ID grupy newslettera (pole wyboru grupy w formularzu MailerLite) – wysyłane tylko przy zaznaczonej zgodzie. */
+    newsletterGroupId: string | null;
     groups: { registration: string; recording: string; newsletter: string };
   };
   analytics: {
-    /** Dopóki false, żadne skrypty analityczne nie są ładowane nawet po zgodzie. */
+    /** Wyłącznik awaryjny: false = żadnych skryptów analitycznych, nawet po zgodzie. */
     enabled: boolean;
+    /** GA4 i Meta Pixel ładują się (po zgodzie) tylko na tych domenach – podgląd nie zaśmieca danych produkcyjnych. */
+    productionHosts: string[];
     ga4Id: string;
     metaPixelId: string;
     clarityId: string | null;
+    /** Clarity także na podglądzie (GitHub Pages), żeby od razu sprawdzić nagrania i mapy kliknięć. */
+    clarityOnPreview: boolean;
   };
   site: {
     url: string;
@@ -60,30 +79,41 @@ export interface EventConfig {
   };
 }
 
+/** Build wydania na subdomenę (PUBLIC_RELEASE=1): bez przełącznika wersji i parametrów podglądu. */
+const RELEASE = import.meta.env?.PUBLIC_RELEASE === '1';
+
 export const eventConfig: EventConfig = {
   name: 'Bezpłatny webinar Przystani Zmiany Zawodowej',
+  id: 'webinar-2026-12-03',
   timeZone: 'Europe/Warsaw',
-  // TODO: termin i format (jedno spotkanie) do potwierdzenia.
-  sessions: [{ start: '2026-12-03T19:00:00+01:00', end: '2026-12-03T20:00:00+01:00' }],
+  // Jedno spotkanie, 90 minut (potwierdzone 15.11.2026).
+  sessions: [{ start: '2026-12-03T19:00:00+01:00', end: '2026-12-03T20:30:00+01:00' }],
   platform: TODO_MARK,
   recording: { available: true, url: null },
   headlineVariant: 'A',
-  allowPreviewParams: true,
+  allowPreviewParams: !RELEASE,
   form: { mode: 'mock' },
   mailerlite: {
+    accountId: '1427944',
+    // TODO: ID nowych formularzy MailerLite (panel MailerLite → Forms → Embedded forms) – patrz docs/wdrozenie.md.
+    forms: { registration: null, recording: null },
+    newsletterGroupId: null,
     groups: { registration: TODO_MARK, recording: TODO_MARK, newsletter: TODO_MARK },
   },
   analytics: {
-    enabled: false,
+    enabled: true,
+    // Analityka od 15.11.2026 także na podglądzie GitHub Pages (do czasu startu subdomeny) – w GA4 filtr po hostName.
+    productionHosts: ['webinar.przystanzmianyzawodowej.pl', 'jacekszwalek.github.io'],
     ga4Id: 'G-GV74S860P0',
     metaPixelId: '2031514730971566',
-    clarityId: null,
+    clarityId: 'ze0k15awef',
+    clarityOnPreview: true,
   },
   site: {
     url: 'https://webinar.przystanzmianyzawodowej.pl',
     indexable: false,
     privacyPolicyUrl: 'https://przystanzmianyzawodowej.pl/polityka-prywatnosci/',
-    termsUrl: null,
+    termsUrl: 'https://przystanzmianyzawodowej.pl/regulamin-newslettera/',
     consultationUrl: null,
   },
   // Dane ze stopki strony macierzystej – tylko na potrzeby prototypu, do potwierdzenia przy wydaniu.

@@ -17,7 +17,7 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
   id={`zapis-${id}`}
   data-form-id={id}
   data-mode={eventConfig.form.mode}
-  data-thanks="v1/dziekuje/"
+  data-thanks="archived/v1/dziekuje/"
   aria-label="Zapis na webinar"
   novalidate
 >
@@ -75,16 +75,8 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
   <p class="clause">
     {clauseBefore}{controller}{clauseAfter}
     Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a>
-    {' '}i Regulaminie{' '}
-    {
-      eventConfig.site.termsUrl ? (
-        <a href={eventConfig.site.termsUrl} rel="noopener">
-          Regulaminie
-        </a>
-      ) : (
-        <span class="todo">{TODO_MARK}</span>
-      )
-    }.
+    {' '}i{' '}
+    {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie newslettera</a> : <>Regulaminie <span class="todo">{TODO_MARK}</span></>}.
   </p>
 </form>
 

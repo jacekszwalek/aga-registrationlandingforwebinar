@@ -12,7 +12,7 @@ export const copyV2 = {
     subtitle:
       'Spotkanie online z psycholożką i coachką ICF. Zobaczysz, co ogranicza Twoje zawodowe wybory, i wyjdziesz z planem jednego konkretnego działania.',
     host: 'Prowadzi Agnieszka Baranowska – psycholożka i coachka ICF, wcześniej m.in. w McKinsey, Boeingu i Capgemini.',
-    facts: { online: 'Online, 60 minut', free: '0 zł', recording: 'Nagranie dla zapisanych' },
+    facts: { online: 'Online, 90 minut', free: '0 zł', recording: 'Nagranie dla zapisanych' },
   },
   after: {
     eyebrow: 'Nagranie webinaru · bezpłatnie',

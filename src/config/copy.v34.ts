@@ -47,7 +47,7 @@ export const copyV3 = {
     companies: ['McKinsey', 'Boeing', 'Capgemini', 'COI'],
   },
   final: {
-    before: 'Pierwszy krok do świadomej zmiany – w 60 minut',
+    before: 'Pierwszy krok do świadomej zmiany – w 90 minut',
     during: 'Webinar trwa – dołącz teraz',
     after: 'Obejrzyj nagranie webinaru',
   },
@@ -61,5 +61,5 @@ export const copyV4 = {
   submitAfter: 'Wyślij mi nagranie',
   note: 'Nie możesz być na żywo? Zapisz się mimo to – nagranie wyślę Ci mailem.',
   learnHeading: 'Co będziesz wiedzieć po webinarze',
-  tiles: { online: '60 min online', free: '0 zł', recording: 'Nagranie' },
+  tiles: { online: '90 min online', free: '0 zł', recording: 'Nagranie' },
 } as const;

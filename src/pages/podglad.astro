@@ -7,7 +7,7 @@
 import { withBase } from '../lib/paths';
 
 const base = withBase('');
-const versions = ['v1', 'v2', 'v3', 'v4'];
+const versions = ['v1', 'v2', 'v3', 'v4', 'v5'];
 ---
 
 <!doctype html>
@@ -144,10 +144,10 @@ const versions = ['v1', 'v2', 'v3', 'v4'];
     <header class="bar">
       <strong>Podgląd mobile · iPhone 15 (ekran 393 × 852, strona 393 × 805)</strong>
       <nav aria-label="Wersja prototypu">
-        {versions.map((v) => <a href={withBase(`podglad/?url=${encodeURIComponent(withBase(`${v}/`))}`)} data-preview-version={v}>{v}</a>)}
+        {versions.map((v) => <a href={withBase(`podglad/?url=${encodeURIComponent(withBase(`archived/${v}/`))}`)} data-preview-version={v}>{v}</a>)}
       </nav>
       <nav aria-label="Urządzenie">
-        <a href={withBase('v2/')} data-exit>Wróć do desktopu</a>
+        <a href={withBase('')} data-exit>Wróć do desktopu</a>
       </nav>
     </header>
     <main class="stage">
@@ -168,18 +168,18 @@ const versions = ['v1', 'v2', 'v3', 'v4'];
     <script is:inline define:vars={{ base }}>
       (function () {
         var esc = base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        var allowed = new RegExp('^' + esc + 'v[1-4]/(dziekuje/)?(\\?[^#]*)?$');
+        var allowed = new RegExp('^' + esc + '(archived/v[1-5]/)?(dziekuje/)?(\\?[^#]*)?$');
         var requested = new URLSearchParams(location.search).get('url') || '';
-        var url = allowed.test(requested) ? requested : base + 'v2/';
+        var url = allowed.test(requested) ? requested : base;
         var frame = document.querySelector('[data-preview-frame]');
         frame.setAttribute('src', url);
         document.querySelector('[data-exit]').setAttribute('href', url);
 
         var query = url.indexOf('?') >= 0 ? url.slice(url.indexOf('?')) : '';
-        var version = (url.slice(base.length).match(/^v[1-4]/) || ['v2'])[0];
+        var version = (url.slice(base.length).match(/v[1-5]/) || ['v5'])[0];
         document.querySelectorAll('[data-preview-version]').forEach(function (a) {
           var v = a.dataset.previewVersion;
-          a.setAttribute('href', location.pathname + '?url=' + encodeURIComponent(base + v + '/' + query));
+          a.setAttribute('href', location.pathname + '?url=' + encodeURIComponent(base + 'archived/' + v + '/' + query));
           if (v === version) a.setAttribute('aria-current', 'page');
         });
 

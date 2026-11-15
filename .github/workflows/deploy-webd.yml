@@ -1,0 +1,45 @@
+name: Wdrożenie na webd (webinar.przystanzmianyzawodowej.pl)
+
+# Produkcja: build wydania (strona główna = v5, bez przełącznika wersji) wgrywany przez FTPS
+# do katalogu subdomeny na hostingu webd.pl (public_html/webinar).
+# Wymaga sekretów repozytorium: FTP_SERVER, FTP_USERNAME, FTP_PASSWORD (konto FTP ograniczone do public_html/webinar).
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-webd
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      FTP_SERVER: ${{ secrets.FTP_SERVER }}
+    steps:
+      - name: Brak sekretów FTP – pomijam wdrożenie
+        if: env.FTP_SERVER == ''
+        run: echo "::notice::Ustaw sekrety FTP_SERVER, FTP_USERNAME, FTP_PASSWORD (docs/wdrozenie.md), żeby wdrażać na webd."
+      - uses: actions/checkout@v4
+        if: env.FTP_SERVER != ''
+      - uses: actions/setup-node@v4
+        if: env.FTP_SERVER != ''
+        with:
+          node-version: 22
+          cache: npm
+      - if: env.FTP_SERVER != ''
+        run: npm ci
+      - if: env.FTP_SERVER != ''
+        run: npm run build:release
+      - name: Wysyłka FTPS do public_html/webinar
+        if: env.FTP_SERVER != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./dist/
+          # Konto FTP ma katalog domowy = public_html/webinar, więc wysyłamy do jego korzenia.
+          server-dir: ./

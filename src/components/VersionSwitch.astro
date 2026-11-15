@@ -9,14 +9,16 @@
 import { eventConfig } from '../config/event.config';
 import { withBase } from '../lib/paths';
 
-export type Version = 'v1' | 'v2' | 'v3' | 'v4';
+export type Version = 'v1' | 'v2' | 'v3' | 'v4' | 'v5';
 interface Props {
   current: Version;
 }
 const { current } = Astro.props;
-const versions: Version[] = ['v1', 'v2', 'v3', 'v4'];
+const versions: Version[] = ['v1', 'v2', 'v3', 'v4', 'v5'];
 const previewBase = withBase('podglad/');
-const previewHref = `${previewBase}?url=${encodeURIComponent(withBase(`${current}/`))}`;
+/** Wersje archiwalne leżą pod /archived/vN/; v5 jest też stroną główną. */
+const versionHref = (v: Version) => withBase(`archived/${v}/`);
+const previewHref = `${previewBase}?url=${encodeURIComponent(versionHref(current))}`;
 ---
 
 {
@@ -24,7 +26,7 @@ const previewHref = `${previewBase}?url=${encodeURIComponent(withBase(`${current
     <nav class="vswitch" aria-label="Wersja prototypu">
       <span class="vswitch__label">Wersja</span>
       {versions.map((v) => (
-        <a href={withBase(`${v}/`)} data-version-link data-version={v} aria-current={v === current ? 'page' : undefined}>
+        <a href={versionHref(v)} data-version-link data-version={v} aria-current={v === current ? 'page' : undefined}>
           {v}
         </a>
       ))}
@@ -32,7 +34,7 @@ const previewHref = `${previewBase}?url=${encodeURIComponent(withBase(`${current
       <a class="vswitch__dev" href={previewHref} data-device-link="mobile" aria-label="Podgląd mobile (iPhone 15)" title="Podgląd mobile (iPhone 15)">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="7" y="2" width="10" height="20" rx="2" /><path d="M11 18h2" /></svg>
       </a>
-      <a class="vswitch__dev" href={withBase(`${current}/`)} data-device-link="desktop" aria-label="Podgląd desktop" title="Podgląd desktop" aria-current="true">
+      <a class="vswitch__dev" href={versionHref(current)} data-device-link="desktop" aria-label="Podgląd desktop" title="Podgląd desktop" aria-current="true">
         <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="2" y="4" width="20" height="13" rx="2" /><path d="M8 21h8M12 17v4" /></svg>
       </a>
     </nav>
@@ -139,7 +141,7 @@ const previewHref = `${previewBase}?url=${encodeURIComponent(withBase(`${current
       display: none;
     }
     .vswitch a {
-      min-width: 34px;
+      min-width: 30px;
     }
   }
 </style>

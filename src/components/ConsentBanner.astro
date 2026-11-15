@@ -2,9 +2,15 @@
 import { copy } from '../config/copy';
 import { eventConfig } from '../config/event.config';
 const c = copy.consent;
+
+interface Props {
+  /** Pokaż baner dopiero po pierwszym przewinięciu (v5 – formularz na całym pierwszym ekranie). */
+  defer?: boolean;
+}
+const { defer = false } = Astro.props;
 ---
 
-<section class="consent" data-consent-banner aria-label="Zgoda na pliki cookies" hidden>
+<section class="consent" data-consent-banner data-consent-defer={defer ? '' : undefined} aria-label="Zgoda na pliki cookies" hidden>
   <div class="consent__inner">
     <p>
       {c.text} <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">{c.policy}</a>

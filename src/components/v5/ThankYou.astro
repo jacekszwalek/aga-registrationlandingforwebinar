@@ -1,9 +1,9 @@
 ---
-import '../../styles/v3.css';
+import '../../styles/v5.css';
 import Base from '../../layouts/Base.astro';
-import Header from '../../components/Header.astro';
-import Footer from '../../components/v3/Footer.astro';
-import ConsentBanner from '../../components/ConsentBanner.astro';
+import Header from '../Header.astro';
+import Footer from '../v3/Footer.astro';
+import ConsentBanner from '../ConsentBanner.astro';
 import { copy } from '../../config/copy';
 import { eventConfig, TODO_MARK } from '../../config/event.config';
 import { googleCalendarUrl } from '../../lib/calendar';
@@ -11,11 +11,15 @@ import { calendarEventFromConfig } from '../../lib/calendarEvent';
 import { formatDate, formatTimeRange } from '../../lib/format';
 import { withBase } from '../../lib/paths';
 
+interface Props {
+  path: string;
+}
+const { path } = Astro.props;
 const t = copy.thankYou;
 const cal = calendarEventFromConfig();
 ---
 
-<Base title={t.metaTitle} description={copy.meta.description} noindex path="v3/dziekuje/">
+<Base title={t.metaTitle} description={copy.meta.description} noindex path={path}>
   <script is:inline slot="head">
     (function () {
       var d = document.documentElement;
@@ -30,7 +34,7 @@ const cal = calendarEventFromConfig();
       d.dataset.nl = nl;
     })();
   </script>
-  <Header version="v3" centered />
+  <Header version="v5" centered />
   <main id="main" class="ty">
     <div class="container ty__inner">
       <section class="card ty__hero" aria-labelledby="ty-title">

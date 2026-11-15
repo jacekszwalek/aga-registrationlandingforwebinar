@@ -1,7 +1,8 @@
 name: Podgląd na GitHub Pages
 
-# Buduje prototyp pod https://jacekszwalek.github.io/aga-registrationlandingforwebinar/
-# i publikuje go na gałęzi gh-pages (Settings → Pages → Deploy from a branch → gh-pages / root).
+# PODGLĄD prototypu (wszystkie wersje v1–v5 z przełącznikiem) pod
+# https://jacekszwalek.github.io/aga-registrationlandingforwebinar/ – gałąź gh-pages.
+# Produkcja (webinar.przystanzmianyzawodowej.pl na webd.pl): deploy-webd.yml.
 on:
   push:
     branches: [main]
@@ -24,10 +25,7 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npm run build
-        env:
-          SITE_URL: https://jacekszwalek.github.io
-          BASE_PATH: /${{ github.event.repository.name }}
+      - run: npm run build:pages
       - name: Publikacja na gałęzi gh-pages
         working-directory: dist
         run: |

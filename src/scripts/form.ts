@@ -2,6 +2,7 @@ import { formMessages } from '../config/formMessages';
 import { eventConfig } from '../config/event.config';
 import { extractUtm, serializeUtm } from '../lib/utm';
 import { withBase } from '../lib/paths';
+import { mailerLiteBody, mailerLiteEndpoint } from '../lib/mailerlite';
 import { track, trackOnce } from './track';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -54,11 +55,14 @@ function setFieldError(form: HTMLFormElement, field: string, message: string | n
 function validate(form: HTMLFormElement): Array<{ field: string; reason: string; message: string }> {
   const e = formMessages;
   const email = (form.elements.namedItem('email') as HTMLInputElement).value.trim();
-  const name = ((form.elements.namedItem('name') as HTMLInputElement | null)?.value ?? '').trim();
+  const nameInput = form.elements.namedItem('name') as HTMLInputElement | null;
+  const name = (nameInput?.value ?? '').trim();
   const errors: Array<{ field: string; reason: string; message: string }> = [];
   if (!email) errors.push({ field: 'email', reason: 'required', message: e.emailRequired });
   else if (!EMAIL_RE.test(email)) errors.push({ field: 'email', reason: 'invalid', message: e.emailInvalid });
-  if (name.length > 60) errors.push({ field: 'name', reason: 'too_long', message: e.nameTooLong });
+  // Imię jest wymagane tylko tam, gdzie pole ma atrybut required (v5).
+  if (nameInput?.required && !name) errors.unshift({ field: 'name', reason: 'required', message: e.nameRequired });
+  else if (name.length > 60) errors.push({ field: 'name', reason: 'too_long', message: e.nameTooLong });
   return errors;
 }
 
@@ -81,6 +85,23 @@ async function send(payload: SignupPayload): Promise<void> {
     await new Promise((r) => setTimeout(r, 600));
     const fail = eventConfig.allowPreviewParams && new URLSearchParams(location.search).get('mock') === 'fail';
     if (fail) throw new Error('mock network error');
+    return;
+  }
+  if (eventConfig.form.mode === 'mailerlite') {
+    const ml = eventConfig.mailerlite;
+    const formId = payload.state === 'after' ? ml.forms.recording : ml.forms.registration;
+    if (!formId) throw new Error('Brak ID formularza MailerLite w event.config.ts');
+    const res = await fetch(mailerLiteEndpoint({ accountId: ml.accountId, formId }), {
+      method: 'POST',
+      body: mailerLiteBody({
+        email: payload.email,
+        name: payload.name,
+        webinarSource: payload.webinar_source,
+        newsletterGroupId: payload.newsletter ? ml.newsletterGroupId : null,
+      }),
+    });
+    const data = (await res.json().catch(() => null)) as { success?: boolean } | null;
+    if (!res.ok || data?.success === false) throw new Error(`MailerLite ${res.status}`);
     return;
   }
   const res = await fetch(withBase('api/subscribe'), {
@@ -146,7 +167,7 @@ function bindForm(form: HTMLFormElement): void {
       } catch {
         /* brak sessionStorage – strona podziękowania pokaże wariant domyślny */
       }
-      location.assign(withBase(form.dataset.thanks || 'v2/dziekuje/'));
+      location.assign(withBase(form.dataset.thanks || 'dziekuje/'));
     } catch {
       track('form_error', { form: formId, field: 'network', reason: 'network' });
       formError.textContent = formMessages.network;

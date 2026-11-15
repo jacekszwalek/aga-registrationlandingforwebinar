@@ -2,14 +2,24 @@ import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { dismissConsent, isAllowedLink, isMobile, openAt, visibleText, type State } from './helpers';
 
-const V2 = '/v2/';
+const V2 = '/archived/v2/';
 const lastPayload = (page: Page) => page.evaluate(() => JSON.parse(sessionStorage.getItem('pzz_mock_last_payload') || 'null'));
 const submit = (page: Page) => page.locator('#zapis-hero button[type="submit"]');
 
 test.describe('v2 – wejście i pierwszy ekran', () => {
-  test('adres główny przekierowuje do v2 z zachowaniem UTM-ów', async ({ page }) => {
+  test('adres główny to v5 (bez przekierowania), zapis prowadzi na /dziekuje/', async ({ page }) => {
+    await dismissConsent(page);
+    await page.clock.install({ time: new Date('2026-11-20T12:00:00+01:00') });
     await page.goto('/?utm_source=linkedin&utm_medium=social');
-    await page.waitForURL('**/v2/?utm_source=linkedin&utm_medium=social');
+    await expect(page).toHaveURL(/\/\?utm_source=linkedin&utm_medium=social$/);
+    await expect(page.locator('.hero5')).toBeVisible();
+    await page.locator('.hero5__cta').click();
+    await page.locator('#hero-name').fill('Anna');
+    await page.locator('#hero-email').fill('anna@example.pl');
+    await page.locator('#zapis-hero button[type="submit"]').click();
+    await page.clock.runFor(1000);
+    await page.waitForURL(/\/dziekuje\/$/);
+    expect(new URL(page.url()).pathname).toBe('/dziekuje/');
   });
 
   test('H1 i przycisk zapisu na pierwszym ekranie – także na telefonie', async ({ page }) => {
@@ -21,7 +31,7 @@ test.describe('v2 – wejście i pierwszy ekran', () => {
     // Konkrety wydarzenia w różowej karcie zamiast dużego portretu.
     const card = page.locator('aside.event');
     await expect(card).toBeVisible();
-    await expect(card).toContainText('Online, 60 minut');
+    await expect(card).toContainText('Online, 90 minut');
     await expect(card).toContainText('Nagranie dla zapisanych');
   });
 
@@ -105,7 +115,7 @@ test.describe('v2 – formularz', () => {
     await page.locator('#hero-email').fill('anna@example.pl');
     await submit(page).click();
     await page.clock.runFor(1000);
-    await page.waitForURL('**/v2/dziekuje/');
+    await page.waitForURL('**/archived/v2/dziekuje/');
     expect(await lastPayload(page)).toMatchObject({
       email: 'anna@example.pl',
       name: '',
@@ -131,7 +141,7 @@ test.describe('v2 – formularz', () => {
     await page.locator('#hero-email').fill('bot@example.pl');
     await page.locator('#hero-website').fill('spam', { force: true });
     await submit(page).click();
-    await page.waitForURL('**/v2/dziekuje/');
+    await page.waitForURL('**/archived/v2/dziekuje/');
     expect(await lastPayload(page)).toBeNull();
   });
 });
@@ -176,7 +186,7 @@ test.describe('v2 – rozwijane treści i CTA', () => {
     await page.goto(`${V2}?state=after&utm_source=x`);
     await expect(page.locator('.vswitch a[aria-current="page"]')).toHaveText('v2');
     await page.locator('.vswitch a', { hasText: 'v1' }).click();
-    await page.waitForURL('**/v1/?state=after&utm_source=x');
+    await page.waitForURL('**/archived/v1/?state=after&utm_source=x');
     expect(await visibleText(page.locator('h1'))).toBe('Obejrzyj nagranie webinaru');
   });
 });
@@ -210,8 +220,8 @@ test.describe('v2 – dostępność (axe, WCAG 2.2 AA)', () => {
     const r = await new AxeBuilder({ page }).withTags(tags).analyze();
     expect(r.violations.map((v) => v.id)).toEqual([]);
   });
-  test('/v2/dziekuje/', async ({ page }) => {
-    await openAt(page, 'before', '/v2/dziekuje/');
+  test('/archived/v2/dziekuje/', async ({ page }) => {
+    await openAt(page, 'before', '/archived/v2/dziekuje/');
     const r = await new AxeBuilder({ page }).withTags(tags).analyze();
     expect(r.violations.map((v) => `${v.id}: ${v.nodes.map((n) => n.target).join(', ')}`)).toEqual([]);
   });
