@@ -26,6 +26,8 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build:pages
+      - name: Podgląd generatora UTM (/utmgen/)
+        run: cp -r utmgen dist/utmgen
       - name: Publikacja na gałęzi gh-pages
         working-directory: dist
         run: |

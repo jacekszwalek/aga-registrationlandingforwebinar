@@ -1,0 +1,36 @@
+name: Wdrożenie generatora UTM (przystanzmianyzawodowej.pl/utmgen)
+
+# Statyczna aplikacja z katalogu utmgen/ → public_html/utmgen na webd.pl przez FTPS.
+# Wymaga sekretów: FTP_SERVER (ten sam serwer co landing), UTMGEN_FTP_USERNAME, UTMGEN_FTP_PASSWORD
+# (osobne konto FTP z katalogiem public_html/utmgen – instrukcja: docs/utmgen.md).
+on:
+  push:
+    branches: [main]
+    paths: ['utmgen/**', '.github/workflows/deploy-utmgen.yml']
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-utmgen
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    env:
+      UTMGEN_FTP_USERNAME: ${{ secrets.UTMGEN_FTP_USERNAME }}
+    steps:
+      - name: Brak sekretów FTP – pomijam wdrożenie
+        if: env.UTMGEN_FTP_USERNAME == ''
+        run: echo "::notice::Ustaw sekrety UTMGEN_FTP_USERNAME i UTMGEN_FTP_PASSWORD (docs/utmgen.md), żeby wdrażać generator UTM."
+      - uses: actions/checkout@v4
+        if: env.UTMGEN_FTP_USERNAME != ''
+      - name: Wysyłka FTPS do public_html/utmgen
+        if: env.UTMGEN_FTP_USERNAME != ''
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.UTMGEN_FTP_USERNAME }}
+          password: ${{ secrets.UTMGEN_FTP_PASSWORD }}
+          protocol: ftps
+          local-dir: ./utmgen/
+          server-dir: ./

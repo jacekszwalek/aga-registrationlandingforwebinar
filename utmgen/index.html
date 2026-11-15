@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="pl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Generator linków UTM – Przystań Zmiany Zawodowej</title>
+  <link rel="icon" type="image/png" href="logo.png">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="app.js"></script>
+</head>
+<body>
+  <header class="top">
+    <img src="logo.png" alt="Przystań Zmiany Zawodowej" width="103" height="46">
+    <h1>Generator linków UTM</h1>
+    <button type="button" class="ghost" id="open-settings" aria-haspopup="dialog">Ustawienia kanałów</button>
+  </header>
+
+  <main>
+    <p class="lead">Wklej adres, wpisz nazwę kampanii, wybierz kanał – link powstaje od razu.</p>
+
+    <section class="card" aria-labelledby="base-title">
+      <h2 id="base-title" class="visually-hidden">Podstawowe dane</h2>
+
+      <div class="field">
+        <div class="label-row">
+          <label for="target">Adres strony</label>
+          <span class="help-wrap">
+            <button type="button" class="help" aria-label="Pomoc: adres strony" aria-describedby="tip-target">?</button>
+            <span role="tooltip" id="tip-target" class="tip" hidden>Wklej link do strony, na którą mają trafić osoby, np. <code>https://przystanzmianyzawodowej.pl/webinar/</code>. Jeśli link ma już parametry <code>utm_…</code>, zastąpimy je nowymi. Inne parametry i <code>#kotwica</code> zostają.</span>
+          </span>
+        </div>
+        <input id="target" type="url" inputmode="url" autocomplete="off" spellcheck="false" placeholder="https://przystanzmianyzawodowej.pl/webinar/">
+        <p class="note" id="target-note" aria-live="polite"></p>
+      </div>
+
+      <div class="field">
+        <div class="label-row">
+          <label for="campaign">Nazwa kampanii <span class="key">utm_campaign</span></label>
+          <span class="help-wrap">
+            <button type="button" class="help" aria-label="Pomoc: nazwa kampanii" aria-describedby="tip-campaign">?</button>
+            <span role="tooltip" id="tip-campaign" class="tip" hidden>Jedna nazwa dla <b>wszystkich</b> linków danego wydarzenia – dzięki temu w GA4 i MailerLite zobaczysz je razem. Wydarzenie: <code>RRRR-MM-DD-krotka-nazwa</code>, np. <code>2026-12-03-zostac-zmienic-wlasna-droga</code>. Stała oferta bez daty: np. <code>ebook-mechanizm</code>.</span>
+          </span>
+        </div>
+        <input id="campaign" type="text" autocomplete="off" spellcheck="false" placeholder="2026-12-03-zostac-zmienic-wlasna-droga" aria-describedby="campaign-rules">
+        <ul class="rules" id="campaign-rules">
+          <li><b>Format:</b> RRRR-MM-DD-krotka-nazwa</li>
+          <li><b>Długość:</b> do 50 znaków, 3–6 słów</li>
+          <li><b>Treść:</b> data + temat, bez danych osobowych</li>
+          <li><b>Znaki:</b> polskie litery, spacje i wielkie litery poprawimy sami</li>
+        </ul>
+        <ul class="notes" id="campaign-notes" aria-live="polite"></ul>
+      </div>
+
+      <div class="field">
+        <div class="label-row">
+          <label for="content">Materiał <span class="key">utm_content</span> <span class="opt">opcjonalnie</span></label>
+          <span class="help-wrap">
+            <button type="button" class="help" aria-label="Pomoc: materiał" aria-describedby="tip-content">?</button>
+            <span role="tooltip" id="tip-content" class="tip" hidden>Rozróżnia konkretne posty i grafiki w tej samej kampanii, np. <code>post-1</code>, <code>rolka-pytanie</code>, <code>grafika-a</code>. Dwa linki różniące się tylko materiałem to prosty test, który post działa lepiej. Zostaw puste, jeśli nie porównujesz.</span>
+          </span>
+        </div>
+        <input id="content" type="text" autocomplete="off" spellcheck="false" placeholder="np. post-1, grafika-a">
+        <p class="note" id="content-note" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <div class="tabs">
+      <div class="tablist" role="tablist" aria-label="Tryb">
+        <button type="button" role="tab" id="tab-single" aria-controls="panel-single" aria-selected="true">Jeden link</button>
+        <button type="button" role="tab" id="tab-set" aria-controls="panel-set" aria-selected="false" tabindex="-1">Komplet dla wydarzenia</button>
+      </div>
+      <span class="help-wrap">
+        <button type="button" class="help" aria-label="Pomoc: tryby" aria-describedby="tip-modes">?</button>
+        <span role="tooltip" id="tip-modes" class="tip" hidden><b>Jeden link</b> – gdy wrzucasz link w jedno miejsce. <b>Komplet</b> – na start promocji: linki dla wszystkich zaznaczonych miejsc naraz, do skopiowania lub pobrania jako plik dla Excela / Arkuszy Google.</span>
+      </span>
+    </div>
+
+    <section class="card" id="panel-single" role="tabpanel" aria-labelledby="tab-single">
+      <div class="grid2">
+        <div class="field">
+          <div class="label-row">
+            <label for="channel">Kanał <span class="key">utm_source</span></label>
+            <span class="help-wrap">
+              <button type="button" class="help" aria-label="Pomoc: kanał" aria-describedby="tip-channel">?</button>
+              <span role="tooltip" id="tip-channel" class="tip" hidden>Skąd przyjdzie osoba – serwis lub miejsce, np. <code>facebook</code>, <code>instagram</code>. Listę zmienisz w „Ustawieniach kanałów”.</span>
+            </span>
+          </div>
+          <select id="channel"></select>
+        </div>
+        <div class="field">
+          <div class="label-row">
+            <label for="placement">Miejsce <span class="key">utm_medium</span></label>
+            <span class="help-wrap">
+              <button type="button" class="help" aria-label="Pomoc: miejsce" aria-describedby="tip-placement">?</button>
+              <span role="tooltip" id="tip-placement" class="tip" hidden>Rodzaj miejsca w kanale, np. post (<code>social</code>), grupa (<code>group</code>), link w bio (<code>bio</code>), reklama (<code>paid</code>). Dzięki temu porównasz np. posty z grupami.</span>
+            </span>
+          </div>
+          <select id="placement"></select>
+        </div>
+      </div>
+      <div class="field" id="partner-field" hidden>
+        <label for="partner">Nazwa partnera</label>
+        <input id="partner" type="text" autocomplete="off" spellcheck="false" placeholder="np. ela, fundacja-xyz">
+      </div>
+
+      <div class="result" id="single-result" aria-live="polite">
+        <p class="empty">Uzupełnij adres strony i nazwę kampanii.</p>
+      </div>
+    </section>
+
+    <section class="card" id="panel-set" role="tabpanel" aria-labelledby="tab-set" hidden>
+      <div class="set-head">
+        <p class="small">Zaznacz miejsca, w których pojawi się link:</p>
+        <div class="quick">
+          <button type="button" class="ghost sm" data-select="social">Wszystkie social media</button>
+          <button type="button" class="ghost sm" data-select="all">Wszystko</button>
+          <button type="button" class="ghost sm" data-select="none">Wyczyść</button>
+        </div>
+      </div>
+      <div id="picker" class="picker"></div>
+      <div class="field" id="partner-set-field" hidden>
+        <label for="partner-set">Nazwa partnera</label>
+        <input id="partner-set" type="text" autocomplete="off" spellcheck="false" placeholder="np. ela, fundacja-xyz">
+      </div>
+
+      <div class="set-actions" id="set-actions" hidden>
+        <button type="button" class="btn" id="copy-all">Kopiuj wszystkie</button>
+        <button type="button" class="btn ghost" id="download-csv">Pobierz plik (CSV)</button>
+        <span class="help-wrap">
+          <button type="button" class="help" aria-label="Pomoc: eksport" aria-describedby="tip-export">?</button>
+          <span role="tooltip" id="tip-export" class="tip" hidden><b>Kopiuj wszystkie</b> – wklej do Arkusza Google lub Excela: kanał, miejsce i link trafią do osobnych kolumn. <b>Plik CSV</b> – otwiera się w Excelu z polskimi znakami; zawiera też wszystkie parametry osobno.</span>
+        </span>
+      </div>
+      <div id="set-result" class="set-result" aria-live="polite">
+        <p class="empty">Uzupełnij adres strony i nazwę kampanii.</p>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="settings" aria-labelledby="settings-title">
+    <form method="dialog" class="settings">
+      <div class="settings-head">
+        <h2 id="settings-title">Ustawienia kanałów</h2>
+        <button type="submit" class="close" aria-label="Zamknij">×</button>
+      </div>
+      <p class="small">Zmiany zapisują się w tej przeglądarce. <b>Kanał</b> = utm_source, <b>wartość</b> miejsca = utm_medium. W kanale możesz użyć <code>{nazwa}</code> – pojawi się pole do wpisania (np. <code>partner-{nazwa}</code>).</p>
+      <div id="editor"></div>
+      <div class="settings-actions">
+        <button type="button" class="btn ghost sm" id="add-channel">+ Dodaj kanał</button>
+        <button type="button" class="btn ghost sm" id="export-settings">Zapisz kopię ustawień</button>
+        <label class="btn ghost sm file">Wczytaj kopię<input type="file" id="import-settings" accept="application/json,.json"></label>
+        <button type="button" class="btn ghost sm danger" id="reset-settings">Przywróć domyślne</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
