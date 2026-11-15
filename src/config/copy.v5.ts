@@ -9,13 +9,13 @@ export const copyV5 = {
       'Pokażę Ci, jak uporządkować swoje pomysły i możliwości, by świadomie wybrać kierunek zawodowy, w którym wykorzystasz swój potencjał i znajdziesz więcej sensu.',
     afterHeadline: 'Obejrzyj nagranie webinaru',
     afterDescription:
-      'Zostaw imię i e-mail, a wyślę Ci link do nagrania. Obejrzysz je, kiedy chcesz, bez limitu czasu.',
+      'Zostaw imię i e-mail, a wyślę Ci link do nagrania. Obejrzysz je, kiedy chcesz – bez limitu czasu.',
   },
   /** Podgląd linku (Facebook, LinkedIn, WhatsApp): krótki tytuł z datą + opis. */
   share: {
     title: 'Zostać, zmienić pracę czy pójść własną drogą? Bezpłatny webinar 3 grudnia 2026',
     description:
-      'Bezpłatny webinar online z Agnieszką Baranowską: 3 grudnia 2026, 19:00, 90 min. Uporządkuj pomysły i świadomie wybierz kierunek zawodowy.',
+      'Bezpłatny webinar online z Agnieszką Baranowską – 3 grudnia 2026, 19:00, 90 min. Uporządkuj pomysły i świadomie wybierz kierunek zawodowy.',
   },
   form: {
     nameLabel: 'Imię',
@@ -29,7 +29,7 @@ export const copyV5 = {
     recording: 'Nagranie dla zapisanych',
   },
   host:
-    'Prowadzi Agnieszka Baranowska, psycholog i coach, wcześniej m.in. w McKinsey, Boeingu, Capgemini i COI. Pracuje z klientkami nad budowaniem satysfakcjonującego życia zawodowego.',
+    'Prowadzi Agnieszka Baranowska – psycholog i coach, wcześniej m.in. w McKinsey, Boeingu, Capgemini i COI. Pracuje z klientkami nad budowaniem satysfakcjonującego życia zawodowego.',
   pains: {
     heading: 'Czujesz, że zawodowo chcesz czegoś więcej, ale…',
     items: [
@@ -78,7 +78,7 @@ export const copyV5 = {
   },
   final: {
     before: 'Zarezerwuj miejsce',
-    during: 'Webinar trwa, dołącz',
+    during: 'Webinar trwa – dołącz',
     after: 'Obejrzyj nagranie',
     cta: { before: 'Zapisuję się bezpłatnie', during: 'Zapisuję się i dołączam', after: 'Wyślij mi nagranie' },
   },

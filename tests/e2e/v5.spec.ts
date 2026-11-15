@@ -67,7 +67,7 @@ test.describe('v5 – formularz', () => {
     await openForm(page);
     await expect(page.locator('#hero-name')).toBeFocused();
     await submit(page).click();
-    await expect(page.locator('#hero-name-error')).toHaveText('Wpisz swoje imię, tak się do Ciebie zwrócę w mailu.');
+    await expect(page.locator('#hero-name-error')).toHaveText('Wpisz swoje imię – tak się do Ciebie zwrócę w mailu.');
     await expect(page.locator('#hero-email-error')).toBeVisible();
     await expect(page.locator('#hero-name')).toBeFocused();
     await page.locator('#hero-name').fill('Anna');
@@ -110,7 +110,7 @@ test.describe('v5 – treść', () => {
     await expect(page.locator('.frame5 .stripe')).toBeAttached();
     const card = page.locator('.event5__card');
     for (const t of ['3\u00a0grudnia\u00a02026, czwartek, 19:00', 'Online, 90\u00a0min', 'Arkusz do pracy', 'Nagranie dla zapisanych']) await expect(card).toContainText(t);
-    await expect(card).toContainText('Prowadzi Agnieszka Baranowska, psycholog i coach');
+    await expect(card).toContainText('Prowadzi Agnieszka Baranowska – psycholog i coach');
     await expect(card.locator('.event5__photo img')).toHaveCount(1);
     expect(await card.locator('.event5__photo').evaluate((e) => getComputedStyle(e).borderRadius)).toBe('50%');
     await expect(page.getByText('Więcej o Agnieszce')).toHaveCount(0);
@@ -245,13 +245,8 @@ test('og:logo i logo organizacji (Schema.org)', async ({ page, request }) => {
   expect((await request.get('/logo.png')).ok()).toBe(true);
 });
 
-test('bez półpauz i pauz w treści; stopka bez danych administratora', async ({ page }) => {
-  for (const url of ['/', '/dziekuje/']) {
-    await page.goto(url);
-    const text = await page.evaluate(() => document.body.innerText + ' ' + document.title + ' ' +
-      [...document.querySelectorAll('meta[content], img[alt]')].map((e) => e.getAttribute('content') ?? e.getAttribute('alt')).join(' '));
-    expect(text, url).not.toMatch(/[–—]/);
-  }
+test('stopka bez danych administratora, z linkiem do polityki prywatności', async ({ page }) => {
+  await page.goto('/');
   await expect(page.locator('footer')).not.toContainText('NIP');
   await expect(page.locator('footer a', { hasText: 'Polityka prywatności' })).toBeVisible();
 });

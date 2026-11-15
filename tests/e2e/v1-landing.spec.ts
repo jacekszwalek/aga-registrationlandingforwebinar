@@ -41,7 +41,7 @@ test.describe('trzy stany strony', () => {
     await openAt(page, 'during');
     await expect(page.locator('html')).toHaveAttribute('data-state', 'during');
     await expect(page.locator('.live')).toBeVisible();
-    await expect(page.locator('.live')).toContainText('Webinar trwa. Dołącz teraz');
+    await expect(page.locator('.live')).toContainText('Webinar trwa – dołącz teraz');
     await expect(page.locator('[data-countdown]')).toBeHidden();
     await expect(page.locator('#zapis-hero input[name="email"]')).toBeEnabled();
   });

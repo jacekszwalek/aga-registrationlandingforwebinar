@@ -31,7 +31,7 @@ describe('format', () => {
   const [s] = parseSessions([{ start: '2026-12-03T19:00:00+01:00', end: '2026-12-03T20:00:00+01:00' }]);
   it('formatuje datę i godziny w strefie Europe/Warsaw', () => {
     expect(formatDate(s.start)).toBe('3 grudnia 2026');
-    expect(formatTimeRange(s)).toBe('19:00-20:00');
+    expect(formatTimeRange(s)).toBe('19:00–20:00');
   });
   it('odmienia liczebniki', () => {
     expect([1, 2, 5, 12, 22, 25].map((n) => plural(n, 'dzień', 'dni', 'dni'))).toEqual(['dzień', 'dni', 'dni', 'dni', 'dni', 'dni']);

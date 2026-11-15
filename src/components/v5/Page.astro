@@ -41,7 +41,7 @@ const [quote, ...moreQuotes] = copy.testimonials.items;
 const description = `${copyV5.hero.description}`;
 ---
 
-<Base title={`${copyV5.hero.headline} | Bezpłatny webinar | Przystań Zmiany Zawodowej`} description={description} path={path} ogTitle={copyV5.share.title} ogDescription={copyV5.share.description}>
+<Base title={`${copyV5.hero.headline} | Bezpłatny webinar – Przystań Zmiany Zawodowej`} description={description} path={path} ogTitle={copyV5.share.title} ogDescription={copyV5.share.description}>
   <Header version="v5" centered />
   <DuringBanner />
   <main id="main">
@@ -183,10 +183,10 @@ const description = `${copyV5.hero.description}`;
         <div data-show="before" data-countdown>
           <p class="final5__date">Start: <time datetime={iso}>{longDate}, {weekday}, {time}</time></p>
           <div class="final5__grid" aria-hidden="true">
-            <div><span data-unit="days">-</span><small data-label="days">dni</small></div>
-            <div><span data-unit="hours">-</span><small data-label="hours">godz.</small></div>
-            <div><span data-unit="minutes">-</span><small data-label="minutes">min</small></div>
-            <div><span data-unit="seconds">-</span><small data-label="seconds">sek.</small></div>
+            <div><span data-unit="days">–</span><small data-label="days">dni</small></div>
+            <div><span data-unit="hours">–</span><small data-label="hours">godz.</small></div>
+            <div><span data-unit="minutes">–</span><small data-label="minutes">min</small></div>
+            <div><span data-unit="seconds">–</span><small data-label="seconds">sek.</small></div>
           </div>
         </div>
         <button type="button" class="btn btn--white" data-open-form="final">
@@ -198,7 +198,7 @@ const description = `${copyV5.hero.description}`;
     </section>
   </main>
   <Footer />
-  <FormDialog thanks={thanks} withName lead="Podaj imię i e-mail, a wyślę Ci link do spotkania i przypomnienie." />
+  <FormDialog thanks={thanks} withName lead="Podaj imię i e-mail – wyślę Ci link do spotkania i przypomnienie." />
   <StickyCta />
   <ConsentBanner defer />
   <script>
