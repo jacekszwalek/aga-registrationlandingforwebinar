@@ -16,16 +16,16 @@ export const copy = {
   hero: {
     overlinePrefix: 'Bezpłatny webinar',
     headline: {
-      A: 'Jak zmienić pracę świadomie, bez rzucania wszystkiego i zaczynania od zera',
+      A: 'Jak zmienić pracę świadomie – bez rzucania wszystkiego i zaczynania od zera',
       B: 'Utknęłaś zawodowo? Na tym webinarze odkryjesz, co Cię blokuje i jaki jest Twój następny krok',
     },
     subtitle:
       'Bezpłatne spotkanie online z psycholożką i coachką ICF. Zobaczysz, co ogranicza Twoje zawodowe wybory, i wyjdziesz z planem jednego konkretnego działania.',
-    host: 'Prowadzi Agnieszka Baranowska, psycholożka i coachka ICF, wcześniej m.in. w McKinsey, Boeingu i Capgemini.',
+    host: 'Prowadzi Agnieszka Baranowska – psycholożka i coachka ICF, wcześniej m.in. w McKinsey, Boeingu i Capgemini.',
   },
 
   during: {
-    banner: 'Webinar trwa. Dołącz teraz',
+    banner: 'Webinar trwa – dołącz teraz',
     bannerText: 'Zapisz się, a link do spotkania wyślę Ci od razu mailem.',
     bannerCta: 'Dołączam',
   },
@@ -34,7 +34,7 @@ export const copy = {
     overline: 'Nagranie webinaru · bezpłatnie',
     headline: 'Obejrzyj nagranie webinaru',
     subtitle:
-      'Zostaw e-mail, a wyślę Ci link do nagrania. Obejrzysz je w dowolnym momencie, bez limitu czasu.',
+      'Zostaw e-mail, a wyślę Ci link do nagrania. Obejrzysz je w dowolnym momencie – bez limitu czasu.',
     newsletterLine: 'Dam Ci też znać o kolejnym webinarze.',
   },
 
@@ -89,7 +89,7 @@ export const copy = {
       {
         title: 'Jaki jest Twój następny krok',
         text: 'Zobaczysz, czym różni się działanie „dla poczucia produktywności” od takiego, które przybliża Cię do zmiany.',
-        result: 'Zaplanujesz jedno konkretne działanie, bez rzucania obecnej pracy.',
+        result: 'Zaplanujesz jedno konkretne działanie – bez rzucania obecnej pracy.',
       },
     ],
     closing: 'Nie musisz mieć gotowego planu na kolejne dziesięć lat. Wystarczy, że zaczniesz świadomie decydować, co dalej.',
@@ -100,9 +100,9 @@ export const copy = {
     name: 'Agnieszka Baranowska',
     role: 'Psycholożka, certyfikowana coachka ICF, założycielka Przystani Zmiany Zawodowej',
     paragraphs: [
-      'Przez ponad 8 lat pracowałam m.in. w McKinsey, Boeingu, Capgemini i COI. Znam od środka świat deadline’ów, projektów i wysokich oczekiwań.',
+      'Przez ponad 8 lat pracowałam m.in. w McKinsey, Boeingu, Capgemini i COI – znam od środka świat deadline’ów, projektów i wysokich oczekiwań.',
       'Sama jestem Dorosłą Najlepszą Uczennicą, która świadomie pokierowała swoją karierą.',
-      'Dziś pomagam ambitnym kobietom świadomie zdecydować, co dalej zawodowo, bez rzucania wszystkiego.',
+      'Dziś pomagam ambitnym kobietom świadomie zdecydować, co dalej zawodowo – bez rzucania wszystkiego.',
     ],
     photoPlaceholder: `Zdjęcie Agnieszki ${TODO_MARK}`,
   },
@@ -145,11 +145,11 @@ export const copy = {
     items: [
       {
         q: 'Czy muszę włączać kamerę?',
-        a: 'Nie. Możesz słuchać i notować, kamera i mikrofon są opcjonalne.',
+        a: 'Nie. Możesz słuchać i notować – kamera i mikrofon są opcjonalne.',
       },
       {
         q: 'Co, jeśli nie zdążę na żywo?',
-        a: 'Zapisz się mimo to. Po webinarze wyślę Ci mailem link do nagrania, bez limitu czasu.',
+        a: 'Zapisz się mimo to. Po webinarze wyślę Ci mailem link do nagrania – bez limitu czasu.',
       },
       { q: 'Czy webinar jest płatny?', a: 'Nie. Udział i nagranie są bezpłatne.' },
       {
@@ -169,7 +169,7 @@ export const copy = {
     metaTitle: 'Jesteś zapisana! | Przystań Zmiany Zawodowej',
     headline: { before: 'Jesteś zapisana!', after: 'Nagranie jest w drodze na Twoją skrzynkę' },
     inbox:
-      'Sprawdź skrzynkę, wysłałam Ci wiadomość z potwierdzeniem. Jeśli jej nie widzisz, zajrzyj do folderów Oferty i Spam.',
+      'Sprawdź skrzynkę – wysłałam Ci wiadomość z potwierdzeniem. Jeśli jej nie widzisz, zajrzyj do folderów Oferty i Spam.',
     calendarHeading: 'Zapisz termin w kalendarzu',
     google: 'Dodaj do Kalendarza Google',
     ics: 'Pobierz plik .ics',
@@ -187,7 +187,7 @@ export const copy = {
   },
 
   consent: {
-    text: 'Używam plików cookies do analityki i mierzenia skuteczności reklam, tylko za Twoją zgodą.',
+    text: 'Używam plików cookies do analityki i mierzenia skuteczności reklam – tylko za Twoją zgodą.',
     accept: 'Akceptuję',
     reject: 'Odrzucam',
     policy: 'Polityka prywatności',
