@@ -50,8 +50,23 @@ Te osoby **nie** są w „Zgodzie marketingowej”. Zgodę odzyskują same, zazn
 Bez zmian (nadal w użyciu lub nie dotyczą wydarzeń): „Formularz na pobranie ebooka - strona www”, „Przystań Zmiany Zawodowej”, „Zaproszenie do NL”, „Proces 1:1 – formularz wstępny”.
 Zmiana nazwy nie wpływa na kontakty, automatyzacje ani osadzone formularze.
 
-## 5. Formularz e-booka – czeka na Ciebie
-Zmiana w edytorze (nowy tekst + niezaznaczony checkbox → „Zgoda marketingowa”). Po zmianie zweryfikuję przez API (grupy formularza) i publiczny kod formularza (czy checkbox ma przypiętą grupę).
+## 5. Formularz e-booka – wykonane (Ty w edytorze, ja weryfikacja przez API i kod formularza)
+Weryfikacja 15.11.2026 („Formularz na pobranie ebooka - strona www”, `SFlwfQ`):
+
+| Sprawdzenie | Wynik |
+|---|---|
+| Grupy formularza | „E-book - pobranie” + „Zgoda marketingowa” ✅ |
+| „E-book - pobranie” | pole ukryte `groups[]=189157050550322906` – każdy zapis ✅ |
+| „Zgoda marketingowa” | checkbox `groups[]=204236857906562074`, **bez** `checked` (niezaznaczony) i **bez** `required` (nieobowiązkowy) ✅ |
+| Treść checkboxa | „Chcę otrzymywać newsletter oraz informacje o wydarzeniach i ofercie Przystani Zmiany Zawodowej” + „Zgoda jest dobrowolna – możesz ją wycofać w każdej chwili.” ✅ |
+| Tekst zgody | „Zapisując się, otrzymasz e-booka i wiadomości z nim związane.” ✅; stary „Zapis oznacza zgodę na…” – brak ✅ |
+| Stary checkbox newslettera | usunięty ✅ |
+| Double opt-in | **włączony** (Twoja decyzja – D4 dotyczy formularzy wydarzeń) |
+
+Uwagi:
+- **Double opt-in w e-booku**: w grupie „E-book - pobranie” jest dziś 68 niepotwierdzonych osób na 209 (33%) – nie dostały e-booka. Przy włączonym DOI e-book dostaje tylko ten, kto kliknie link w mailu potwierdzającym. Warto co jakiś czas sprawdzać ten odsetek; jeśli zostanie wysoki – rozważyć wyłączenie DOI także tu.
+- W tekście formularza przed checkboxem widnieje słowo „Ebook” – najpewniej nazwa sekcji grup zainteresowań. Sprawdź w podglądzie, czy wygląda naturalnie; jeśli nie – w edytorze ukryj tytuł sekcji.
+- Test: zapisz się na swój adres → po potwierdzeniu sprawdź, czy kontakt jest w „E-book - pobranie”, a w „Zgodzie marketingowej” tylko przy zaznaczonym checkboxie.
 
 ## 6. Przekierowanie /wyzwanie2/ → /webinar/ – czeka na Ciebie
 Nie mam dostępu do `public_html/.htaccess` (konta FTP widzą tylko `public_html/webinar` i `public_html/utmgen`). Instrukcja w TODO niżej; po zmianie sprawdzę curl-em kod 301. Stan dziś: `/wyzwanie2/` → **200** (strona działa, formularz zbiera zapisy).
@@ -103,7 +118,7 @@ Szkice nie są zaplanowane ani wysłane. Automatyzacji z mailami nie da się zbu
 6. **3 zawieszone wpisy w automatyzacji „Ebook”** (z lipca i września): *Automations → Ebook → Activity* → sprawdź, czy dostały mail „Gotowe! Twój przewodnik…”. Jeśli nie – wyślij im ręcznie tylko ten mail (to realizacja ich zamówienia, nie marketing). Jeśli tak – nic nie rób.
 7. **38 osób, które dostały zaproszenie na wyzwanie** (w tym 3 już po starcie): **nie wysyłaj przeprosin ani „sprostowań”** – kolejny mail bez zgody pogłębiłby problem. Te osoby nie dostaną więcej reklam, bo nie są w „Zgodzie marketingowej”.
 8. **Jak dalej komunikować się z osobami z e-booka bez ważnej zgody**: tylko maile związane z e-bookiem, o który prosiły (np. jeśli e-book się zaktualizuje – wysyłka nowej wersji). Zaproszenia na webinary, newsletter i oferty – **nie**. Kanały, by same do nas wróciły: link do webinaru na stronie e-booka i w samym e-booku (PDF), posty w social media z linkiem z generatora UTM. Kto zapisze się na webinar i zaznaczy checkbox – trafia do „Zgody marketingowej”.
-9. **Formularz e-booka** (blok C): *Forms → „Formularz na pobranie ebooka - strona www” → Edit*: tekst „Zapisując się, otrzymasz e-booka i wiadomości z nim związane.”; blok *Interest groups* z jedną pozycją „Zgoda marketingowa”, etykieta „Chcę otrzymywać newsletter Przystani Zmiany Zawodowej…”, **niezaznaczony**, **nieobowiązkowy**; wyłącz double opt-in (*Settings*); zapisz i opublikuj → daj znać, zweryfikuję przez API.
+9. ~~**Formularz e-booka**~~ – zrobione i zweryfikowane (sekcja 5). Zostało: zapis testowy na swój adres i podgląd słowa „Ebook” nad checkboxem.
 10. Rozważ: e-book pobierany także przez skrypt API (jak webinar) – wtedy grupy „Interakcja RRRR” i „Pierwsze wydarzenie” zadziałają też dla e-booka.
 
 ### Strona i porządki
