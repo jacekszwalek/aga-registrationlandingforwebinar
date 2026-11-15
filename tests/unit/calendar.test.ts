@@ -8,7 +8,7 @@ const event: CalendarEvent = {
   location: 'Online – link w mailu',
   url: 'https://webinar.przystanzmianyzawodowej.pl',
   sessions: parseSessions([{ start: '2026-12-03T19:00:00+01:00', end: '2026-12-03T20:00:00+01:00' }]),
-  uidPrefix: 'webinar-2026-12-03',
+  uidPrefix: '2026-12-03-zostac-zmienic-wlasna-droga',
 };
 const NOW = Date.parse('2026-11-11T10:00:00Z');
 
@@ -28,7 +28,7 @@ describe('buildIcs', () => {
   it('zawiera czasy w UTC i stabilny UID', () => {
     expect(ics).toContain('DTSTART:20261203T180000Z');
     expect(ics).toContain('DTEND:20261203T190000Z');
-    expect(ics).toContain('UID:webinar-2026-12-03-1@przystanzmianyzawodowej.pl');
+    expect(ics).toContain('UID:2026-12-03-zostac-zmienic-wlasna-droga-1@przystanzmianyzawodowej.pl');
     expect(ics).toContain('DTSTAMP:20261111T100000Z');
   });
   it('escapuje przecinki i średniki', () => {

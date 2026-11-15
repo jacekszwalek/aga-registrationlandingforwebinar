@@ -137,7 +137,7 @@ test.describe('v5 – treść', () => {
     await openAt(page, 'before', V5);
     await openForm(page);
     const ev = await page.evaluate(() => (window.__events ?? []).find((e) => e.name === 'form_open'));
-    expect(ev).toMatchObject({ webinar_id: 'webinar-2026-12-03', landing_version: 'v5' });
+    expect(ev).toMatchObject({ webinar_id: '2026-12-03-zostac-zmienic-wlasna-droga', landing_version: 'v5' });
   });
 
   test('stan after', async ({ page }) => {
@@ -200,7 +200,7 @@ test.describe('analityka po zgodzie', () => {
     // Zdarzenia lejka trafiają też do Clarity.
     await page.locator('.hero5__cta').click();
     const after = await page.evaluate(() => ((window as unknown as { clarity: { q: unknown[][] } }).clarity.q ?? []).map((a) => a.join(':')));
-    expect(after).toEqual(expect.arrayContaining(['event:form_open', 'event:form_start', 'set:webinar_id:webinar-2026-12-03']));
+    expect(after).toEqual(expect.arrayContaining(['event:form_open', 'event:form_start', 'set:webinar_id:2026-12-03-zostac-zmienic-wlasna-droga']));
   });
 });
 
@@ -212,4 +212,16 @@ test('archiwum: stare wersje pod /archived/vN/ działają i mają noindex', asyn
     expect((await page.request.get(`/archived/${v}/dziekuje/`)).status()).toBe(200);
   }
   expect((await page.request.get('/v1/')).status()).toBe(404);
+});
+
+test('podgląd linku: og:image 1200×630 z subdomeny i karta Twittera', async ({ page, request }) => {
+  await page.goto('/');
+  await expect(page.locator('meta[property="og:image"]')).toHaveAttribute('content', 'https://webinar.przystanzmianyzawodowej.pl/og-image.png');
+  await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute('content', '1200');
+  await expect(page.locator('meta[property="og:image:height"]')).toHaveAttribute('content', '630');
+  await expect(page.locator('meta[property="og:image:alt"]')).toHaveAttribute('content', /3 grudnia 2026/);
+  await expect(page.locator('meta[name="twitter:card"]')).toHaveAttribute('content', 'summary_large_image');
+  const img = await request.get('/og-image.png');
+  expect(img.ok()).toBe(true);
+  expect(img.headers()['content-type']).toContain('image/png');
 });
