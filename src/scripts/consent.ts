@@ -90,7 +90,16 @@ export function initConsent(): void {
 
   const existing = read();
   if (existing) apply(existing);
-  else show();
+  else if (banner.hasAttribute('data-consent-defer')) {
+    // v5: pierwszy ekran telefonu należy do formularza – baner pojawia się po pierwszym przewinięciu.
+    // Do tego czasu nic się nie ładuje (domyślna odmowa), więc zgoda nie jest pomijana.
+    const onScroll = () => {
+      if (window.scrollY < 80) return;
+      window.removeEventListener('scroll', onScroll);
+      show();
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+  } else show();
 
   banner.addEventListener('click', (e) => {
     const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('[data-consent]');

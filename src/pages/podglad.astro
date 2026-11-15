@@ -7,7 +7,7 @@
 import { withBase } from '../lib/paths';
 
 const base = withBase('');
-const versions = ['v1', 'v2', 'v3', 'v4'];
+const versions = ['v1', 'v2', 'v3', 'v4', 'v5'];
 ---
 
 <!doctype html>
@@ -168,7 +168,7 @@ const versions = ['v1', 'v2', 'v3', 'v4'];
     <script is:inline define:vars={{ base }}>
       (function () {
         var esc = base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        var allowed = new RegExp('^' + esc + 'v[1-4]/(dziekuje/)?(\\?[^#]*)?$');
+        var allowed = new RegExp('^' + esc + 'v[1-5]/(dziekuje/)?(\\?[^#]*)?$');
         var requested = new URLSearchParams(location.search).get('url') || '';
         var url = allowed.test(requested) ? requested : base + 'v2/';
         var frame = document.querySelector('[data-preview-frame]');
@@ -176,7 +176,7 @@ const versions = ['v1', 'v2', 'v3', 'v4'];
         document.querySelector('[data-exit]').setAttribute('href', url);
 
         var query = url.indexOf('?') >= 0 ? url.slice(url.indexOf('?')) : '';
-        var version = (url.slice(base.length).match(/^v[1-4]/) || ['v2'])[0];
+        var version = (url.slice(base.length).match(/^v[1-5]/) || ['v2'])[0];
         document.querySelectorAll('[data-preview-version]').forEach(function (a) {
           var v = a.dataset.previewVersion;
           a.setAttribute('href', location.pathname + '?url=' + encodeURIComponent(base + v + '/' + query));

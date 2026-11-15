@@ -9,12 +9,12 @@
 import { eventConfig } from '../config/event.config';
 import { withBase } from '../lib/paths';
 
-export type Version = 'v1' | 'v2' | 'v3' | 'v4';
+export type Version = 'v1' | 'v2' | 'v3' | 'v4' | 'v5';
 interface Props {
   current: Version;
 }
 const { current } = Astro.props;
-const versions: Version[] = ['v1', 'v2', 'v3', 'v4'];
+const versions: Version[] = ['v1', 'v2', 'v3', 'v4', 'v5'];
 const previewBase = withBase('podglad/');
 const previewHref = `${previewBase}?url=${encodeURIComponent(withBase(`${current}/`))}`;
 ---
@@ -139,7 +139,7 @@ const previewHref = `${previewBase}?url=${encodeURIComponent(withBase(`${current
       display: none;
     }
     .vswitch a {
-      min-width: 34px;
+      min-width: 30px;
     }
   }
 </style>
