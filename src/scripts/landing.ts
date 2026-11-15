@@ -18,7 +18,8 @@ function openFormDialog(source: string): boolean {
     d.showModal();
     track('form_open', { source });
   }
-  d.querySelector<HTMLInputElement>('input[name="email"]')?.focus();
+  // Fokus w pierwszym widocznym polu (v5: imię, v3: e-mail).
+  d.querySelector<HTMLInputElement>('input[type="text"]:not([tabindex="-1"]), input[type="email"]')?.focus();
   return true;
 }
 
