@@ -10,6 +10,7 @@ export function calendarEventFromConfig(): CalendarEvent {
     location: 'Online – link w mailu',
     url: eventConfig.site.url,
     sessions: parseSessions(eventConfig.sessions),
-    uidPrefix: `webinar-${eventConfig.sessions[0].start.slice(0, 10)}`,
+    // Stały UID z identyfikatora webinaru – ponowny import nie dubluje wydarzenia.
+    uidPrefix: eventConfig.id,
   };
 }

@@ -20,6 +20,7 @@ export interface EventConfig {
   /**
    * Identyfikator TEGO webinaru – trafia do każdego zdarzenia GA4/Clarity/Meta (parametr webinar_id)
    * i do nazw formularzy/grup MailerLite, żeby dane nie mieszały się z poprzednimi edycjami.
+   * Konwencja (od 15.11.2026): RRRR-MM-DD-krotka-nazwa, np. 2026-12-03-zostac-zmienic-wlasna-droga.
    */
   id: string;
   timeZone: 'Europe/Warsaw';
@@ -84,7 +85,7 @@ const RELEASE = import.meta.env?.PUBLIC_RELEASE === '1';
 
 export const eventConfig: EventConfig = {
   name: 'Bezpłatny webinar Przystani Zmiany Zawodowej',
-  id: 'webinar-2026-12-03',
+  id: '2026-12-03-zostac-zmienic-wlasna-droga',
   timeZone: 'Europe/Warsaw',
   // Jedno spotkanie, 90 minut (potwierdzone 15.11.2026).
   sessions: [{ start: '2026-12-03T19:00:00+01:00', end: '2026-12-03T20:30:00+01:00' }],
