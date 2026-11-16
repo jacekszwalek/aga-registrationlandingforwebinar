@@ -25,11 +25,15 @@ const TARGET = 'https://przystanzmianyzawodowej.pl/webinar/';
 
 const pick = (page: Page, value: string) => page.locator(`#picker input[value="${value}"]`);
 
-test('domyślnie dzisiejsza data jako kampania', async ({ page }) => {
+test('kampania: pole puste, bieżąca data tylko jako podpowiedź w tle', async ({ page }) => {
   await page.clock.setFixedTime(new Date('2026-11-16T10:00:00+01:00'));
   await open(page);
-  await expect(page.locator('#campaign')).toHaveValue('261116');
-  await expect(page.locator('#campaign-date')).toHaveValue('2026-11-16');
+  await expect(page.locator('#campaign')).toHaveValue('');
+  await expect(page.locator('#campaign')).toHaveAttribute('placeholder', 'np. 261116');
+  await expect(page.locator('#campaign-date')).toHaveValue('');
+  await expect(page.locator('#tip-campaign')).not.toContainText('startuje z dzisiejszą datą');
+  await page.locator('#campaign-date').fill('2026-12-03');
+  await expect(page.locator('#campaign')).toHaveValue('261203');
 });
 
 test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) => {
@@ -92,7 +96,8 @@ test('rodzaj kampanii: jednorazowe (data) i cykliczne/stałe (nazwa) – dymek i
   const rules = page.locator('#campaign-rules');
   const tip = page.locator('#tip-campaign');
   await expect(page.locator('input[name="ctype"][value="event"]')).toBeChecked();
-  await expect(page.locator('#campaign')).toHaveValue('261116');
+  await expect(page.locator('#campaign')).toHaveValue('');
+  await page.fill('#campaign', '261203');
   await expect(rules).toContainText('dwa wydarzenia jednego dnia: 261203-2');
   // jeden wspólny dymek dla obu rodzajów
   await expect(tip).toContainText('Dwa wydarzenia tego samego dnia');
@@ -102,7 +107,7 @@ test('rodzaj kampanii: jednorazowe (data) i cykliczne/stałe (nazwa) – dymek i
   await page.locator('.seg label', { hasText: 'Cykliczne' }).click();
   await expect(page.locator('#campaign-date')).toBeHidden();
   await expect(page.locator('#campaign')).toHaveValue('');
-  await expect(page.locator('#campaign')).toHaveAttribute('placeholder', 'ebook-najlepsza-uczennica');
+  await expect(page.locator('#campaign')).toHaveAttribute('placeholder', 'np. ebook-najlepsza-uczennica');
   await expect(rules).toHaveText('Nazwa lub tytuł · zawsze ta sama · małe litery i myślniki · widoczna w linku');
   await expect(rules).not.toContainText('poprawimy');
   await expect(tip).toContainText('zawsze tej samej nazwy');
@@ -112,7 +117,7 @@ test('rodzaj kampanii: jednorazowe (data) i cykliczne/stałe (nazwa) – dymek i
 
   // powrót do daty i ponownie do nazwy – nazwa zapamiętana
   await page.locator('.seg label', { hasText: 'Wydarzenie jednorazowe' }).click();
-  await expect(page.locator('#campaign')).toHaveValue('261116');
+  await expect(page.locator('#campaign')).toHaveValue('261203'); // data z kalendarza wraca
   await page.locator('.seg label', { hasText: 'Cykliczne' }).click();
   await expect(page.locator('#campaign')).toHaveValue('ebook-najlepsza-uczennica');
   await page.reload();

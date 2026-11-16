@@ -409,12 +409,12 @@ function download(name, text, type) {
 /* ---------- Rodzaj kampanii ---------- */
 const CAMPAIGN_TYPES = {
   event: {
-    placeholder: '261203',
+    placeholder: `np. ${todayCampaign().campaign}`, // bieżąca data jako podpowiedź w tle (pole puste)
     inputMode: 'numeric',
     rules: 'Data rozpoczęcia RRMMDD · link nie zdradza, czego dotyczy kampania · dwa wydarzenia jednego dnia: 261203-2',
   },
   name: {
-    placeholder: 'ebook-najlepsza-uczennica',
+    placeholder: 'np. ebook-najlepsza-uczennica',
     inputMode: 'text',
     rules: 'Nazwa lub tytuł · zawsze ta sama · małe litery i myślniki · widoczna w linku',
   },
@@ -433,16 +433,13 @@ function applyCampaignType(type, first = false) {
   els.campaign.inputMode = t.inputMode;
   els.campaign.placeholder = t.placeholder;
   $('campaign-rules').textContent = t.rules;
-  els.campaign.value = isEvent ? campaignFromDate($('campaign-date').value) || todayCampaign().campaign : state.name;
+  // Jednorazowe: pole puste (bieżąca data tylko jako podpowiedź w tle) albo data wybrana wcześniej w kalendarzu.
+  els.campaign.value = isEvent ? campaignFromDate($('campaign-date').value) : state.name;
   if (!first) els.campaign.focus();
 }
 
 /* ---------- Start ---------- */
 function init() {
-  // Domyślnie dzisiejsza data (RRMMDD) – za każdym otwarciem, żeby nie zostawała kampania z poprzedniego dnia.
-  // Wydarzenie jednorazowe: domyślnie dzisiejsza data (RRMMDD) – za każdym otwarciem.
-  const today = todayCampaign();
-  $('campaign-date').value = today.iso;
   applyCampaignType(state.ctype, true);
   document.querySelectorAll('input[name="ctype"]').forEach((r) => {
     r.checked = r.value === state.ctype;
@@ -466,7 +463,7 @@ function init() {
   els.campaign.addEventListener('input', () => {
     if (state.ctype !== 'event') return;
     const m = /^(\d{2})(\d{2})(\d{2})/.exec(slugify(els.campaign.value));
-    if (m) $('campaign-date').value = `20${m[1]}-${m[2]}-${m[3]}`;
+    $('campaign-date').value = m ? `20${m[1]}-${m[2]}-${m[3]}` : '';
   });
   $('campaign-date').addEventListener('change', (e) => {
     const v = campaignFromDate(e.target.value);
