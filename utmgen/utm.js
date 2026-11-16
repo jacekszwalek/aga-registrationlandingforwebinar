@@ -86,8 +86,8 @@ function isValidYymmdd(v) {
 
 /**
  * Podpowiedzi do nazwy kampanii (po porządkach).
- * Zalecenie: sama data wydarzenia RRMMDD (np. 261203) – link nie zdradza, czego dotyczy kampania.
- * Drugie wydarzenie tego samego dnia: 261203-2.
+ * Wydarzenie jednorazowe – data rozpoczęcia RRMMDD (np. 261203; drugie tego dnia: 261203-2).
+ * Wydarzenie cykliczne lub stała kampania – nazwa/tytuł, np. ebook-najlepsza-uczennica.
  */
 export function campaignNotes(rawValue) {
   const raw = String(rawValue ?? '');
@@ -96,9 +96,9 @@ export function campaignNotes(rawValue) {
   if (!value) return notes;
   if (value !== raw.trim()) notes.push({ level: 'info', code: 'cleaned', text: `Zapiszemy jako: ${value}` });
   if (/[a-z]/.test(value)) {
-    notes.push({ level: 'warn', code: 'reveals', text: 'Słowa w nazwie będą widoczne w linku dla każdego. Zalecamy samą datę wydarzenia: RRMMDD, np. 261203.' });
+    notes.push({ level: 'tip', code: 'name', text: 'Nazwa – dla wydarzenia cyklicznego lub stałej kampanii. Jest widoczna w linku. Wydarzenie jednorazowe? Wpisz datę rozpoczęcia RRMMDD.' });
   } else if (!/^\d{6}(-\d{1,2})?$/.test(value)) {
-    notes.push({ level: 'tip', code: 'format', text: 'Zalecany format: RRMMDD – sama data wydarzenia, np. 261203 (3 grudnia 2026).' });
+    notes.push({ level: 'tip', code: 'format', text: 'Wydarzenie jednorazowe: RRMMDD – data rozpoczęcia, np. 261203 (3 grudnia 2026).' });
   } else if (!isValidYymmdd(value.slice(0, 6))) {
     notes.push({ level: 'warn', code: 'baddate', text: 'To nie jest poprawna data RRMMDD – sprawdź miesiąc i dzień.' });
   }

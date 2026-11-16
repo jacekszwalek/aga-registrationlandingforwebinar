@@ -136,7 +136,7 @@ function renderNotes({ target, content }) {
 function missingText({ target, campaign }) {
   if (!target.ok && !campaign) return 'Wklej adres strony i wpisz kampanię.';
   if (!target.ok) return 'Wklej poprawny adres strony.';
-  if (!campaign) return 'Wpisz kampanię (datę wydarzenia RRMMDD).';
+  if (!campaign) return 'Wpisz kampanię – datę rozpoczęcia RRMMDD albo nazwę (wydarzenia cykliczne i stałe).';
   return '';
 }
 

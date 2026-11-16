@@ -32,17 +32,17 @@
 
       <div class="f">
         <div class="lab-row">
-          <label for="campaign">Kampania (RRMMDD)</label>
+          <label for="campaign">Kampania</label>
           <span class="help-wrap">
             <button type="button" class="help" aria-label="Pomoc: kampania" aria-describedby="tip-campaign">?</button>
-            <span role="tooltip" id="tip-campaign" class="tip" hidden>Wpisujemy <b>samą datę wydarzenia w formacie RRMMDD</b>, np. <code>261203</code> dla 3 grudnia 2026. Pole startuje z <b>dzisiejszą datą</b> – zmień ją na datę wydarzenia, którego dotyczy promocja. <b>Dlaczego data?</b> Parametry linku widzi każdy, kto w niego kliknie – data nie zdradza, czego dotyczy kampania. Jedna nazwa dla wszystkich linków wydarzenia – w GA4 i MailerLite zobaczysz je razem. Dwa wydarzenia tego samego dnia: <code>261203-2</code>. Czego dotyczy kampania, sprawdzisz po dacie – grupy wydarzeń w MailerLite zaczynają się od tej samej daty.</span>
+            <span role="tooltip" id="tip-campaign" class="tip" hidden><b>Wydarzenie jednorazowe</b> (np. webinar 3 grudnia) – <b>data rozpoczęcia w formacie RRMMDD</b>, np. <code>261203</code>. Pole startuje z dzisiejszą datą – zmień ją na datę wydarzenia albo wybierz z kalendarza. Data nie zdradza w linku, czego dotyczy kampania; czego dotyczy, sprawdzisz po dacie (grupy wydarzeń w MailerLite zaczynają się od tej samej daty). Dwa wydarzenia tego samego dnia: <code>261203-2</code>.<br><br><b>Wydarzenie cykliczne lub stała kampania</b> (np. e-book, cykl spotkań) – <b>nazwa lub tytuł</b>, np. <code>ebook-najlepsza-uczennica</code>. Zawsze ta sama nazwa – w GA4 i MailerLite zobaczysz całą historię razem. Nazwa jest widoczna w linku.</span>
           </span>
         </div>
         <div class="two">
-          <input id="campaign" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="261203" aria-describedby="campaign-rules">
+          <input id="campaign" type="text" autocomplete="off" spellcheck="false" placeholder="261203" aria-describedby="campaign-rules">
           <input id="campaign-date" type="date" aria-label="Wybierz datę wydarzenia z kalendarza">
         </div>
-        <p class="hint" id="campaign-rules">Data wydarzenia · link nie zdradza, czego dotyczy kampania · dwa wydarzenia jednego dnia: 261203-2</p>
+        <p class="hint" id="campaign-rules"><b>Jednorazowe:</b> data rozpoczęcia RRMMDD, np. 261203 · <b>cykliczne lub stałe:</b> nazwa, np. ebook-najlepsza-uczennica</p>
         <ul class="notes" id="campaign-notes" aria-live="polite"></ul>
       </div>
 

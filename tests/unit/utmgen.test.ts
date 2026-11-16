@@ -35,12 +35,13 @@ describe('utmgen – link', () => {
 });
 
 describe('utmgen – kampania i kanały', () => {
-  it('podpowiedzi: zalecana sama data RRMMDD', () => {
+  it('podpowiedzi: data RRMMDD (jednorazowe) albo nazwa (cykliczne/stałe)', () => {
     const codes = (v: string) => campaignNotes(v).map((n: { code: string }) => n.code);
     expect(campaignNotes('261203')).toEqual([]);
     expect(campaignNotes('261203-2')).toEqual([]);
-    expect(codes('Webinar Grudzień')).toEqual(['cleaned', 'reveals']);
-    expect(codes('2026-12-03-zostac')).toEqual(['reveals']);
+    expect(codes('Webinar Grudzień')).toEqual(['cleaned', 'name']);
+    expect(codes('ebook-najlepsza-uczennica')).toEqual(['name']);
+    expect(codes('2026-12-03-zostac')).toEqual(['name']);
     expect(codes('2026-12-03')).toEqual(['format']);
     expect(codes('261332')).toEqual(['baddate']);
     expect(codes('260229')).toEqual(['baddate']);

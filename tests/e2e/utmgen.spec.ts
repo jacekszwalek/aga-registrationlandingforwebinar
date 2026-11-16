@@ -38,7 +38,7 @@ test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) =
   await page.fill('#target', TARGET);
   await page.fill('#campaign', 'Zostać Zmienić');
   await expect(page.locator('#campaign-notes')).toContainText('Zapiszemy jako: zostac-zmienic');
-  await expect(page.locator('#campaign-notes')).toContainText('widoczne w linku');
+  await expect(page.locator('#campaign-notes')).toContainText('wydarzenia cyklicznego lub stałej kampanii');
   await page.locator('#campaign-date').fill('2026-12-03');
   await expect(page.locator('#campaign')).toHaveValue('261203');
   await expect(page.locator('#campaign-notes')).toBeEmpty();
