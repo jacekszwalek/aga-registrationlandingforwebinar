@@ -11,19 +11,15 @@
 </head>
 <body>
   <header class="top">
-    <img src="logo.png" alt="Przystań Zmiany Zawodowej" width="103" height="46">
+    <img src="logo.png" alt="Przystań Zmiany Zawodowej" width="72" height="32">
     <h1>Generator linków UTM</h1>
-    <button type="button" class="ghost" id="open-settings" aria-haspopup="dialog">Ustawienia kanałów</button>
+    <button type="button" class="top-link" id="open-settings" aria-haspopup="dialog">Kanały <span aria-hidden="true">⚙</span></button>
   </header>
 
-  <main>
-    <p class="lead">Wklej adres, wpisz datę wydarzenia jako kampanię, wybierz kanał – link powstaje od razu.</p>
-
-    <section class="card" aria-labelledby="base-title">
-      <h2 id="base-title" class="visually-hidden">Podstawowe dane</h2>
-
-      <div class="field">
-        <div class="label-row">
+  <main class="grid">
+    <section class="panel form" aria-label="Dane linku">
+      <div class="f">
+        <div class="lab-row">
           <label for="target">Adres strony</label>
           <span class="help-wrap">
             <button type="button" class="help" aria-label="Pomoc: adres strony" aria-describedby="tip-target">?</button>
@@ -34,133 +30,91 @@
         <p class="note" id="target-note" aria-live="polite"></p>
       </div>
 
-      <div class="field">
-        <div class="label-row">
-          <label for="campaign">Kampania <span class="key">utm_campaign</span></label>
+      <div class="f">
+        <div class="lab-row">
+          <label for="campaign">Kampania (RRMMDD)</label>
           <span class="help-wrap">
             <button type="button" class="help" aria-label="Pomoc: kampania" aria-describedby="tip-campaign">?</button>
-            <span role="tooltip" id="tip-campaign" class="tip" hidden>Wpisujemy <b>samą datę wydarzenia w formacie RRMMDD</b>, np. <code>261203</code> dla 3 grudnia 2026. Pole startuje z <b>dzisiejszą datą</b> – zmień ją na datę wydarzenia, którego dotyczy promocja. <b>Dlaczego?</b> Parametry linku widzi każdy, kto w niego kliknie – data nie zdradza, czego dotyczy kampania (np. tematu reklamy czy grupy docelowej). Jedna nazwa dla <b>wszystkich</b> linków danego wydarzenia – w GA4 i MailerLite zobaczysz je razem. Dwa wydarzenia tego samego dnia: <code>261203-2</code>. Czego dotyczy kampania, sprawdzisz po dacie – grupy wydarzeń w MailerLite zaczynają się od tej samej daty.</span>
+            <span role="tooltip" id="tip-campaign" class="tip" hidden>Wpisujemy <b>samą datę wydarzenia w formacie RRMMDD</b>, np. <code>261203</code> dla 3 grudnia 2026. Pole startuje z <b>dzisiejszą datą</b> – zmień ją na datę wydarzenia, którego dotyczy promocja. <b>Dlaczego data?</b> Parametry linku widzi każdy, kto w niego kliknie – data nie zdradza, czego dotyczy kampania. Jedna nazwa dla wszystkich linków wydarzenia – w GA4 i MailerLite zobaczysz je razem. Dwa wydarzenia tego samego dnia: <code>261203-2</code>. Czego dotyczy kampania, sprawdzisz po dacie – grupy wydarzeń w MailerLite zaczynają się od tej samej daty.</span>
           </span>
         </div>
-        <div class="campaign-row">
+        <div class="two">
           <input id="campaign" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="261203" aria-describedby="campaign-rules">
-          <label class="date-pick">
-            <span>albo wybierz datę</span>
-            <input id="campaign-date" type="date" aria-label="Data wydarzenia – wypełni kampanię">
-          </label>
+          <input id="campaign-date" type="date" aria-label="Wybierz datę wydarzenia z kalendarza">
         </div>
-        <ul class="rules" id="campaign-rules">
-          <li><b>Format:</b> RRMMDD – data wydarzenia, np. 261203</li>
-          <li><b>Dlaczego:</b> link nie zdradza, czego dotyczy kampania</li>
-          <li><b>Dwa wydarzenia jednego dnia:</b> 261203-2</li>
-        </ul>
+        <p class="hint" id="campaign-rules">Data wydarzenia · link nie zdradza, czego dotyczy kampania · dwa wydarzenia jednego dnia: 261203-2</p>
         <ul class="notes" id="campaign-notes" aria-live="polite"></ul>
       </div>
 
-      <details class="field more-field" id="content-details">
-        <summary>Materiał <span class="key">utm_content</span> <span class="opt">opcjonalnie</span><span class="content-badge" id="content-badge" hidden></span></summary>
-        <div class="label-row">
-          <label for="content">Materiał (utm_content)</label>
+      <div class="f">
+        <div class="lab-row">
+          <span class="lab" id="places-label">Miejsca</span>
           <span class="help-wrap">
-            <button type="button" class="help" aria-label="Pomoc: materiał" aria-describedby="tip-content">?</button>
-            <span role="tooltip" id="tip-content" class="tip" hidden><b>utm_content</b> odróżnia konkretne linki w tej samej kampanii i kanale – który przycisk, grafika albo post przyniósł zapis. <b>Przykład:</b> ten sam post wrzucasz z dwiema grafikami – w jednym linku wpisz <code>grafika-z-kubkiem</code>, w drugim <code>grafika-z-laptopem</code>; w GA4 zobaczysz, która dała więcej zapisów. Albo <code>link-rejestracja</code> (przycisk w poście) i <code>link-komentarz</code>. Nie wpisuj nic, co zdradza treść reklamy czy grupę docelową – też widać to w linku. Zostaw puste, jeśli nie porównujesz.</span>
+            <button type="button" class="help" aria-label="Pomoc: miejsca" aria-describedby="tip-places">?</button>
+            <span role="tooltip" id="tip-places" class="tip" hidden>Zaznacz, gdzie wrzucasz link – dla każdego miejsca powstanie osobny link. Jeden link = jedno zaznaczone miejsce. Kanał to <code>utm_source</code> (np. <code>facebook</code>), miejsce to <code>utm_medium</code> (szary napis po prawej, np. <code>group</code>). Listę zmienisz w „Kanały ⚙” – tam też ukryjesz miejsca, których teraz nie używasz.</span>
           </span>
         </div>
-        <input id="content" type="text" autocomplete="off" spellcheck="false" placeholder="np. link-rejestracja, grafika-z-kubkiem">
-        <p class="note" id="content-note" aria-live="polite"></p>
+        <div class="quick">
+          <button type="button" class="mini" data-select="social">Social media</button>
+          <button type="button" class="mini" data-select="all">Wszystko</button>
+          <button type="button" class="mini" data-select="none">Wyczyść</button>
+        </div>
+        <div id="picker" class="picker" role="group" aria-labelledby="places-label"></div>
+        <div class="f partner" id="partner-field" hidden>
+          <label for="partner">Nazwa partnera</label>
+          <input id="partner" type="text" autocomplete="off" spellcheck="false" placeholder="np. ela, fundacja-xyz">
+        </div>
+      </div>
+
+      <details class="more" id="content-details">
+        <summary>Materiał (opcjonalnie)<span class="badge" id="content-badge" hidden></span></summary>
+        <div class="f">
+          <div class="lab-row">
+            <label for="content">utm_content</label>
+            <span class="help-wrap">
+              <button type="button" class="help" aria-label="Pomoc: materiał" aria-describedby="tip-content">?</button>
+              <span role="tooltip" id="tip-content" class="tip" hidden><b>utm_content</b> odróżnia konkretne linki w tej samej kampanii i kanale – który przycisk, grafika albo post przyniósł zapis. <b>Przykład:</b> ten sam post wrzucasz z dwiema grafikami – w jednym linku wpisz <code>grafika-z-kubkiem</code>, w drugim <code>grafika-z-laptopem</code>; w GA4 zobaczysz, która dała więcej zapisów. Albo <code>link-rejestracja</code> (przycisk w poście) i <code>link-komentarz</code>. Nie wpisuj nic, co zdradza treść reklamy czy grupę docelową – też widać to w linku. Zostaw puste, jeśli nie porównujesz.</span>
+            </span>
+          </div>
+          <input id="content" type="text" autocomplete="off" spellcheck="false" placeholder="np. link-rejestracja, grafika-z-kubkiem">
+          <p class="note" id="content-note" aria-live="polite"></p>
+        </div>
       </details>
     </section>
 
-    <div class="tabs">
-      <div class="tablist" role="tablist" aria-label="Tryb">
-        <button type="button" role="tab" id="tab-single" aria-controls="panel-single" aria-selected="true">Jeden link</button>
-        <button type="button" role="tab" id="tab-set" aria-controls="panel-set" aria-selected="false" tabindex="-1">Komplet dla wydarzenia</button>
-      </div>
-      <span class="help-wrap">
-        <button type="button" class="help" aria-label="Pomoc: tryby" aria-describedby="tip-modes">?</button>
-        <span role="tooltip" id="tip-modes" class="tip" hidden><b>Jeden link</b> – gdy wrzucasz link w jedno miejsce. <b>Komplet</b> – na start promocji: linki dla wszystkich zaznaczonych miejsc naraz, do skopiowania lub pobrania jako plik dla Excela / Arkuszy Google.</span>
-      </span>
-    </div>
-
-    <section class="card" id="panel-single" role="tabpanel" aria-labelledby="tab-single">
-      <div class="grid2">
-        <div class="field">
-          <div class="label-row">
-            <label for="channel">Kanał <span class="key">utm_source</span></label>
-            <span class="help-wrap">
-              <button type="button" class="help" aria-label="Pomoc: kanał" aria-describedby="tip-channel">?</button>
-              <span role="tooltip" id="tip-channel" class="tip" hidden>Skąd przyjdzie osoba – serwis lub miejsce, np. <code>facebook</code>, <code>instagram</code>. Listę zmienisz w „Ustawieniach kanałów”.</span>
-            </span>
-          </div>
-          <select id="channel"></select>
-        </div>
-        <div class="field">
-          <div class="label-row">
-            <label for="placement">Miejsce <span class="key">utm_medium</span></label>
-            <span class="help-wrap">
-              <button type="button" class="help" aria-label="Pomoc: miejsce" aria-describedby="tip-placement">?</button>
-              <span role="tooltip" id="tip-placement" class="tip" hidden>Rodzaj miejsca w kanale, np. post (<code>social</code>), grupa (<code>group</code>), link w bio (<code>bio</code>), reklama (<code>paid</code>). Dzięki temu porównasz np. posty z grupami.</span>
-            </span>
-          </div>
-          <select id="placement"></select>
-        </div>
-      </div>
-      <div class="field" id="partner-field" hidden>
-        <label for="partner">Nazwa partnera</label>
-        <input id="partner" type="text" autocomplete="off" spellcheck="false" placeholder="np. ela, fundacja-xyz">
-      </div>
-
-      <div class="result" id="single-result" aria-live="polite">
-        <p class="empty">Uzupełnij adres strony i nazwę kampanii.</p>
-      </div>
-    </section>
-
-    <section class="card" id="panel-set" role="tabpanel" aria-labelledby="tab-set" hidden>
-      <div class="set-head">
-        <p class="small">Zaznacz miejsca, w których pojawi się link:</p>
-        <div class="quick">
-          <button type="button" class="ghost sm" data-select="social">Wszystkie social media</button>
-          <button type="button" class="ghost sm" data-select="all">Wszystko</button>
-          <button type="button" class="ghost sm" data-select="none">Wyczyść</button>
-        </div>
-      </div>
-      <div id="picker" class="picker"></div>
-      <div class="field" id="partner-set-field" hidden>
-        <label for="partner-set">Nazwa partnera</label>
-        <input id="partner-set" type="text" autocomplete="off" spellcheck="false" placeholder="np. ela, fundacja-xyz">
-      </div>
-
-      <div class="set-actions" id="set-actions" hidden>
+    <section class="panel res" aria-labelledby="res-title">
+      <h2 id="res-title">Gotowe linki</h2>
+      <p class="meta" id="res-meta"></p>
+      <div class="acts" id="acts" hidden>
         <button type="button" class="btn" id="copy-all">Kopiuj wszystkie</button>
-        <button type="button" class="btn ghost" id="download-csv">Pobierz plik (CSV)</button>
+        <button type="button" class="ghost" id="download-csv">CSV</button>
         <span class="help-wrap">
           <button type="button" class="help" aria-label="Pomoc: eksport" aria-describedby="tip-export">?</button>
-          <span role="tooltip" id="tip-export" class="tip" hidden><b>Kopiuj wszystkie</b> – wklej do Arkusza Google lub Excela: kanał, miejsce i link trafią do osobnych kolumn. <b>Plik CSV</b> – otwiera się w Excelu z polskimi znakami; zawiera też wszystkie parametry osobno.</span>
+          <span role="tooltip" id="tip-export" class="tip" hidden><b>Kopiuj wszystkie</b> – wklej do Arkusza Google lub Excela: kanał, miejsce i link trafią do osobnych kolumn. <b>CSV</b> – plik dla Excela z polskimi znakami i wszystkimi parametrami osobno.</span>
         </span>
       </div>
-      <div id="set-result" class="set-result" aria-live="polite">
-        <p class="empty">Uzupełnij adres strony i nazwę kampanii.</p>
-      </div>
+      <div id="result" aria-live="polite"></div>
     </section>
   </main>
 
   <dialog id="settings" aria-labelledby="settings-title">
     <form method="dialog" class="settings">
       <div class="settings-head">
-        <h2 id="settings-title">Ustawienia kanałów</h2>
+        <h2 id="settings-title">Kanały</h2>
         <button type="submit" class="close" aria-label="Zamknij">×</button>
       </div>
       <p class="small">Zmiany zapisują się w tej przeglądarce. Odznacz <b>„Pokazuj”</b>, żeby tymczasowo ukryć kanał lub miejsce (bez usuwania). <b>Kanał</b> = utm_source, <b>wartość</b> miejsca = utm_medium. W kanale możesz użyć <code>{nazwa}</code> – pojawi się pole do wpisania (np. <code>partner-{nazwa}</code>).</p>
       <div id="editor"></div>
       <div class="settings-actions">
-        <button type="button" class="btn ghost sm" id="add-channel">+ Dodaj kanał</button>
-        <button type="button" class="btn ghost sm" id="export-settings">Zapisz kopię ustawień</button>
-        <label class="btn ghost sm file">Wczytaj kopię<input type="file" id="import-settings" accept="application/json,.json"></label>
-        <button type="button" class="btn ghost sm danger" id="reset-settings">Przywróć domyślne</button>
+        <button type="button" class="ghost" id="add-channel">+ Dodaj kanał</button>
+        <button type="button" class="ghost" id="export-settings">Zapisz kopię ustawień</button>
+        <label class="ghost file">Wczytaj kopię<input type="file" id="import-settings" accept="application/json,.json"></label>
+        <button type="button" class="ghost danger" id="reset-settings">Przywróć domyślne</button>
       </div>
     </form>
   </dialog>
 
+  <a class="jump" id="jump" href="#res-title" hidden></a>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
 </html>

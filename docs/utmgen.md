@@ -3,15 +3,14 @@
 Narzędzie pracy dla Agnieszki: **https://przystanzmianyzawodowej.pl/utmgen/** (podgląd: GitHub Pages `…/aga-registrationlandingforwebinar/utmgen/`).
 Statyczna strona bez serwera i bez analityki, `noindex` (meta + nagłówek `X-Robots-Tag`), nielinkowana.
 
-## Co robi
-- Wklejasz adres strony, wpisujesz kampanię (`utm_campaign`) – **samą datę wydarzenia RRMMDD**, np. `261203` (pole startuje z dzisiejszą datą; zmieniasz ją na datę wydarzenia albo wybierasz z kalendarza obok pola), opcjonalnie materiał (`utm_content`).
-- **Dlaczego data, a nie nazwa:** parametry linku widzi każdy, kto w niego kliknie; data nie zdradza, czego dotyczy kampania. Dwa wydarzenia tego samego dnia: `261203-2`. Generator ostrzega, gdy w nazwie są słowa, i sprawdza, czy data jest poprawna (decyzja 16.11.2026).
-- **Jeden link**: kanał (`utm_source`) + miejsce (`utm_medium`) → gotowy link i „Kopiuj”.
-- **Materiał (`utm_content`)** – sekcja domyślnie zwinięta i pusta (podpowiedź: `link-rejestracja`, `grafika-z-kubkiem`); po wpisaniu wartość widać przy zwiniętym nagłówku.
-- **Komplet dla wydarzenia**: linki dla wszystkich zaznaczonych miejsc (domyślnie wszystkie social media), pogrupowane według platform (z przyciskiem „Kopiuj N” dla całej platformy) → kopiowanie pojedynczo, „Kopiuj wszystkie” (wkleja się do arkusza w kolumnach) albo plik CSV (Excel, średnik, polskie znaki).
+## Co robi (projekt B – dwa panele, od 16.11.2026)
+- **Lewy panel**: adres strony, kampania (**data wydarzenia RRMMDD**, np. `261203`; startuje z dzisiejszą datą, kalendarz obok), lista **miejsc** do zaznaczenia (pogrupowana: social media / inne kanały → kanał → miejsca, z `utm_medium` po prawej), skróty „Social media / Wszystko / Wyczyść”, zwinięty **Materiał (`utm_content`)** – domyślnie pusty (podpowiedź `link-rejestracja`, `grafika-z-kubkiem`).
+- **Prawy panel – Gotowe linki** (na żywo): linki pogrupowane według platform, „Kopiuj” przy każdym, „Kopiuj N” dla platformy, „Kopiuj wszystkie” (do arkusza w kolumnach) i **CSV** (Excel, średnik, polskie znaki). Jeden link = jedno zaznaczone miejsce.
+- Na telefonie panele są jeden pod drugim, a przycisk „Gotowe: N linków ↓” przewija do wyników.
+- **Dlaczego data jako kampania:** parametry linku widzi każdy, kto w niego kliknie; data nie zdradza, czego dotyczy kampania. Dwa wydarzenia tego samego dnia: `261203-2`. Generator ostrzega, gdy w nazwie są słowa, i sprawdza poprawność daty.
 - **Porządki automatyczne**: małe litery, bez polskich znaków, myślniki zamiast spacji; stare `utm_*` w wklejonym linku są zastępowane, inne parametry i `#kotwica` zostają.
 - **Pomoc**: znak „?” przy każdym polu (najechanie, fokus albo dotknięcie).
-- **Ustawienia kanałów**: dodawanie/zmiana/usuwanie kanałów i miejsc; **„Pokazuj”** – tymczasowe ukrycie kanału lub miejsca bez usuwania; zapis w przeglądarce; „Zapisz kopię ustawień” / „Wczytaj kopię” (plik JSON) i „Przywróć domyślne”.
+- **Kanały ⚙**: dodawanie/zmiana/usuwanie kanałów i miejsc; **„Pokazuj”** – tymczasowe ukrycie kanału lub miejsca bez usuwania; zapis w przeglądarce; „Zapisz kopię ustawień” / „Wczytaj kopię” (JSON) i „Przywróć domyślne”. Zapis ustawień na serwerze – odłożony (wymaga hasła na `/utmgen/`).
 
 ## Kanały domyślne (`utmgen/channels.js`)
 Social media: Facebook (post, grupa, wydarzenie, Messenger), Instagram (bio, stories, DM), LinkedIn (post/komentarz, profil, wiadomość), WhatsApp (grupa, kanał, wiadomość), YouTube (opis/komentarz), TikTok (bio).
