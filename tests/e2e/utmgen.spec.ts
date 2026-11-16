@@ -43,6 +43,11 @@ test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) =
   await expect(page.locator('#campaign')).toHaveValue('261203');
   await expect(page.locator('#campaign-notes')).toBeEmpty();
   await expect(page.locator('#result')).toContainText('Zaznacz po lewej');
+  await expect(page.locator('#acts')).toBeHidden(); // bez linków nie ma „Kopiuj wszystkie” ani CSV
+  // Materiał jest zaraz pod kampanią, przed miejscami
+  const order = await page.evaluate(() => ['campaign', 'content-details', 'places-label'].map((id) => document.getElementById(id)!.getBoundingClientRect().top));
+  expect(order[0]).toBeLessThan(order[1]);
+  expect(order[1]).toBeLessThan(order[2]);
 
   await pick(page, 'facebook:grupa').check();
   await expect(page.locator('#content')).toBeHidden(); // materiał domyślnie zwinięty
@@ -55,6 +60,25 @@ test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) =
   await expect(page.locator('.ln')).toHaveCount(1);
   await expect(page.locator('.ln-u')).toHaveText(`${TARGET}?utm_source=facebook&utm_medium=group&utm_campaign=261203&utm_content=post-1`);
   await expect(page.locator('#res-meta')).toContainText('1 link · kampania 261203 · materiał post-1');
+});
+
+test('checkbox przy platformie zaznacza i odznacza wszystkie jej miejsca', async ({ page }) => {
+  await open(page);
+  await page.fill('#target', TARGET);
+  await page.fill('#campaign', '261203');
+  const fb = page.locator('#picker input[data-channel="facebook"]');
+  await fb.check();
+  await expect(page.locator('.ln')).toHaveCount(4);
+  await pick(page, 'facebook:messenger').uncheck();
+  await expect(fb).not.toBeChecked();
+  expect(await fb.evaluate((el: HTMLInputElement) => el.indeterminate)).toBe(true);
+  await pick(page, 'facebook:messenger').check();
+  await expect(fb).toBeChecked();
+  await fb.uncheck();
+  await expect(page.locator('.ln')).toHaveCount(0);
+  await expect(pick(page, 'facebook:grupa')).not.toBeChecked();
+  // kanał z jednym miejscem (TikTok) nie ma osobnego checkboxa
+  await expect(page.locator('#picker input[data-channel="tiktok"]')).toHaveCount(0);
 });
 
 test('partner wymaga nazwy', async ({ page }) => {

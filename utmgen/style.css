@@ -26,6 +26,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 400 15px/1.5 var(--font-body); }
 :focus-visible { outline: none; box-shadow: var(--focus); }
@@ -90,7 +91,7 @@ input::placeholder { color: #8f8389; }
 .it small { color: var(--muted); font: 400 0.74rem var(--mono); }
 
 /* Materiał */
-.more { border-top: 1px solid var(--line); padding-top: 6px; }
+.more { margin: -6px 0 14px; }
 .more > summary { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; list-style: none; font-size: 0.88rem; font-weight: 600; color: var(--pink-800); }
 .more > summary::-webkit-details-marker { display: none; }
 .more > summary::before { content: '+'; width: 12px; }
@@ -178,3 +179,10 @@ dialog::backdrop { background: rgb(43 8 26 / 0.45); }
   }
   main.grid { padding-bottom: 72px; }
 }
+
+/* Checkbox przy platformie – zaznacz/odznacz wszystkie */
+.pick-all { display: flex !important; align-items: center; gap: 10px; min-height: 40px; padding: 4px 8px !important; cursor: pointer; border-radius: 8px; }
+.pick-all:hover { background: var(--bg); }
+.pick-all input { width: 18px; height: 18px; margin: 0; accent-color: var(--pink-700); flex: none; }
+.pick-all:has(input:focus-visible) { box-shadow: var(--focus); }
+.pick-name:not(.pick-all) { padding-left: 36px; }
