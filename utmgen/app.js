@@ -412,13 +412,11 @@ const CAMPAIGN_TYPES = {
     placeholder: '261203',
     inputMode: 'numeric',
     rules: 'Data rozpoczęcia RRMMDD · link nie zdradza, czego dotyczy kampania · dwa wydarzenia jednego dnia: 261203-2',
-    tip: '<b>Wydarzenie jednorazowe</b> (np. webinar 3 grudnia) – wpisz <b>datę rozpoczęcia w formacie RRMMDD</b>, np. <code>261203</code>. Pole startuje z dzisiejszą datą – zmień ją na datę wydarzenia albo wybierz z kalendarza. Data nie zdradza w linku, czego dotyczy kampania; czego dotyczy, sprawdzisz po dacie (grupy wydarzeń w MailerLite zaczynają się od tej samej daty). <b>Dwa wydarzenia tego samego dnia:</b> drugie oznacz <code>261203-2</code>, trzecie <code>261203-3</code>.',
   },
   name: {
     placeholder: 'ebook-najlepsza-uczennica',
     inputMode: 'text',
     rules: 'Nazwa lub tytuł · zawsze ta sama · małe litery i myślniki · widoczna w linku',
-    tip: '<b>Wydarzenie cykliczne lub stała kampania</b> (np. e-book, cykl spotkań) – wpisz <b>nazwę lub tytuł</b>, np. <code>ebook-najlepsza-uczennica</code>. Używaj <b>zawsze tej samej nazwy</b> – w GA4 i MailerLite zobaczysz całą historię kampanii razem. Generator zapamięta ostatnią nazwę. Nazwa jest widoczna w linku – nie wpisuj w nią nic, czego nie chcesz pokazać odbiorcom.',
   },
 };
 
@@ -435,7 +433,6 @@ function applyCampaignType(type, first = false) {
   els.campaign.inputMode = t.inputMode;
   els.campaign.placeholder = t.placeholder;
   $('campaign-rules').textContent = t.rules;
-  $('tip-campaign').innerHTML = t.tip;
   els.campaign.value = isEvent ? campaignFromDate($('campaign-date').value) || todayCampaign().campaign : state.name;
   if (!first) els.campaign.focus();
 }
