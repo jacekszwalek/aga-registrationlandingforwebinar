@@ -7,14 +7,15 @@ Statyczna strona bez serwera i bez analityki, `noindex` (meta + nagłówek `X-Ro
 - Wklejasz adres strony, wpisujesz kampanię (`utm_campaign`) – **samą datę wydarzenia RRMMDD**, np. `261203` (pole startuje z dzisiejszą datą; zmieniasz ją na datę wydarzenia albo wybierasz z kalendarza obok pola), opcjonalnie materiał (`utm_content`).
 - **Dlaczego data, a nie nazwa:** parametry linku widzi każdy, kto w niego kliknie; data nie zdradza, czego dotyczy kampania. Dwa wydarzenia tego samego dnia: `261203-2`. Generator ostrzega, gdy w nazwie są słowa, i sprawdza, czy data jest poprawna (decyzja 16.11.2026).
 - **Jeden link**: kanał (`utm_source`) + miejsce (`utm_medium`) → gotowy link i „Kopiuj”.
-- **Komplet dla wydarzenia**: linki dla wszystkich zaznaczonych miejsc (domyślnie wszystkie social media) → kopiowanie pojedynczo, „Kopiuj wszystkie” (wkleja się do arkusza w kolumnach) albo plik CSV (Excel, średnik, polskie znaki).
+- **Materiał (`utm_content`)** – sekcja domyślnie zwinięta i pusta (podpowiedź: `link-rejestracja`, `grafika-z-kubkiem`); po wpisaniu wartość widać przy zwiniętym nagłówku.
+- **Komplet dla wydarzenia**: linki dla wszystkich zaznaczonych miejsc (domyślnie wszystkie social media), pogrupowane według platform (z przyciskiem „Kopiuj N” dla całej platformy) → kopiowanie pojedynczo, „Kopiuj wszystkie” (wkleja się do arkusza w kolumnach) albo plik CSV (Excel, średnik, polskie znaki).
 - **Porządki automatyczne**: małe litery, bez polskich znaków, myślniki zamiast spacji; stare `utm_*` w wklejonym linku są zastępowane, inne parametry i `#kotwica` zostają.
 - **Pomoc**: znak „?” przy każdym polu (najechanie, fokus albo dotknięcie).
-- **Ustawienia kanałów**: dodawanie/zmiana/usuwanie kanałów i miejsc; zapis w przeglądarce; „Zapisz kopię ustawień” / „Wczytaj kopię” (plik JSON) i „Przywróć domyślne”.
+- **Ustawienia kanałów**: dodawanie/zmiana/usuwanie kanałów i miejsc; **„Pokazuj”** – tymczasowe ukrycie kanału lub miejsca bez usuwania; zapis w przeglądarce; „Zapisz kopię ustawień” / „Wczytaj kopię” (plik JSON) i „Przywróć domyślne”.
 
 ## Kanały domyślne (`utmgen/channels.js`)
 Social media: Facebook (post, grupa, wydarzenie, Messenger), Instagram (bio, stories, DM), LinkedIn (post/komentarz, profil, wiadomość), WhatsApp (grupa, kanał, wiadomość), YouTube (opis/komentarz), TikTok (bio).
-Inne: newsletter (`mailerlite/email`), stopka maila, strona www, partner (`partner-{nazwa}/referral`), kod QR (`qr/offline`), reklamy Meta (`meta/paid`), LinkedIn (`linkedin/paid`), Google (`google/cpc`).
+Inne: newsletter (`mailerlite/email`), stopka maila, strona www, partner (`partner-{nazwa}/referral`), kod QR (`qr/offline`), reklamy Facebook (`facebook/paid`), reklamy Instagram (`instagram/paid`) – od 16.11.2026 zamiast wspólnego „Meta”, LinkedIn (`linkedin/paid`), Google (`google/cpc`).
 Miejsca o tym samym `utm_medium` połączono (profil i strona FB → „Post”; post i komentarz LinkedIn; opis i komentarz YouTube), żeby komplet nie zawierał identycznych linków.
 
 ## Wdrożenie (jednorazowo – TY)

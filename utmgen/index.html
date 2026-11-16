@@ -57,17 +57,18 @@
         <ul class="notes" id="campaign-notes" aria-live="polite"></ul>
       </div>
 
-      <div class="field">
+      <details class="field more-field" id="content-details">
+        <summary>Materiał <span class="key">utm_content</span> <span class="opt">opcjonalnie</span><span class="content-badge" id="content-badge" hidden></span></summary>
         <div class="label-row">
-          <label for="content">Materiał <span class="key">utm_content</span> <span class="opt">opcjonalnie</span></label>
+          <label for="content">Materiał (utm_content)</label>
           <span class="help-wrap">
             <button type="button" class="help" aria-label="Pomoc: materiał" aria-describedby="tip-content">?</button>
-            <span role="tooltip" id="tip-content" class="tip" hidden>Rozróżnia konkretne posty i grafiki w tej samej kampanii, np. <code>post-1</code>, <code>rolka-pytanie</code>, <code>grafika-a</code>. Dwa linki różniące się tylko materiałem to prosty test, który post działa lepiej. Zostaw puste, jeśli nie porównujesz.</span>
+            <span role="tooltip" id="tip-content" class="tip" hidden><b>utm_content</b> odróżnia konkretne linki w tej samej kampanii i kanale – który przycisk, grafika albo post przyniósł zapis. <b>Przykład:</b> ten sam post wrzucasz z dwiema grafikami – w jednym linku wpisz <code>grafika-z-kubkiem</code>, w drugim <code>grafika-z-laptopem</code>; w GA4 zobaczysz, która dała więcej zapisów. Albo <code>link-rejestracja</code> (przycisk w poście) i <code>link-komentarz</code>. Nie wpisuj nic, co zdradza treść reklamy czy grupę docelową – też widać to w linku. Zostaw puste, jeśli nie porównujesz.</span>
           </span>
         </div>
-        <input id="content" type="text" autocomplete="off" spellcheck="false" placeholder="np. post-1, grafika-a">
+        <input id="content" type="text" autocomplete="off" spellcheck="false" placeholder="np. link-rejestracja, grafika-z-kubkiem">
         <p class="note" id="content-note" aria-live="polite"></p>
-      </div>
+      </details>
     </section>
 
     <div class="tabs">
@@ -149,7 +150,7 @@
         <h2 id="settings-title">Ustawienia kanałów</h2>
         <button type="submit" class="close" aria-label="Zamknij">×</button>
       </div>
-      <p class="small">Zmiany zapisują się w tej przeglądarce. <b>Kanał</b> = utm_source, <b>wartość</b> miejsca = utm_medium. W kanale możesz użyć <code>{nazwa}</code> – pojawi się pole do wpisania (np. <code>partner-{nazwa}</code>).</p>
+      <p class="small">Zmiany zapisują się w tej przeglądarce. Odznacz <b>„Pokazuj”</b>, żeby tymczasowo ukryć kanał lub miejsce (bez usuwania). <b>Kanał</b> = utm_source, <b>wartość</b> miejsca = utm_medium. W kanale możesz użyć <code>{nazwa}</code> – pojawi się pole do wpisania (np. <code>partner-{nazwa}</code>).</p>
       <div id="editor"></div>
       <div class="settings-actions">
         <button type="button" class="btn ghost sm" id="add-channel">+ Dodaj kanał</button>
