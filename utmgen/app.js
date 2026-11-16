@@ -40,7 +40,9 @@ let channels = validChannels(store.get(STORE.channels)) ? store.get(STORE.channe
 const shownPlaces = (c) => (c.hidden ? [] : c.placements.filter((p) => !p.hidden));
 const shownChannels = () => channels.filter((c) => shownPlaces(c).length);
 const saved = store.get(STORE.state, {});
-const state = { selected: new Set(saved.selected || []), partner: '', ctype: saved.ctype === 'name' ? 'name' : 'event', name: saved.name || '' };
+// Pierwsza wizyta (brak zapisanego wyboru): zaznaczone tylko Facebook – Post. Potem pamiętamy wybór, także pusty.
+const DEFAULT_SELECTED = ['facebook:post'];
+const state = { selected: new Set(Array.isArray(saved.selected) ? saved.selected : DEFAULT_SELECTED), partner: '', ctype: saved.ctype === 'name' ? 'name' : 'event', name: saved.name || '' };
 
 const els = {
   target: $('target'), targetNote: $('target-note'),

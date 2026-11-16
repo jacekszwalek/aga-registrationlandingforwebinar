@@ -8,7 +8,16 @@ const ROOT = join(process.cwd(), 'utmgen');
 const ORIGIN = 'http://utmgen.test';
 const TYPES: Record<string, string> = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.woff2': 'font/woff2' };
 
-async function open(page: Page) {
+async function open(page: Page, opts: { fresh?: boolean } = {}) {
+  // Testy startują z pustym wyborem miejsc (pierwsza wizyta ma domyślnie Facebook – Post; sprawdza to osobny test).
+  if (!opts.fresh) {
+    await page.addInitScript(() => {
+      if (!sessionStorage.getItem('seed-sel')) {
+        localStorage.setItem('utmgen.state.v1', JSON.stringify({ selected: [] }));
+        sessionStorage.setItem('seed-sel', '1');
+      }
+    });
+  }
   await page.route(`${ORIGIN}/**`, (route) => {
     let path = new URL(route.request().url()).pathname.replace(/^\/utmgen\//, '/');
     if (path.endsWith('/')) path += 'index.html';
@@ -67,6 +76,15 @@ test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) =
   // cały link widoczny (bez ucinania „…”)
   const cut = await page.locator('.ln-u').evaluate((el) => el.scrollWidth > el.clientWidth + 1);
   expect(cut).toBe(false);
+});
+
+test('nowa osoba: zaznaczone tylko Facebook – Post; wyczyszczony wybór zostaje pusty po odświeżeniu', async ({ page }) => {
+  await open(page, { fresh: true });
+  const checked = await page.locator('#picker input[type="checkbox"][value]:checked').evaluateAll((els) => els.map((e) => (e as HTMLInputElement).value));
+  expect(checked).toEqual(['facebook:post']);
+  await page.getByRole('button', { name: 'Wyczyść' }).click();
+  await page.reload();
+  await expect(page.locator('#picker input[type="checkbox"][value]:checked')).toHaveCount(0);
 });
 
 test('checkbox przy platformie zaznacza i odznacza wszystkie jej miejsca', async ({ page }) => {
