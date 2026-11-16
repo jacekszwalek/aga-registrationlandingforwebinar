@@ -38,7 +38,7 @@ test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) =
   await page.fill('#target', TARGET);
   await page.fill('#campaign', 'Zostać Zmienić');
   await expect(page.locator('#campaign-notes')).toContainText('Zapiszemy jako: zostac-zmienic');
-  await expect(page.locator('#campaign-notes')).toContainText('wydarzenia cyklicznego lub stałej kampanii');
+  await expect(page.locator('#campaign-notes')).toContainText('Cykliczne lub stała kampania');
   await page.locator('#campaign-date').fill('2026-12-03');
   await expect(page.locator('#campaign')).toHaveValue('261203');
   await expect(page.locator('#campaign-notes')).toBeEmpty();
@@ -82,6 +82,41 @@ test('checkbox przy platformie zaznacza i odznacza wszystkie jej miejsca', async
   await expect(pick(page, 'facebook:grupa')).not.toBeChecked();
   // kanał z jednym miejscem (TikTok) nie ma osobnego checkboxa
   await expect(page.locator('#picker input[data-channel="tiktok"]')).toHaveCount(0);
+});
+
+test('rodzaj kampanii: jednorazowe (data) i cykliczne/stałe (nazwa) – dymek i podpowiedź dla wybranego', async ({ page, isMobile }) => {
+  await page.clock.setFixedTime(new Date('2026-11-16T10:00:00+01:00'));
+  await open(page);
+  await page.fill('#target', TARGET);
+  await pick(page, 'facebook:grupa').check();
+  const rules = page.locator('#campaign-rules');
+  const tip = page.locator('#tip-campaign');
+  await expect(page.locator('input[name="ctype"][value="event"]')).toBeChecked();
+  await expect(page.locator('#campaign')).toHaveValue('261116');
+  await expect(rules).toContainText('dwa wydarzenia jednego dnia: 261203-2');
+  await expect(tip).toContainText('Dwa wydarzenia tego samego dnia');
+  await expect(tip).not.toContainText('ebook');
+
+  await page.locator('.seg label', { hasText: 'Cykliczne' }).click();
+  await expect(page.locator('#campaign-date')).toBeHidden();
+  await expect(page.locator('#campaign')).toHaveValue('');
+  await expect(page.locator('#campaign')).toHaveAttribute('placeholder', 'ebook-najlepsza-uczennica');
+  await expect(rules).toHaveText('Nazwa lub tytuł · zawsze ta sama · małe litery i myślniki · widoczna w linku');
+  await expect(rules).not.toContainText('poprawimy');
+  await expect(tip).toContainText('zawsze tej samej nazwy');
+  await expect(tip).not.toContainText('261203');
+  await page.fill('#campaign', 'ebook-najlepsza-uczennica');
+  await expect(page.locator('.ln-u')).toContainText('utm_campaign=ebook-najlepsza-uczennica');
+
+  // powrót do daty i ponownie do nazwy – nazwa zapamiętana
+  await page.locator('.seg label', { hasText: 'Wydarzenie jednorazowe' }).click();
+  await expect(page.locator('#campaign')).toHaveValue('261116');
+  await page.locator('.seg label', { hasText: 'Cykliczne' }).click();
+  await expect(page.locator('#campaign')).toHaveValue('ebook-najlepsza-uczennica');
+  await page.reload();
+  await expect(page.locator('input[name="ctype"][value="name"]')).toBeChecked();
+  await expect(page.locator('#campaign')).toHaveValue('ebook-najlepsza-uczennica');
+  void isMobile;
 });
 
 test('partner wymaga nazwy', async ({ page }) => {
@@ -149,7 +184,7 @@ test('pomoc i ustawienia: dodanie kanału, ukrywanie bez usuwania', async ({ pag
   await expect(page.locator('#tip-campaign')).toBeVisible();
   await page.keyboard.press('Escape');
 
-  await page.getByRole('button', { name: /Kanały/ }).click();
+  await page.getByRole('button', { name: 'Ustawienia kanałów' }).click();
   await page.getByRole('button', { name: '+ Dodaj kanał' }).click();
   const last = page.locator('.ed-channel').last();
   await last.locator('[data-f="label"]').fill('Podcast');
@@ -158,13 +193,16 @@ test('pomoc i ustawienia: dodanie kanału, ukrywanie bez usuwania', async ({ pag
   await expect(last.locator('[data-f="source"]')).toHaveValue('moj-podcast');
   const tiktok = page.locator('.ed-channel').filter({ has: page.locator('[data-f="label"][value="TikTok"]') });
   await tiktok.locator('[data-f="visible"]').uncheck();
+  // przycisk zamknięcia widoczny także po przewinięciu listy kanałów
+  await page.locator('.ed-channel').last().scrollIntoViewIfNeeded();
+  await expect(page.getByRole('button', { name: 'Zamknij' })).toBeInViewport();
   await page.getByRole('button', { name: 'Zamknij' }).click();
   await expect(page.locator('#picker')).toContainText('Podcast');
   await expect(page.locator('#picker')).not.toContainText('TikTok');
   await page.reload();
   await expect(page.locator('#picker')).toContainText('Podcast');
   await expect(page.locator('#picker')).not.toContainText('TikTok');
-  await page.getByRole('button', { name: /Kanały/ }).click();
+  await page.getByRole('button', { name: 'Ustawienia kanałów' }).click();
   await expect(page.locator('[data-f="label"][value="TikTok"]')).toHaveCount(1);
 });
 

@@ -40,7 +40,7 @@ let channels = validChannels(store.get(STORE.channels)) ? store.get(STORE.channe
 const shownPlaces = (c) => (c.hidden ? [] : c.placements.filter((p) => !p.hidden));
 const shownChannels = () => channels.filter((c) => shownPlaces(c).length);
 const saved = store.get(STORE.state, {});
-const state = { selected: new Set(saved.selected || []), partner: '' };
+const state = { selected: new Set(saved.selected || []), partner: '', ctype: saved.ctype === 'name' ? 'name' : 'event', name: saved.name || '' };
 
 const els = {
   target: $('target'), targetNote: $('target-note'),
@@ -55,7 +55,8 @@ const needsName = (c) => c.source.includes('{nazwa}');
 const plural = (n, one, few, many) => (n === 1 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many);
 
 function persist() {
-  store.set(STORE.state, { selected: [...state.selected] });
+  if (state.ctype === 'name') state.name = els.campaign.value;
+  store.set(STORE.state, { selected: [...state.selected], ctype: state.ctype, name: state.name });
 }
 
 /* ---------- Pomoc: dymki po najechaniu, fokusie lub kliknięciu ---------- */
@@ -125,7 +126,7 @@ function renderNotes({ target, content }) {
   else if (target.ok && target.insecure) note = 'Adres zaczyna się od http:// – jeśli strona ma https://, użyj go.';
   els.targetNote.textContent = note;
   els.targetNote.className = 'note' + (t && !target.ok ? ' warn' : '');
-  els.campaignNotes.innerHTML = campaignNotes(els.campaign.value).map((n) => `<li class="${n.level}">${esc(n.text)}</li>`).join('');
+  els.campaignNotes.innerHTML = campaignNotes(els.campaign.value, state.ctype).map((n) => `<li class="${n.level}">${esc(n.text)}</li>`).join('');
   const badge = $('content-badge');
   badge.hidden = !content;
   badge.textContent = content;
@@ -136,7 +137,7 @@ function renderNotes({ target, content }) {
 function missingText({ target, campaign }) {
   if (!target.ok && !campaign) return 'Wklej adres strony i wpisz kampanię.';
   if (!target.ok) return 'Wklej poprawny adres strony.';
-  if (!campaign) return 'Wpisz kampanię – datę rozpoczęcia RRMMDD albo nazwę (wydarzenia cykliczne i stałe).';
+  if (!campaign) return state.ctype === 'name' ? 'Wpisz nazwę kampanii, np. ebook-najlepsza-uczennica.' : 'Wpisz datę rozpoczęcia wydarzenia (RRMMDD).';
   return '';
 }
 
@@ -176,7 +177,7 @@ function renderPicker() {
 }
 
 /** Pole „Nazwa partnera” – tuż pod miejscem „Partner / polecenie”, widoczne tylko po jego zaznaczeniu. */
-const PARTNER_TIP = '<b>Partner / polecenie</b> – link, który dajesz <b>komuś innemu</b>, żeby polecił wydarzenie swoim odbiorcom (np. znajoma coachka w swoim newsletterze, fundacja na swoim profilu). Każdy partner dostaje własny link, np. <code>utm_source=partner-ela</code>, <code>utm_medium=referral</code>. W GA4 i w MailerLite (pole <code>webinar_source</code>) zobaczysz, ile zapisów przyprowadził – możesz podziękować konkretną liczbą i wiesz, z kim warto współpracować dalej. To co innego niż „Udostępnij” na stronie podziękowania (<code>utm_source=referral</code> – polecenia od zapisanych osób, bez nazwy). <b>Nazwa jest widoczna w linku</b> – wpisuj imię lub markę, które partner zna i akceptuje. Nie używasz? Ukryj w „Kanały ⚙” → „Pokazuj”.';
+const PARTNER_TIP = '<b>Partner / polecenie</b> – link, który dajesz <b>komuś innemu</b>, żeby polecił wydarzenie swoim odbiorcom (np. znajoma coachka w swoim newsletterze, fundacja na swoim profilu). Każdy partner dostaje własny link, np. <code>utm_source=partner-ela</code>, <code>utm_medium=referral</code>. W GA4 i w MailerLite (pole <code>webinar_source</code>) zobaczysz, ile zapisów przyprowadził – możesz podziękować konkretną liczbą i wiesz, z kim warto współpracować dalej. To co innego niż „Udostępnij” na stronie podziękowania (<code>utm_source=referral</code> – polecenia od zapisanych osób, bez nazwy). <b>Nazwa jest widoczna w linku</b> – wpisuj imię lub markę, które partner zna i akceptuje. Nie używasz? Ukryj w „Ustawienia kanałów ⚙” → „Pokazuj”.';
 function partnerFieldHtml() {
   return `
           <div class="partner" id="partner-field" hidden>
@@ -405,12 +406,55 @@ function download(name, text, type) {
   setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
+/* ---------- Rodzaj kampanii ---------- */
+const CAMPAIGN_TYPES = {
+  event: {
+    placeholder: '261203',
+    inputMode: 'numeric',
+    rules: 'Data rozpoczęcia RRMMDD · link nie zdradza, czego dotyczy kampania · dwa wydarzenia jednego dnia: 261203-2',
+    tip: '<b>Wydarzenie jednorazowe</b> (np. webinar 3 grudnia) – wpisz <b>datę rozpoczęcia w formacie RRMMDD</b>, np. <code>261203</code>. Pole startuje z dzisiejszą datą – zmień ją na datę wydarzenia albo wybierz z kalendarza. Data nie zdradza w linku, czego dotyczy kampania; czego dotyczy, sprawdzisz po dacie (grupy wydarzeń w MailerLite zaczynają się od tej samej daty). <b>Dwa wydarzenia tego samego dnia:</b> drugie oznacz <code>261203-2</code>, trzecie <code>261203-3</code>.',
+  },
+  name: {
+    placeholder: 'ebook-najlepsza-uczennica',
+    inputMode: 'text',
+    rules: 'Nazwa lub tytuł · zawsze ta sama · małe litery i myślniki · widoczna w linku',
+    tip: '<b>Wydarzenie cykliczne lub stała kampania</b> (np. e-book, cykl spotkań) – wpisz <b>nazwę lub tytuł</b>, np. <code>ebook-najlepsza-uczennica</code>. Używaj <b>zawsze tej samej nazwy</b> – w GA4 i MailerLite zobaczysz całą historię kampanii razem. Generator zapamięta ostatnią nazwę. Nazwa jest widoczna w linku – nie wpisuj w nią nic, czego nie chcesz pokazać odbiorcom.',
+  },
+};
+
+/**
+ * 'event' – wydarzenie jednorazowe: data rozpoczęcia RRMMDD (start: dziś), kalendarz obok.
+ * 'name'  – cykliczne / stała kampania: nazwa (zapamiętana z ostatniego użycia), bez kalendarza.
+ */
+function applyCampaignType(type, first = false) {
+  state.ctype = type;
+  const t = CAMPAIGN_TYPES[type];
+  const isEvent = type === 'event';
+  $('campaign-date').hidden = !isEvent;
+  $('campaign-row').classList.toggle('single', !isEvent);
+  els.campaign.inputMode = t.inputMode;
+  els.campaign.placeholder = t.placeholder;
+  $('campaign-rules').textContent = t.rules;
+  $('tip-campaign').innerHTML = t.tip;
+  els.campaign.value = isEvent ? campaignFromDate($('campaign-date').value) || todayCampaign().campaign : state.name;
+  if (!first) els.campaign.focus();
+}
+
 /* ---------- Start ---------- */
 function init() {
   // Domyślnie dzisiejsza data (RRMMDD) – za każdym otwarciem, żeby nie zostawała kampania z poprzedniego dnia.
+  // Wydarzenie jednorazowe: domyślnie dzisiejsza data (RRMMDD) – za każdym otwarciem.
   const today = todayCampaign();
-  els.campaign.value = today.campaign;
   $('campaign-date').value = today.iso;
+  applyCampaignType(state.ctype, true);
+  document.querySelectorAll('input[name="ctype"]').forEach((r) => {
+    r.checked = r.value === state.ctype;
+    r.addEventListener('change', () => {
+      if (state.ctype === 'name') state.name = els.campaign.value;
+      applyCampaignType(r.value);
+      render();
+    });
+  });
   renderPicker();
   setupHelp();
   setupSettings();
@@ -423,6 +467,7 @@ function init() {
   });
   // Kalendarz pokazuje datę wpisanej kampanii (RRMMDD → RRRR-MM-DD).
   els.campaign.addEventListener('input', () => {
+    if (state.ctype !== 'event') return;
     const m = /^(\d{2})(\d{2})(\d{2})/.exec(slugify(els.campaign.value));
     if (m) $('campaign-date').value = `20${m[1]}-${m[2]}-${m[3]}`;
   });
