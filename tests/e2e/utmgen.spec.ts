@@ -60,6 +60,9 @@ test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) =
   await expect(page.locator('.ln')).toHaveCount(1);
   await expect(page.locator('.ln-u')).toHaveText(`${TARGET}?utm_source=facebook&utm_medium=group&utm_campaign=261203&utm_content=post-1`);
   await expect(page.locator('#res-meta')).toContainText('1 link · kampania 261203 · materiał post-1');
+  // cały link widoczny (bez ucinania „…”)
+  const cut = await page.locator('.ln-u').evaluate((el) => el.scrollWidth > el.clientWidth + 1);
+  expect(cut).toBe(false);
 });
 
 test('checkbox przy platformie zaznacza i odznacza wszystkie jej miejsca', async ({ page }) => {
