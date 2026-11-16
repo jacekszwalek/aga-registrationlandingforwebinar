@@ -42,7 +42,7 @@ const shownChannels = () => channels.filter((c) => shownPlaces(c).length);
 const saved = store.get(STORE.state, {});
 // Pierwsza wizyta (brak zapisanego wyboru): zaznaczone tylko Facebook – Post. Potem pamiętamy wybór, także pusty.
 const DEFAULT_SELECTED = ['facebook:post'];
-const state = { selected: new Set(Array.isArray(saved.selected) ? saved.selected : DEFAULT_SELECTED), partner: '', ctype: saved.ctype === 'name' ? 'name' : 'event', name: saved.name || '' };
+const state = { pgroup: saved.pgroup === 'other' ? 'other' : 'social', selected: new Set(Array.isArray(saved.selected) ? saved.selected : DEFAULT_SELECTED), partner: '', ctype: saved.ctype === 'name' ? 'name' : 'event', name: saved.name || '' };
 
 const els = {
   target: $('target'), targetNote: $('target-note'),
@@ -58,7 +58,7 @@ const plural = (n, one, few, many) => (n === 1 ? one : n % 10 >= 2 && n % 10 <= 
 
 function persist() {
   if (state.ctype === 'name') state.name = els.campaign.value;
-  store.set(STORE.state, { selected: [...state.selected], ctype: state.ctype, name: state.name });
+  store.set(STORE.state, { pgroup: state.pgroup, selected: [...state.selected], ctype: state.ctype, name: state.name });
 }
 
 /* ---------- Pomoc: dymki po najechaniu, fokusie lub kliknięciu ---------- */
@@ -154,15 +154,13 @@ function linkRow(c, p, base) {
 }
 
 /* ---------- Lewy panel: miejsca ---------- */
+const inGroup = (c, g) => (g === 'social' ? c.group === 'social' : c.group !== 'social');
+
 function renderPicker() {
-  const sections = [
-    ['Social media', shownChannels().filter((c) => c.group === 'social')],
-    ['Inne kanały', shownChannels().filter((c) => c.group !== 'social')],
-  ].filter(([, list]) => list.length);
-  els.picker.innerHTML = sections
-    .map(([title, list]) => `
-      <p class="pick-sec">${esc(title)}</p>
-      ${list.map((c) => `
+  const list = shownChannels().filter((c) => inGroup(c, state.pgroup));
+  els.picker.innerHTML = list.length
+    ? list
+        .map((c) => `
         <div class="pick-ch">
           ${shownPlaces(c).length > 1
             ? `<label class="pick-name pick-all"><input type="checkbox" data-channel="${esc(c.id)}" aria-label="${esc(c.label)} – zaznacz lub odznacz wszystkie miejsca"><span>${esc(c.label)}</span></label>`
@@ -171,8 +169,10 @@ function renderPicker() {
             <label class="it"><input type="checkbox" value="${esc(key(c, p))}" ${state.selected.has(key(c, p)) ? 'checked' : ''}>
               <span class="it-l">${esc(p.label)}</span><small>${esc(slugify(p.medium))}</small></label>`).join('')}
           ${needsName(c) ? partnerFieldHtml() : ''}
-        </div>`).join('')}`)
-    .join('');
+        </div>`)
+        .join('')
+    : '<p class="empty">Brak widocznych kanałów w tej zakładce – włącz je w „Ustawieniach kanałów”.</p>';
+  updateCounts();
   updatePartnerField();
   syncChannelBoxes();
   setupHelp(els.picker);
@@ -192,6 +192,14 @@ function partnerFieldHtml() {
             </div>
             <input id="partner" type="text" autocomplete="off" spellcheck="false" placeholder="np. ela, fundacja-xyz" value="${esc(state.partner)}">
           </div>`;
+}
+
+/** Liczba zaznaczonych miejsc przy zakładkach. */
+function updateCounts() {
+  for (const g of ['social', 'other']) {
+    const n = channels.filter((c) => inGroup(c, g)).reduce((sum, c) => sum + shownPlaces(c).filter((p) => state.selected.has(key(c, p))).length, 0);
+    $(`cnt-${g}`).textContent = n ? ` (${n})` : '';
+  }
 }
 
 /** Checkbox przy platformie: zaznaczony = wszystkie miejsca, częściowo = niektóre. */
@@ -491,15 +499,25 @@ function init() {
     else state.selected.delete(e.target.value);
     syncChannelBoxes();
     updatePartnerField();
+    updateCounts();
     render();
+  });
+  document.querySelectorAll('input[name="pgroup"]').forEach((r) => {
+    r.checked = r.value === state.pgroup;
+    r.addEventListener('change', () => {
+      state.pgroup = r.value;
+      renderPicker();
+      persist();
+    });
   });
   document.querySelectorAll('[data-select]').forEach((b) =>
     b.addEventListener('click', () => {
-      const mode = b.dataset.select;
-      state.selected.clear();
-      for (const c of channels) {
+      // Działa w otwartej zakładce; zaznaczenia w drugiej zakładce zostają.
+      const on = b.dataset.select === 'tab';
+      for (const c of channels.filter((x) => inGroup(x, state.pgroup))) {
         for (const p of shownPlaces(c)) {
-          if (mode === 'all' || (mode === 'social' && c.group === 'social')) state.selected.add(key(c, p));
+          if (on) state.selected.add(key(c, p));
+          else state.selected.delete(key(c, p));
         }
       }
       renderPicker();

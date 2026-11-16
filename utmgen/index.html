@@ -70,13 +70,16 @@
           <span class="lab" id="places-label">Miejsca</span>
           <span class="help-wrap">
             <button type="button" class="help" aria-label="Pomoc: miejsca" aria-describedby="tip-places">?</button>
-            <span role="tooltip" id="tip-places" class="tip" hidden>Zaznacz, gdzie wrzucasz link – dla każdego miejsca powstanie osobny link. Jeden link = jedno zaznaczone miejsce. Kanał to <code>utm_source</code> (np. <code>facebook</code>), miejsce to <code>utm_medium</code> (szary napis po prawej, np. <code>group</code>). Listę zmienisz w „Ustawienia kanałów ⚙” – tam też ukryjesz miejsca, których teraz nie używasz.</span>
+            <span role="tooltip" id="tip-places" class="tip" hidden>Zaznacz, gdzie wrzucasz link – dla każdego miejsca powstanie osobny link. Przełącznik dzieli kanały na <b>Social media</b> i <b>Inne kanały</b> (newsletter, strona, partner, QR, reklamy); liczba przy zakładce to zaznaczone w niej miejsca, a gotowe linki pokazują zaznaczone z obu zakładek. „Zaznacz / Odznacz wszystkie” działa w otwartej zakładce. Jeden link = jedno zaznaczone miejsce. Kanał to <code>utm_source</code> (np. <code>facebook</code>), miejsce to <code>utm_medium</code> (szary napis po prawej, np. <code>group</code>). Listę zmienisz w „Ustawienia kanałów ⚙” – tam też ukryjesz miejsca, których teraz nie używasz.</span>
           </span>
         </div>
+        <div class="seg" role="radiogroup" aria-label="Grupa kanałów">
+          <label><input type="radio" name="pgroup" value="social" checked><span>Social media<span class="cnt" id="cnt-social"></span></span></label>
+          <label><input type="radio" name="pgroup" value="other"><span>Inne kanały<span class="cnt" id="cnt-other"></span></span></label>
+        </div>
         <div class="quick">
-          <button type="button" class="mini" data-select="social">Social media</button>
-          <button type="button" class="mini" data-select="all">Wszystko</button>
-          <button type="button" class="mini" data-select="none">Wyczyść</button>
+          <button type="button" class="mini" data-select="tab">Zaznacz wszystkie</button>
+          <button type="button" class="mini" data-select="none">Odznacz wszystkie</button>
         </div>
         <div id="picker" class="picker" role="group" aria-labelledby="places-label"></div>
       </div>
