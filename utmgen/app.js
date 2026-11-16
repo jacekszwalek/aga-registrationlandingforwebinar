@@ -40,32 +40,23 @@ let channels = validChannels(store.get(STORE.channels)) ? store.get(STORE.channe
 const shownPlaces = (c) => (c.hidden ? [] : c.placements.filter((p) => !p.hidden));
 const shownChannels = () => channels.filter((c) => shownPlaces(c).length);
 const saved = store.get(STORE.state, {});
-const state = {
-  mode: saved.mode === 'set' ? 'set' : 'single',
-  channel: saved.channel || channels[0]?.id,
-  placement: saved.placement || '',
-  selected: new Set(saved.selected || []),
-};
+const state = { selected: new Set(saved.selected || []) };
 
 const els = {
   target: $('target'), targetNote: $('target-note'),
   campaign: $('campaign'), campaignNotes: $('campaign-notes'),
   content: $('content'), contentNote: $('content-note'),
-  channel: $('channel'), placement: $('placement'),
   partnerField: $('partner-field'), partner: $('partner'),
-  partnerSetField: $('partner-set-field'), partnerSet: $('partner-set'),
-  single: $('single-result'), picker: $('picker'), set: $('set-result'), setActions: $('set-actions'),
+  picker: $('picker'), result: $('result'), meta: $('res-meta'), acts: $('acts'),
 };
 
 const key = (c, p) => `${c.id}:${p.id}`;
 const esc = (s) => String(s).replace(/[&<>"]/g, (ch) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[ch]);
 const needsName = (c) => c.source.includes('{nazwa}');
+const plural = (n, one, few, many) => (n === 1 ? one : n % 10 >= 2 && n % 10 <= 4 && (n % 100 < 10 || n % 100 >= 20) ? few : many);
 
 function persist() {
-  store.set(STORE.state, {
-    mode: state.mode, channel: state.channel, placement: state.placement,
-    selected: [...state.selected],
-  });
+  store.set(STORE.state, { selected: [...state.selected] });
 }
 
 /* ---------- Pomoc: dymki po najechaniu, fokusie lub kliknięciu ---------- */
@@ -110,10 +101,7 @@ async function copy(text, label = 'Skopiowano') {
 
 /* ---------- Dane wejściowe ---------- */
 function inputs() {
-  const target = parseTarget(els.target.value);
-  const campaign = slugify(els.campaign.value);
-  const content = slugify(els.content.value);
-  return { target, campaign, content };
+  return { target: parseTarget(els.target.value), campaign: slugify(els.campaign.value), content: slugify(els.content.value) };
 }
 
 function renderNotes({ target, content }) {
@@ -124,27 +112,23 @@ function renderNotes({ target, content }) {
   else if (target.ok && target.insecure) note = 'Adres zaczyna się od http:// – jeśli strona ma https://, użyj go.';
   els.targetNote.textContent = note;
   els.targetNote.className = 'note' + (t && !target.ok ? ' warn' : '');
-
-  els.campaignNotes.innerHTML = campaignNotes(els.campaign.value)
-    .map((n) => `<li class="${n.level}">${esc(n.text)}</li>`)
-    .join('');
-
+  els.campaignNotes.innerHTML = campaignNotes(els.campaign.value).map((n) => `<li class="${n.level}">${esc(n.text)}</li>`).join('');
   const badge = $('content-badge');
   badge.hidden = !content;
   badge.textContent = content;
-  const rawContent = els.content.value.trim();
-  els.contentNote.textContent = rawContent && content !== rawContent ? `Zapiszemy jako: ${content}` : '';
+  const raw = els.content.value.trim();
+  els.contentNote.textContent = raw && content !== raw ? `Zapiszemy jako: ${content}` : '';
 }
 
 function missingText({ target, campaign }) {
-  if (!target.ok && !campaign) return 'Uzupełnij adres strony i nazwę kampanii.';
-  if (!target.ok) return 'Uzupełnij poprawny adres strony.';
-  if (!campaign) return 'Uzupełnij nazwę kampanii.';
+  if (!target.ok && !campaign) return 'Wklej adres strony i wpisz kampanię.';
+  if (!target.ok) return 'Wklej poprawny adres strony.';
+  if (!campaign) return 'Wpisz kampanię (datę wydarzenia RRMMDD).';
   return '';
 }
 
-function linkRow(c, p, base, name) {
-  const source = resolveSource(c, name);
+function linkRow(c, p, base) {
+  const source = resolveSource(c, els.partner.value);
   if (!source) return null;
   const medium = slugify(p.medium);
   return {
@@ -153,172 +137,95 @@ function linkRow(c, p, base, name) {
   };
 }
 
-/* ---------- Jeden link ---------- */
-function fillChannelSelect() {
-  const visible = shownChannels();
-  if (!visible.some((c) => c.id === state.channel)) state.channel = visible[0]?.id;
-  const opt = (c) => `<option value="${esc(c.id)}">${esc(c.label)}</option>`;
-  const social = visible.filter((c) => c.group === 'social');
-  const other = visible.filter((c) => c.group !== 'social');
-  els.channel.innerHTML =
-    (social.length ? `<optgroup label="Social media">${social.map(opt).join('')}</optgroup>` : '') +
-    (other.length ? `<optgroup label="Inne kanały">${other.map(opt).join('')}</optgroup>` : '');
-  els.channel.value = state.channel;
-  fillPlacementSelect();
-}
-
-function fillPlacementSelect() {
-  const c = channels.find((x) => x.id === state.channel);
-  const list = c ? shownPlaces(c) : [];
-  if (!list.some((p) => p.id === state.placement)) state.placement = list[0]?.id || '';
-  els.placement.innerHTML = list
-    .map((p) => `<option value="${esc(p.id)}">${esc(p.label)} – ${esc(slugify(p.medium))}</option>`)
-    .join('');
-  els.placement.value = state.placement;
-  els.partnerField.hidden = !(c && needsName(c));
-}
-
-function renderSingle(base) {
-  const missing = missingText(base);
-  const c = channels.find((x) => x.id === state.channel);
-  const p = c ? shownPlaces(c).find((x) => x.id === state.placement) : undefined;
-  if (missing || !c || !p) {
-    els.single.innerHTML = `<p class="empty">${esc(missing || 'Wybierz kanał i miejsce.')}</p>`;
-    return;
-  }
-  const row = linkRow(c, p, base, els.partner.value);
-  if (!row) {
-    els.single.innerHTML = '<p class="empty">Wpisz nazwę partnera.</p>';
-    return;
-  }
-  els.single.innerHTML = `
-    <div class="link-box">
-      <code class="link" id="single-link">${esc(row.link)}</code>
-      <button type="button" class="btn" id="copy-single">Kopiuj link</button>
-    </div>
-    <p class="params">${['source', 'medium', 'campaign', 'content']
-      .filter((k) => row[k])
-      .map((k) => `<span><b>utm_${k}</b> ${esc(row[k])}</span>`)
-      .join('')}</p>`;
-  $('copy-single').addEventListener('click', () => copy(row.link, 'Link skopiowany'));
-}
-
-/* ---------- Komplet ---------- */
+/* ---------- Lewy panel: miejsca ---------- */
 function renderPicker() {
-  const groups = [
+  const sections = [
     ['Social media', shownChannels().filter((c) => c.group === 'social')],
     ['Inne kanały', shownChannels().filter((c) => c.group !== 'social')],
-  ];
-  els.picker.innerHTML = groups
-    .filter(([, list]) => list.length)
+  ].filter(([, list]) => list.length);
+  els.picker.innerHTML = sections
     .map(([title, list]) => `
-      <fieldset>
-        <legend>${esc(title)}</legend>
-        ${list.map((c) => `
-          <div class="pick-channel">
-            <span class="pick-name">${esc(c.label)}</span>
-            <div class="pick-places">
-              ${shownPlaces(c).map((p) => `
-                <label class="chip"><input type="checkbox" value="${esc(key(c, p))}" ${state.selected.has(key(c, p)) ? 'checked' : ''}>
-                  <span>${esc(p.label)}</span></label>`).join('')}
-            </div>
-          </div>`).join('')}
-      </fieldset>`)
+      <p class="pick-sec">${esc(title)}</p>
+      ${list.map((c) => `
+        <div class="pick-ch">
+          <span class="pick-name">${esc(c.label)}</span>
+          ${shownPlaces(c).map((p) => `
+            <label class="it"><input type="checkbox" value="${esc(key(c, p))}" ${state.selected.has(key(c, p)) ? 'checked' : ''}>
+              <span class="it-l">${esc(p.label)}</span><small>${esc(slugify(p.medium))}</small></label>`).join('')}
+        </div>`).join('')}`)
     .join('');
-  updatePartnerSetField();
+  updatePartnerField();
 }
 
-function updatePartnerSetField() {
-  const any = channels.some((c) => needsName(c) && shownPlaces(c).some((p) => state.selected.has(key(c, p))));
-  els.partnerSetField.hidden = !any;
+function updatePartnerField() {
+  els.partnerField.hidden = !channels.some((c) => needsName(c) && shownPlaces(c).some((p) => state.selected.has(key(c, p))));
 }
 
+/* ---------- Prawy panel: gotowe linki ---------- */
 let currentRows = [];
 let currentGroups = [];
-function renderSet(base) {
-  const missing = missingText(base);
+function renderResult(base) {
   currentRows = [];
-  if (missing) {
-    els.set.innerHTML = `<p class="empty">${esc(missing)}</p>`;
-    els.setActions.hidden = true;
-    return;
-  }
+  currentGroups = [];
+  const missing = missingText(base);
   let skipped = false;
-  const groups = [];
-  for (const c of channels) {
-    const rows = [];
-    for (const p of shownPlaces(c)) {
-      if (!state.selected.has(key(c, p))) continue;
-      const row = linkRow(c, p, base, els.partnerSet.value);
-      if (row) {
-        rows.push(currentRows.length);
-        currentRows.push(row);
-      } else skipped = true;
+  if (!missing) {
+    for (const c of channels) {
+      const rows = [];
+      for (const p of shownPlaces(c)) {
+        if (!state.selected.has(key(c, p))) continue;
+        const row = linkRow(c, p, base);
+        if (row) {
+          rows.push(currentRows.length);
+          currentRows.push(row);
+        } else skipped = true;
+      }
+      if (rows.length) currentGroups.push({ c, rows });
     }
-    if (rows.length) groups.push({ c, rows });
   }
-  if (!currentRows.length) {
-    els.set.innerHTML = `<p class="empty">${skipped ? 'Wpisz nazwę partnera.' : 'Zaznacz co najmniej jedno miejsce.'}</p>`;
-    els.setActions.hidden = true;
+  const n = currentRows.length;
+  els.acts.hidden = !n;
+  const jump = $('jump');
+  jump.hidden = !n;
+  jump.textContent = `Gotowe: ${n} ${plural(n, 'link', 'linki', 'linków')} ↓`;
+  els.meta.textContent = n ? `${n} ${plural(n, 'link', 'linki', 'linków')} · kampania ${base.campaign}${base.content ? ` · materiał ${base.content}` : ''}` : '';
+  if (!n) {
+    const msg = missing || (skipped ? 'Wpisz nazwę partnera.' : 'Zaznacz po lewej, gdzie wrzucasz link.');
+    els.result.innerHTML = `<p class="empty">${esc(msg)}</p>`;
     return;
   }
-  els.setActions.hidden = false;
-  els.set.innerHTML =
+  els.result.innerHTML =
     (skipped ? '<p class="note warn">Partner pominięty – wpisz jego nazwę.</p>' : '') +
-    `<p class="small count">Linków: ${currentRows.length} · platform: ${groups.length}</p><div class="platforms">` +
-    groups
+    currentGroups
       .map(({ c, rows }, gi) => `
-        <section class="platform" aria-labelledby="pf-${gi}">
-          <div class="platform-head">
-            <h3 id="pf-${gi}">${esc(c.label)}<span class="count">${rows.length} ${rows.length === 1 ? 'link' : rows.length < 5 ? 'linki' : 'linków'}</span></h3>
-            ${rows.length > 1 ? `<button type="button" class="ghost sm" data-copy-group="${gi}" aria-label="Kopiuj wszystkie linki: ${esc(c.label)}">Kopiuj ${rows.length}</button>` : ''}
+        <section class="plat" aria-labelledby="pl-${gi}">
+          <div class="plat-head">
+            <h3 id="pl-${gi}">${esc(c.label)}</h3>
+            ${rows.length > 1 ? `<button type="button" class="cp" data-copy-group="${gi}" aria-label="Kopiuj ${rows.length} – wszystkie linki: ${esc(c.label)}">Kopiuj ${rows.length}</button>` : ''}
           </div>
-          <ul class="rows">
-            ${rows
-              .map((i) => {
-                const r = currentRows[i];
-                return `
-              <li>
-                <div class="row-head">${esc(r.placement)}</div>
-                <div class="link-box">
-                  <code class="link">${esc(r.link)}</code>
-                  <button type="button" class="btn sm" data-copy="${i}" aria-label="Kopiuj link: ${esc(r.channel)}, ${esc(r.placement)}">Kopiuj</button>
-                </div>
-              </li>`;
-              })
-              .join('')}
-          </ul>
+          ${rows.map((i) => {
+            const r = currentRows[i];
+            return `
+          <div class="ln">
+            <span class="ln-l">${esc(r.placement)}</span>
+            <code class="ln-u" title="${esc(r.link)}">${esc(r.link)}</code>
+            <button type="button" class="cp" data-copy="${i}" aria-label="Kopiuj link: ${esc(r.channel)}, ${esc(r.placement)}">Kopiuj</button>
+          </div>`;
+          }).join('')}
         </section>`)
-      .join('') +
-    '</div>';
-  currentGroups = groups;
+      .join('');
 }
 
-/* ---------- Odświeżanie ---------- */
 function render() {
   const base = inputs();
   renderNotes(base);
-  if (state.mode === 'single') renderSingle(base);
-  else renderSet(base);
+  renderResult(base);
   persist();
-}
-
-function setMode(mode) {
-  state.mode = mode;
-  const single = mode === 'single';
-  $('tab-single').setAttribute('aria-selected', String(single));
-  $('tab-set').setAttribute('aria-selected', String(!single));
-  $('tab-single').tabIndex = single ? 0 : -1;
-  $('tab-set').tabIndex = single ? -1 : 0;
-  $('panel-single').hidden = !single;
-  $('panel-set').hidden = single;
-  render();
 }
 
 /* ---------- Ustawienia kanałów ---------- */
 function saveChannels() {
   store.set(STORE.channels, channels);
-  fillChannelSelect();
   renderPicker();
   render();
 }
@@ -458,12 +365,16 @@ function init() {
   const today = todayCampaign();
   els.campaign.value = today.campaign;
   $('campaign-date').value = today.iso;
-  fillChannelSelect();
   renderPicker();
   setupHelp();
   setupSettings();
 
-  for (const el of [els.target, els.campaign, els.content, els.partner, els.partnerSet]) el.addEventListener('input', render);
+  for (const el of [els.target, els.campaign, els.content, els.partner]) el.addEventListener('input', render);
+  // Kalendarz pokazuje datę wpisanej kampanii (RRMMDD → RRRR-MM-DD).
+  els.campaign.addEventListener('input', () => {
+    const m = /^(\d{2})(\d{2})(\d{2})/.exec(slugify(els.campaign.value));
+    if (m) $('campaign-date').value = `20${m[1]}-${m[2]}-${m[3]}`;
+  });
   $('campaign-date').addEventListener('change', (e) => {
     const v = campaignFromDate(e.target.value);
     if (v) {
@@ -471,22 +382,12 @@ function init() {
       render();
     }
   });
-  els.channel.addEventListener('change', () => {
-    state.channel = els.channel.value;
-    state.placement = '';
-    fillPlacementSelect();
-    render();
-  });
-  els.placement.addEventListener('change', () => {
-    state.placement = els.placement.value;
-    render();
-  });
 
   els.picker.addEventListener('change', (e) => {
     if (e.target.type !== 'checkbox') return;
     if (e.target.checked) state.selected.add(e.target.value);
     else state.selected.delete(e.target.value);
-    updatePartnerSetField();
+    updatePartnerField();
     render();
   });
   document.querySelectorAll('[data-select]').forEach((b) =>
@@ -503,7 +404,7 @@ function init() {
     }),
   );
 
-  els.set.addEventListener('click', (e) => {
+  els.result.addEventListener('click', (e) => {
     const b = e.target.closest('[data-copy]');
     if (b) copy(currentRows[Number(b.dataset.copy)].link, 'Link skopiowany');
     const g = e.target.closest('[data-copy-group]');
@@ -512,28 +413,12 @@ function init() {
       copy(toTsv(group.rows.map((i) => currentRows[i])), `Skopiowano linki: ${group.c.label}`);
     }
   });
-  $('copy-all').addEventListener('click', () => copy(toTsv(currentRows), `Skopiowano ${currentRows.length} linków`));
+  $('copy-all').addEventListener('click', () => copy(toTsv(currentRows), `Skopiowano ${currentRows.length} ${plural(currentRows.length, 'link', 'linki', 'linków')}`));
   $('download-csv').addEventListener('click', () => {
-    const name = `utm-${slugify(els.campaign.value) || 'linki'}.csv`;
-    download(name, toCsv(currentRows), 'text/csv;charset=utf-8');
+    download(`utm-${slugify(els.campaign.value) || 'linki'}.csv`, toCsv(currentRows), 'text/csv;charset=utf-8');
   });
 
-  // Strzałki w zakładkach (wzorzec ARIA tabs)
-  document.querySelector('[role="tablist"]').addEventListener('keydown', (e) => {
-    if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') {
-      const next = state.mode === 'single' ? 'set' : 'single';
-      setMode(next);
-      $(`tab-${next}`).focus();
-    }
-  });
-  $('tab-single').addEventListener('click', () => setMode('single'));
-  $('tab-set').addEventListener('click', () => setMode('set'));
-
-  if (!state.selected.size) {
-    for (const c of channels) if (c.group === 'social') for (const p of shownPlaces(c)) state.selected.add(key(c, p));
-    renderPicker();
-  }
-  setMode(state.mode);
+  render();
 }
 
 init();
