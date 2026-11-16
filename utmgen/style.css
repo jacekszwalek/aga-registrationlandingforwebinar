@@ -79,7 +79,6 @@ input::placeholder { color: #8f8389; }
 .mini::after { content: ''; position: absolute; inset: -6px -2px; }
 .mini:hover { background: var(--blush-50); }
 .picker { display: grid; gap: 2px; }
-.pick-sec { margin: 10px 0 2px; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--pink-800); }
 .pick-ch { padding: 4px 0; border-top: 1px solid var(--line); }
 .pick-name { display: block; padding: 4px 8px 0; font-size: 0.8rem; font-weight: 600; color: var(--ink); }
 .it { display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 4px 8px; border-radius: 8px; font-size: 0.88rem; cursor: pointer; }
@@ -204,3 +203,7 @@ dialog::backdrop { background: rgb(43 8 26 / 0.45); }
 dialog { overflow-y: auto; }
 .settings { padding-top: 0; }
 .settings-head { position: sticky; top: 0; z-index: 5; margin: 0 -18px; padding: 10px 18px; background: var(--white); border-bottom: 1px solid var(--line); }
+
+/* Zakładki kanałów */
+.cnt { font-weight: 400; }
+.picker .empty { padding: 16px; font-size: 0.85rem; }

@@ -32,6 +32,7 @@ async function open(page: Page, opts: { fresh?: boolean } = {}) {
 
 const TARGET = 'https://przystanzmianyzawodowej.pl/webinar/';
 
+const tab = (page: Page, name: 'Social media' | 'Inne kanały') => page.locator('#places-label').locator('xpath=ancestor::div[contains(@class,"f")][1]').locator('.seg label', { hasText: name }).click();
 const pick = (page: Page, value: string) => page.locator(`#picker input[value="${value}"]`);
 
 test('kampania: pole puste, bieżąca data tylko jako podpowiedź w tle', async ({ page }) => {
@@ -82,7 +83,7 @@ test('nowa osoba: zaznaczone tylko Facebook – Post; wyczyszczony wybór zostaj
   await open(page, { fresh: true });
   const checked = await page.locator('#picker input[type="checkbox"][value]:checked').evaluateAll((els) => els.map((e) => (e as HTMLInputElement).value));
   expect(checked).toEqual(['facebook:post']);
-  await page.getByRole('button', { name: 'Wyczyść' }).click();
+  await page.getByRole('button', { name: 'Odznacz wszystkie' }).click();
   await page.reload();
   await expect(page.locator('#picker input[type="checkbox"][value]:checked')).toHaveCount(0);
 });
@@ -150,6 +151,8 @@ test('partner wymaga nazwy', async ({ page }) => {
   await page.fill('#target', TARGET);
   await page.fill('#campaign', '261203');
   await expect(page.locator('#partner-field')).toBeHidden();
+  await tab(page, 'Inne kanały');
+  await expect(page.locator('#partner-field')).toBeHidden();
   await pick(page, 'partner:polecenie').check();
   await expect(page.locator('#partner-field')).toBeVisible();
   // pole jest tuż pod pozycją „Partner / polecenie”
@@ -183,7 +186,8 @@ test('social media: linki pogrupowane w platformy, reklamy FB i IG osobno, CSV',
   await open(page);
   await page.fill('#target', TARGET);
   await page.fill('#campaign', '261203');
-  await page.getByRole('button', { name: 'Social media' }).click();
+  await page.getByRole('button', { name: 'Zaznacz wszystkie' }).click();
+  await expect(page.locator('#cnt-social')).toHaveText(' (15)');
   // Facebook 4 + Instagram 3 + LinkedIn 3 + WhatsApp 3 + YouTube 1 + TikTok 1
   await expect(page.locator('.ln')).toHaveCount(15);
   await expect(page.locator('.plat')).toHaveCount(6);
@@ -191,11 +195,26 @@ test('social media: linki pogrupowane w platformy, reklamy FB i IG osobno, CSV',
   await expect(page.locator('.plat').first().locator('.ln')).toHaveCount(4);
   await expect(page.locator('#res-meta')).toContainText('15 linków');
 
+  // zakładka „Inne kanały”: social media znikają z listy, ale ich linki zostają w wynikach
+  await tab(page, 'Inne kanały');
+  await expect(page.locator('#picker')).not.toContainText('TikTok');
   await expect(page.locator('#picker')).toContainText('Reklamy Facebook');
   await expect(page.locator('#picker')).toContainText('Reklamy Instagram');
   await expect(page.locator('#picker')).not.toContainText('Meta');
-  await page.getByRole('button', { name: 'Wyczyść' }).click();
   await pick(page, 'instagram-ads:reklama').check();
+  await expect(page.locator('#cnt-other')).toHaveText(' (1)');
+  await expect(page.locator('.ln')).toHaveCount(16);
+  // „Odznacz wszystkie” działa tylko w otwartej zakładce
+  await tab(page, 'Social media');
+  await page.getByRole('button', { name: 'Odznacz wszystkie' }).click();
+  await expect(page.locator('#cnt-social')).toHaveText('');
+  await expect(page.locator('.ln')).toHaveCount(1);
+  // wybrana zakładka zapamiętana
+  await tab(page, 'Inne kanały');
+  await page.reload();
+  await expect(page.locator('input[name="pgroup"][value="other"]')).toBeChecked();
+  await page.fill('#target', TARGET);
+  await page.fill('#campaign', '261203');
   await expect(page.locator('.ln-u')).toContainText('utm_source=instagram&utm_medium=paid');
 
   const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'CSV' }).click()]);
@@ -243,15 +262,16 @@ test('migracja: stare „Reklamy Meta” → Facebook i Instagram', async ({ pag
     }
   });
   await open(page);
-  const names = await page.locator('.pick-name').allTextContents();
-  expect(names).toEqual(['Facebook', 'Reklamy Facebook', 'Reklamy Instagram']);
+  expect(await page.locator('.pick-name').allTextContents()).toEqual(['Facebook']);
+  await tab(page, 'Inne kanały');
+  expect(await page.locator('.pick-name').allTextContents()).toEqual(['Reklamy Facebook', 'Reklamy Instagram']);
 });
 
 test('axe: brak błędów dostępności', async ({ page }) => {
   await open(page);
   await page.fill('#target', TARGET);
   await page.fill('#campaign', '261203');
-  await page.getByRole('button', { name: 'Social media' }).click();
+  await page.getByRole('button', { name: 'Zaznacz wszystkie' }).click();
   const r = await new AxeBuilder({ page }).analyze();
   expect(r.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
 });
