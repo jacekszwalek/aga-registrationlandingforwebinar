@@ -148,13 +148,27 @@ function renderPicker() {
       <p class="pick-sec">${esc(title)}</p>
       ${list.map((c) => `
         <div class="pick-ch">
-          <span class="pick-name">${esc(c.label)}</span>
+          ${shownPlaces(c).length > 1
+            ? `<label class="pick-name pick-all"><input type="checkbox" data-channel="${esc(c.id)}" aria-label="${esc(c.label)} – zaznacz lub odznacz wszystkie miejsca"><span>${esc(c.label)}</span></label>`
+            : `<span class="pick-name">${esc(c.label)}</span>`}
           ${shownPlaces(c).map((p) => `
             <label class="it"><input type="checkbox" value="${esc(key(c, p))}" ${state.selected.has(key(c, p)) ? 'checked' : ''}>
               <span class="it-l">${esc(p.label)}</span><small>${esc(slugify(p.medium))}</small></label>`).join('')}
         </div>`).join('')}`)
     .join('');
   updatePartnerField();
+  syncChannelBoxes();
+}
+
+/** Checkbox przy platformie: zaznaczony = wszystkie miejsca, częściowo = niektóre. */
+function syncChannelBoxes() {
+  els.picker.querySelectorAll('input[data-channel]').forEach((box) => {
+    const c = channels.find((x) => x.id === box.dataset.channel);
+    const places = shownPlaces(c);
+    const n = places.filter((p) => state.selected.has(key(c, p))).length;
+    box.checked = n === places.length;
+    box.indeterminate = n > 0 && n < places.length;
+  });
 }
 
 function updatePartnerField() {
@@ -385,8 +399,19 @@ function init() {
 
   els.picker.addEventListener('change', (e) => {
     if (e.target.type !== 'checkbox') return;
-    if (e.target.checked) state.selected.add(e.target.value);
+    const chId = e.target.dataset.channel;
+    if (chId) {
+      const c = channels.find((x) => x.id === chId);
+      for (const p of shownPlaces(c)) {
+        const k = key(c, p);
+        if (e.target.checked) state.selected.add(k);
+        else state.selected.delete(k);
+        const box = els.picker.querySelector(`input[value="${CSS.escape(k)}"]`);
+        if (box) box.checked = e.target.checked;
+      }
+    } else if (e.target.checked) state.selected.add(e.target.value);
     else state.selected.delete(e.target.value);
+    syncChannelBoxes();
     updatePartnerField();
     render();
   });

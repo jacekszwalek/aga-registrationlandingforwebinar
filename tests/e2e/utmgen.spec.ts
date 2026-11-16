@@ -62,6 +62,25 @@ test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) =
   await expect(page.locator('#res-meta')).toContainText('1 link · kampania 261203 · materiał post-1');
 });
 
+test('checkbox przy platformie zaznacza i odznacza wszystkie jej miejsca', async ({ page }) => {
+  await open(page);
+  await page.fill('#target', TARGET);
+  await page.fill('#campaign', '261203');
+  const fb = page.locator('#picker input[data-channel="facebook"]');
+  await fb.check();
+  await expect(page.locator('.ln')).toHaveCount(4);
+  await pick(page, 'facebook:messenger').uncheck();
+  await expect(fb).not.toBeChecked();
+  expect(await fb.evaluate((el: HTMLInputElement) => el.indeterminate)).toBe(true);
+  await pick(page, 'facebook:messenger').check();
+  await expect(fb).toBeChecked();
+  await fb.uncheck();
+  await expect(page.locator('.ln')).toHaveCount(0);
+  await expect(pick(page, 'facebook:grupa')).not.toBeChecked();
+  // kanał z jednym miejscem (TikTok) nie ma osobnego checkboxa
+  await expect(page.locator('#picker input[data-channel="tiktok"]')).toHaveCount(0);
+});
+
 test('partner wymaga nazwy', async ({ page }) => {
   await open(page);
   await page.fill('#target', TARGET);

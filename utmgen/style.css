@@ -179,3 +179,10 @@ dialog::backdrop { background: rgb(43 8 26 / 0.45); }
   }
   main.grid { padding-bottom: 72px; }
 }
+
+/* Checkbox przy platformie – zaznacz/odznacz wszystkie */
+.pick-all { display: flex !important; align-items: center; gap: 10px; min-height: 40px; padding: 4px 8px !important; cursor: pointer; border-radius: 8px; }
+.pick-all:hover { background: var(--bg); }
+.pick-all input { width: 18px; height: 18px; margin: 0; accent-color: var(--pink-700); flex: none; }
+.pick-all:has(input:focus-visible) { box-shadow: var(--focus); }
+.pick-name:not(.pick-all) { padding-left: 36px; }

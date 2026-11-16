@@ -4,7 +4,7 @@ Narzędzie pracy dla Agnieszki: **https://przystanzmianyzawodowej.pl/utmgen/** (
 Statyczna strona bez serwera i bez analityki, `noindex` (meta + nagłówek `X-Robots-Tag`), nielinkowana.
 
 ## Co robi (projekt B – dwa panele, od 16.11.2026)
-- **Lewy panel**: adres strony, kampania (**data wydarzenia RRMMDD**, np. `261203`; startuje z dzisiejszą datą, kalendarz obok), lista **miejsc** do zaznaczenia (pogrupowana: social media / inne kanały → kanał → miejsca, z `utm_medium` po prawej), skróty „Social media / Wszystko / Wyczyść”, zwinięty **Materiał (`utm_content`)** – domyślnie pusty (podpowiedź `link-rejestracja`, `grafika-z-kubkiem`).
+- **Lewy panel**: adres strony, kampania (**data wydarzenia RRMMDD**, np. `261203`; startuje z dzisiejszą datą, kalendarz obok), lista **miejsc** do zaznaczenia (pogrupowana: social media / inne kanały → kanał → miejsca, z `utm_medium` po prawej; checkbox przy platformie zaznacza/odznacza wszystkie jej miejsca), skróty „Social media / Wszystko / Wyczyść”, zaraz pod kampanią zwinięty **Materiał (`utm_content`)** – domyślnie pusty (podpowiedź `link-rejestracja`, `grafika-z-kubkiem`).
 - **Prawy panel – Gotowe linki** (na żywo): linki pogrupowane według platform, „Kopiuj” przy każdym, „Kopiuj N” dla platformy, „Kopiuj wszystkie” (do arkusza w kolumnach) i **CSV** (Excel, średnik, polskie znaki). Jeden link = jedno zaznaczone miejsce.
 - Na telefonie panele są jeden pod drugim, a przycisk „Gotowe: N linków ↓” przewija do wyników.
 - **Dlaczego data jako kampania:** parametry linku widzi każdy, kto w niego kliknie; data nie zdradza, czego dotyczy kampania. Dwa wydarzenia tego samego dnia: `261203-2`. Generator ostrzega, gdy w nazwie są słowa, i sprawdza poprawność daty.
