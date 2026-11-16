@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, resolveSource, toCsv, toTsv } from '../../utmgen/utm.js';
+import { slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, todayCampaign, resolveSource, toCsv, toTsv } from '../../utmgen/utm.js';
 import { DEFAULT_CHANNELS } from '../../utmgen/channels.js';
 
 describe('utmgen – porządki', () => {
@@ -49,6 +49,10 @@ describe('utmgen – kampania i kanały', () => {
   it('data z kalendarza → RRMMDD', () => {
     expect(campaignFromDate('2026-12-03')).toBe('261203');
     expect(campaignFromDate('')).toBe('');
+  });
+  it('domyślnie dzisiejsza data', () => {
+    expect(todayCampaign(new Date(2026, 10, 16, 23, 30))).toEqual({ campaign: '261116', iso: '2026-11-16' });
+    expect(todayCampaign(new Date(2027, 0, 5))).toEqual({ campaign: '270105', iso: '2027-01-05' });
   });
   it('partner wymaga nazwy', () => {
     const partner = DEFAULT_CHANNELS.find((c: { id: string }) => c.id === 'partner');

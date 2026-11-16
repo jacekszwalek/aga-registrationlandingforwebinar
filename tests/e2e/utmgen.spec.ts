@@ -23,8 +23,18 @@ async function open(page: Page) {
 
 const TARGET = 'https://przystanzmianyzawodowej.pl/webinar/';
 
+test('domyślnie dzisiejsza data jako kampania', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-11-16T10:00:00+01:00'));
+  await open(page);
+  await expect(page.locator('#campaign')).toHaveValue('261116');
+  await expect(page.locator('#campaign-date')).toHaveValue('2026-11-16');
+  await page.fill('#target', TARGET);
+  await expect(page.locator('#single-link')).toContainText('utm_campaign=261116');
+});
+
 test('noindex, porządki nazwy i jeden link', async ({ page }) => {
   await open(page);
+  await page.fill('#campaign', '');
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
   await expect(page.locator('#single-result')).toContainText('Uzupełnij adres strony i nazwę kampanii');
 

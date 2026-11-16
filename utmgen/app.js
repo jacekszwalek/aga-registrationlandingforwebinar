@@ -1,4 +1,4 @@
-import { slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, resolveSource, toCsv, toTsv } from './utm.js';
+import { slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, todayCampaign, resolveSource, toCsv, toTsv } from './utm.js';
 import { DEFAULT_CHANNELS } from './channels.js';
 
 const STORE = { channels: 'utmgen.channels.v1', state: 'utmgen.state.v1' };
@@ -31,7 +31,6 @@ let channels = validChannels(store.get(STORE.channels)) ? store.get(STORE.channe
 const saved = store.get(STORE.state, {});
 const state = {
   mode: saved.mode === 'set' ? 'set' : 'single',
-  campaign: saved.campaign || '',
   channel: saved.channel || channels[0]?.id,
   placement: saved.placement || '',
   selected: new Set(saved.selected || []),
@@ -53,7 +52,7 @@ const needsName = (c) => c.source.includes('{nazwa}');
 
 function persist() {
   store.set(STORE.state, {
-    mode: state.mode, campaign: els.campaign.value, channel: state.channel, placement: state.placement,
+    mode: state.mode, channel: state.channel, placement: state.placement,
     selected: [...state.selected],
   });
 }
@@ -409,7 +408,10 @@ function download(name, text, type) {
 
 /* ---------- Start ---------- */
 function init() {
-  els.campaign.value = state.campaign;
+  // Domyślnie dzisiejsza data (RRMMDD) – za każdym otwarciem, żeby nie zostawała kampania z poprzedniego dnia.
+  const today = todayCampaign();
+  els.campaign.value = today.campaign;
+  $('campaign-date').value = today.iso;
   fillChannelSelect();
   renderPicker();
   setupHelp();
