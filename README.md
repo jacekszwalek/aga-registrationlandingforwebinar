@@ -65,7 +65,7 @@ Strona przekazuje każdy parametr `utm_*`, więc schemat można zmieniać bez zm
 | Newsletter | `?utm_source=mailerlite&utm_medium=email&utm_campaign=261203` |
 | Polecenie (automatycznie z /dziekuje/) | `?utm_source=referral&utm_medium=share` |
 
-Zasady: małe litery, myślniki zamiast spacji, `utm_content` rozróżnia konkretne posty. `utm_campaign`: wydarzenie jednorazowe – data rozpoczęcia RRMMDD (np. `261203`, link nie zdradza, czego dotyczy kampania); wydarzenie cykliczne lub stała kampania – nazwa (np. `ebook-najlepsza-uczennica`). Linki najlepiej tworzyć w generatorze `/utmgen/`.
+Zasady: małe litery, myślniki zamiast spacji, `utm_content` rozróżnia konkretne posty. `utm_campaign`: wydarzenie jednorazowe – data rozpoczęcia RRMMDD (np. `261203` – skraca link i jednoznacznie wskazuje kampanię); wydarzenie cykliczne lub stała kampania – nazwa (np. `ebook-najlepsza-uczennica`). Linki najlepiej tworzyć w generatorze `/utmgen/`.
 
 ## Checklista przed każdą edycją
 - [ ] Zmieniam termin tylko w `event.config.ts`, treść tylko w `copy.ts`.

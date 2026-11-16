@@ -99,6 +99,7 @@ test('rodzaj kampanii: jednorazowe (data) i cykliczne/stałe (nazwa) – dymek i
   await expect(page.locator('#campaign')).toHaveValue('');
   await page.fill('#campaign', '261203');
   await expect(rules).toContainText('dwa wydarzenia jednego dnia: 261203-2');
+  await expect(rules).toContainText('krótszy link, jednoznacznie wskazuje kampanię');
   // jeden wspólny dymek dla obu rodzajów
   await expect(tip).toContainText('Dwa wydarzenia tego samego dnia');
   await expect(tip).toContainText('Data zamiast opisu skraca długość linku');
