@@ -186,3 +186,9 @@ dialog::backdrop { background: rgb(43 8 26 / 0.45); }
 .pick-all input { width: 18px; height: 18px; margin: 0; accent-color: var(--pink-700); flex: none; }
 .pick-all:has(input:focus-visible) { box-shadow: var(--focus); }
 .pick-name:not(.pick-all) { padding-left: 36px; }
+
+/* Dymek nad przyciskiem, gdy pod nim brakuje miejsca */
+.tip { overflow-y: auto; overscroll-behavior: contain; }
+.tip.up { top: auto; bottom: calc(100% + 8px); }
+
+.opt { margin-left: 6px; font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); }
