@@ -60,13 +60,27 @@ function persist() {
 }
 
 /* ---------- Pomoc: dymki po najechaniu, fokusie lub kliknięciu ---------- */
+/** Dymek pod przyciskiem, a gdy brakuje miejsca do dolnej krawędzi okna – nad nim; za długi dostaje przewijanie. */
+function placeTip(tip) {
+  tip.classList.remove('up');
+  tip.style.maxHeight = '';
+  const btn = tip.previousElementSibling.getBoundingClientRect();
+  const margin = 12;
+  const below = window.innerHeight - btn.bottom - margin - 8;
+  const above = btn.top - margin - 8;
+  const h = tip.scrollHeight;
+  if (h > below && above > below) tip.classList.add('up');
+  const room = tip.classList.contains('up') ? above : below;
+  if (h > room) tip.style.maxHeight = `${Math.max(room, 120)}px`;
+}
+
 function setupHelp(root = document) {
   root.querySelectorAll('.help').forEach((btn) => {
     if (btn.dataset.bound) return;
     btn.dataset.bound = '1';
     const tip = document.getElementById(btn.getAttribute('aria-describedby'));
     let pinned = false;
-    const show = () => { tip.hidden = false; };
+    const show = () => { tip.hidden = false; placeTip(tip); };
     const hide = () => { if (!pinned) tip.hidden = true; };
     btn.addEventListener('mouseenter', show);
     btn.addEventListener('mouseleave', hide);

@@ -87,8 +87,21 @@ test('partner wymaga nazwy', async ({ page }) => {
   await page.fill('#campaign', '261203');
   await pick(page, 'partner:polecenie').check();
   await expect(page.locator('#partner-field')).toBeVisible();
-  await page.getByRole('button', { name: 'Pomoc: partner' }).click();
-  await expect(page.locator('#tip-partner')).toContainText('komuś innemu');
+  // dymek na dole strony mieści się w oknie (otwiera się nad przyciskiem)
+  await page.setViewportSize({ width: 420, height: 500 });
+  const helpBtn = page.getByRole('button', { name: 'Pomoc: partner' });
+  await helpBtn.scrollIntoViewIfNeeded();
+  await page.evaluate(() => {
+    const b = document.querySelector('[aria-describedby="tip-partner"]')!;
+    window.scrollBy(0, b.getBoundingClientRect().bottom - window.innerHeight + 20);
+  });
+  await helpBtn.click();
+  const tip = page.locator('#tip-partner');
+  await expect(tip).toContainText('komuś innemu');
+  await expect(tip).toContainText('Opcjonalne');
+  const box = (await tip.boundingBox())!;
+  expect(box.y).toBeGreaterThanOrEqual(0);
+  expect(box.y + box.height).toBeLessThanOrEqual(500);
   await expect(page.locator('#result')).toContainText('Wpisz nazwę partnera');
   await page.fill('#partner', 'Ela');
   await expect(page.locator('.ln-u')).toContainText('utm_source=partner-ela&utm_medium=referral');
