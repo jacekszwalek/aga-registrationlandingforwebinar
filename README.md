@@ -59,13 +59,13 @@ Strona przekazuje każdy parametr `utm_*`, więc schemat można zmieniać bez zm
 
 | Kanał | Przykład |
 |---|---|
-| Facebook – post | `?utm_source=facebook&utm_medium=social&utm_campaign=webinar-2026-12&utm_content=post-1` |
-| Facebook – grupa | `?utm_source=facebook&utm_medium=group&utm_campaign=webinar-2026-12&utm_content=nazwa-grupy` |
-| LinkedIn – post | `?utm_source=linkedin&utm_medium=social&utm_campaign=webinar-2026-12&utm_content=post-1` |
-| Newsletter | `?utm_source=mailerlite&utm_medium=email&utm_campaign=webinar-2026-12` |
+| Facebook – post | `?utm_source=facebook&utm_medium=social&utm_campaign=261203&utm_content=post-1` |
+| Facebook – grupa | `?utm_source=facebook&utm_medium=group&utm_campaign=261203&utm_content=nazwa-grupy` |
+| LinkedIn – post | `?utm_source=linkedin&utm_medium=social&utm_campaign=261203&utm_content=post-1` |
+| Newsletter | `?utm_source=mailerlite&utm_medium=email&utm_campaign=261203` |
 | Polecenie (automatycznie z /dziekuje/) | `?utm_source=referral&utm_medium=share` |
 
-Zasady: małe litery, myślniki zamiast spacji, `utm_content` rozróżnia konkretne posty.
+Zasady: małe litery, myślniki zamiast spacji, `utm_content` rozróżnia konkretne posty. `utm_campaign` = data wydarzenia RRMMDD (np. `261203`) – link nie zdradza, czego dotyczy kampania. Linki najlepiej tworzyć w generatorze `/utmgen/`.
 
 ## Checklista przed każdą edycją
 - [ ] Zmieniam termin tylko w `event.config.ts`, treść tylko w `copy.ts`.

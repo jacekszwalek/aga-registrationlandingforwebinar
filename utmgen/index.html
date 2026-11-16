@@ -17,7 +17,7 @@
   </header>
 
   <main>
-    <p class="lead">Wklej adres, wpisz nazwę kampanii, wybierz kanał – link powstaje od razu.</p>
+    <p class="lead">Wklej adres, wpisz datę wydarzenia jako kampanię, wybierz kanał – link powstaje od razu.</p>
 
     <section class="card" aria-labelledby="base-title">
       <h2 id="base-title" class="visually-hidden">Podstawowe dane</h2>
@@ -36,18 +36,23 @@
 
       <div class="field">
         <div class="label-row">
-          <label for="campaign">Nazwa kampanii <span class="key">utm_campaign</span></label>
+          <label for="campaign">Kampania <span class="key">utm_campaign</span></label>
           <span class="help-wrap">
-            <button type="button" class="help" aria-label="Pomoc: nazwa kampanii" aria-describedby="tip-campaign">?</button>
-            <span role="tooltip" id="tip-campaign" class="tip" hidden>Jedna nazwa dla <b>wszystkich</b> linków danego wydarzenia – dzięki temu w GA4 i MailerLite zobaczysz je razem. Wydarzenie: <code>RRRR-MM-DD-krotka-nazwa</code>, np. <code>2026-12-03-zostac-zmienic-wlasna-droga</code>. Stała oferta bez daty: np. <code>ebook-mechanizm</code>.</span>
+            <button type="button" class="help" aria-label="Pomoc: kampania" aria-describedby="tip-campaign">?</button>
+            <span role="tooltip" id="tip-campaign" class="tip" hidden>Wpisujemy <b>samą datę wydarzenia w formacie RRMMDD</b>, np. <code>261203</code> dla 3 grudnia 2026. <b>Dlaczego?</b> Parametry linku widzi każdy, kto w niego kliknie – data nie zdradza, czego dotyczy kampania (np. tematu reklamy czy grupy docelowej). Jedna nazwa dla <b>wszystkich</b> linków danego wydarzenia – w GA4 i MailerLite zobaczysz je razem. Dwa wydarzenia tego samego dnia: <code>261203-2</code>. Czego dotyczy kampania, sprawdzisz po dacie – grupy wydarzeń w MailerLite zaczynają się od tej samej daty.</span>
           </span>
         </div>
-        <input id="campaign" type="text" autocomplete="off" spellcheck="false" placeholder="2026-12-03-zostac-zmienic-wlasna-droga" aria-describedby="campaign-rules">
+        <div class="campaign-row">
+          <input id="campaign" type="text" inputmode="numeric" autocomplete="off" spellcheck="false" placeholder="261203" aria-describedby="campaign-rules">
+          <label class="date-pick">
+            <span>albo wybierz datę</span>
+            <input id="campaign-date" type="date" aria-label="Data wydarzenia – wypełni kampanię">
+          </label>
+        </div>
         <ul class="rules" id="campaign-rules">
-          <li><b>Format:</b> RRRR-MM-DD-krotka-nazwa</li>
-          <li><b>Długość:</b> do 50 znaków, 3–6 słów</li>
-          <li><b>Treść:</b> data + temat, bez danych osobowych</li>
-          <li><b>Znaki:</b> polskie litery, spacje i wielkie litery poprawimy sami</li>
+          <li><b>Format:</b> RRMMDD – data wydarzenia, np. 261203</li>
+          <li><b>Dlaczego:</b> link nie zdradza, czego dotyczy kampania</li>
+          <li><b>Dwa wydarzenia jednego dnia:</b> 261203-2</li>
         </ul>
         <ul class="notes" id="campaign-notes" aria-live="polite"></ul>
       </div>

@@ -29,20 +29,24 @@ test('noindex, porządki nazwy i jeden link', async ({ page }) => {
   await expect(page.locator('#single-result')).toContainText('Uzupełnij adres strony i nazwę kampanii');
 
   await page.fill('#target', TARGET);
-  await page.fill('#campaign', '2026-12-03 Zostać Zmienić');
-  await expect(page.locator('#campaign-notes')).toContainText('Zapiszemy jako: 2026-12-03-zostac-zmienic');
+  await page.fill('#campaign', 'Zostać Zmienić');
+  await expect(page.locator('#campaign-notes')).toContainText('Zapiszemy jako: zostac-zmienic');
+  await expect(page.locator('#campaign-notes')).toContainText('widoczne w linku');
+  await page.locator('#campaign-date').fill('2026-12-03');
+  await expect(page.locator('#campaign')).toHaveValue('261203');
+  await expect(page.locator('#campaign-notes')).toBeEmpty();
   await page.selectOption('#channel', 'facebook');
   await page.selectOption('#placement', 'grupa');
   await page.fill('#content', 'Post 1');
   await expect(page.locator('#single-link')).toHaveText(
-    `${TARGET}?utm_source=facebook&utm_medium=group&utm_campaign=2026-12-03-zostac-zmienic&utm_content=post-1`,
+    `${TARGET}?utm_source=facebook&utm_medium=group&utm_campaign=261203&utm_content=post-1`,
   );
 });
 
 test('partner wymaga nazwy', async ({ page }) => {
   await open(page);
   await page.fill('#target', TARGET);
-  await page.fill('#campaign', '2026-12-03-x');
+  await page.fill('#campaign', '261203');
   await page.selectOption('#channel', 'partner');
   await expect(page.locator('#partner-field')).toBeVisible();
   await expect(page.locator('#single-result')).toContainText('Wpisz nazwę partnera');
@@ -53,7 +57,7 @@ test('partner wymaga nazwy', async ({ page }) => {
 test('komplet: domyślnie wszystkie social media, eksport CSV', async ({ page }) => {
   await open(page);
   await page.fill('#target', TARGET);
-  await page.fill('#campaign', '2026-12-03-x');
+  await page.fill('#campaign', '261203');
   await page.getByRole('tab', { name: 'Komplet dla wydarzenia' }).click();
   // Facebook 4 + Instagram 3 + LinkedIn 3 + WhatsApp 3 + YouTube 1 + TikTok 1
   await expect(page.locator('.rows li')).toHaveCount(15);
@@ -63,12 +67,12 @@ test('komplet: domyślnie wszystkie social media, eksport CSV', async ({ page })
   await expect(page.locator('#partner-set-field')).toBeVisible();
   await expect(page.locator('#set-result')).toContainText('Partner pominięty');
   const [download] = await Promise.all([page.waitForEvent('download'), page.getByRole('button', { name: 'Pobierz plik (CSV)' }).click()]);
-  expect(download.suggestedFilename()).toBe('utm-2026-12-03-x.csv');
+  expect(download.suggestedFilename()).toBe('utm-261203.csv');
 });
 
 test('pomoc po najechaniu i ustawienia kanałów', async ({ page, isMobile }) => {
   await open(page);
-  const help = page.getByRole('button', { name: 'Pomoc: nazwa kampanii' });
+  const help = page.getByRole('button', { name: 'Pomoc: kampania' });
   if (isMobile) await help.click();
   else await help.hover();
   await expect(page.locator('#tip-campaign')).toBeVisible();
@@ -91,7 +95,7 @@ test('pomoc po najechaniu i ustawienia kanałów', async ({ page, isMobile }) =>
 test('axe: brak błędów dostępności', async ({ page }) => {
   await open(page);
   await page.fill('#target', TARGET);
-  await page.fill('#campaign', '2026-12-03-x');
+  await page.fill('#campaign', '261203');
   const r = await new AxeBuilder({ page }).analyze();
   expect(r.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
 });

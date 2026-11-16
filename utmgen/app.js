@@ -1,4 +1,4 @@
-import { slugify, parseTarget, buildLink, campaignNotes, resolveSource, toCsv, toTsv } from './utm.js';
+import { slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, resolveSource, toCsv, toTsv } from './utm.js';
 import { DEFAULT_CHANNELS } from './channels.js';
 
 const STORE = { channels: 'utmgen.channels.v1', state: 'utmgen.state.v1' };
@@ -416,6 +416,13 @@ function init() {
   setupSettings();
 
   for (const el of [els.target, els.campaign, els.content, els.partner, els.partnerSet]) el.addEventListener('input', render);
+  $('campaign-date').addEventListener('change', (e) => {
+    const v = campaignFromDate(e.target.value);
+    if (v) {
+      els.campaign.value = v;
+      render();
+    }
+  });
   els.channel.addEventListener('change', () => {
     state.channel = els.channel.value;
     state.placement = '';

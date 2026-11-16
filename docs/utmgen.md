@@ -4,7 +4,8 @@ Narzędzie pracy dla Agnieszki: **https://przystanzmianyzawodowej.pl/utmgen/** (
 Statyczna strona bez serwera i bez analityki, `noindex` (meta + nagłówek `X-Robots-Tag`), nielinkowana.
 
 ## Co robi
-- Wklejasz adres strony, wpisujesz nazwę kampanii (`utm_campaign`), opcjonalnie materiał (`utm_content`).
+- Wklejasz adres strony, wpisujesz kampanię (`utm_campaign`) – **samą datę wydarzenia RRMMDD**, np. `261203` (albo wybierasz datę z kalendarza obok pola), opcjonalnie materiał (`utm_content`).
+- **Dlaczego data, a nie nazwa:** parametry linku widzi każdy, kto w niego kliknie; data nie zdradza, czego dotyczy kampania. Dwa wydarzenia tego samego dnia: `261203-2`. Generator ostrzega, gdy w nazwie są słowa, i sprawdza, czy data jest poprawna (decyzja 16.11.2026).
 - **Jeden link**: kanał (`utm_source`) + miejsce (`utm_medium`) → gotowy link i „Kopiuj”.
 - **Komplet dla wydarzenia**: linki dla wszystkich zaznaczonych miejsc (domyślnie wszystkie social media) → kopiowanie pojedynczo, „Kopiuj wszystkie” (wkleja się do arkusza w kolumnach) albo plik CSV (Excel, średnik, polskie znaki).
 - **Porządki automatyczne**: małe litery, bez polskich znaków, myślniki zamiast spacji; stare `utm_*` w wklejonym linku są zastępowane, inne parametry i `#kotwica` zostają.

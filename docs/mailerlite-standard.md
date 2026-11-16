@@ -43,7 +43,7 @@ Zabezpieczenia: tylko żądania ze strony (nagłówek Origin), limit 6 zapisów 
 3. **Landing – `src/config/event.config.ts`**: `id`, `sessions`, `mailerlite.eventName`, `mailerlite.groups.registration/recording` (ID z adresu grupy w panelu), ewentualnie `groups.eventType`. Reszta (zgoda, uczestnicy, pole) bez zmian.
 4. **Automatyzacje** (MailerLite → Automations): (a) wyzwalacz „dołącza do grupy … - rejestracja” → mail z podziękowaniem; (b) „dołącza do grupy … - nagranie” → mail z linkiem do nagrania. Bez reklam. Wzory: `docs/maile/A1.html`, `A2.html`.
 5. **Kampanie do grupy „… - rejestracja”** (zaplanowane z wyprzedzeniem – grupa liczona w chwili wysyłki, więc obejmie też spóźnialskich): dzień przed (K1), rano w dniu (K2, z linkiem), 15 min przed (K3, z linkiem), dzień po (K4, nagranie). Wzory: `docs/maile/K1–K4.html`.
-6. **Linki do promocji**: generator https://przystanzmianyzawodowej.pl/utmgen/ (`utm_campaign` = identyfikator wydarzenia).
+6. **Linki do promocji**: generator https://przystanzmianyzawodowej.pl/utmgen/ (`utm_campaign` = **data wydarzenia RRMMDD**, np. `261203` – nie ujawnia w linku, czego dotyczy kampania).
 7. **Test przed promocją**: zapis na swój adres → w MailerLite sprawdź grupy i pola → dostałeś podziękowanie? → usuń testowy kontakt.
 8. **Po wydarzeniu**: K4 z nagraniem; landing sam przełącza się na zapis po nagranie (grupa „nagranie”).
 9. **Ok. 2 miesiące po wydarzeniu**: porządki – niżej.
