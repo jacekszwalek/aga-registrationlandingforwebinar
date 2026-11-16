@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { slugify, parseTarget, buildLink, campaignNotes, resolveSource, toCsv, toTsv } from '../../utmgen/utm.js';
+import { slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, resolveSource, toCsv, toTsv } from '../../utmgen/utm.js';
 import { DEFAULT_CHANNELS } from '../../utmgen/channels.js';
 
 describe('utmgen – porządki', () => {
@@ -26,8 +26,8 @@ describe('utmgen – adres', () => {
 describe('utmgen – link', () => {
   const t = parseTarget('https://przystanzmianyzawodowej.pl/webinar/?ref=1&utm_source=stare#zapis').url;
   it('zastępuje UTM-y, zachowuje inne parametry i kotwicę, stała kolejność', () => {
-    const link = buildLink(t, { source: 'facebook', medium: 'group', campaign: '2026-12-03-x', content: '' });
-    expect(link).toBe('https://przystanzmianyzawodowej.pl/webinar/?ref=1&utm_source=facebook&utm_medium=group&utm_campaign=2026-12-03-x#zapis');
+    const link = buildLink(t, { source: 'facebook', medium: 'group', campaign: '261203', content: '' });
+    expect(link).toBe('https://przystanzmianyzawodowej.pl/webinar/?ref=1&utm_source=facebook&utm_medium=group&utm_campaign=261203#zapis');
   });
   it('dodaje utm_content, gdy podany', () => {
     expect(buildLink(t, { source: 'a', medium: 'b', campaign: 'c', content: 'post-1' })).toContain('utm_content=post-1');
@@ -35,11 +35,20 @@ describe('utmgen – link', () => {
 });
 
 describe('utmgen – kampania i kanały', () => {
-  it('podpowiedzi', () => {
-    expect(campaignNotes('2026-12-03-zostac')).toEqual([]);
+  it('podpowiedzi: zalecana sama data RRMMDD', () => {
     const codes = (v: string) => campaignNotes(v).map((n: { code: string }) => n.code);
-    expect(codes('Webinar Grudzień')).toEqual(['cleaned', 'nodate']);
-    expect(codes('2026-12-03-' + 'a'.repeat(50))).toContain('long');
+    expect(campaignNotes('261203')).toEqual([]);
+    expect(campaignNotes('261203-2')).toEqual([]);
+    expect(codes('Webinar Grudzień')).toEqual(['cleaned', 'reveals']);
+    expect(codes('2026-12-03-zostac')).toEqual(['reveals']);
+    expect(codes('2026-12-03')).toEqual(['format']);
+    expect(codes('261332')).toEqual(['baddate']);
+    expect(codes('260229')).toEqual(['baddate']);
+    expect(codes('280229')).toEqual([]);
+  });
+  it('data z kalendarza → RRMMDD', () => {
+    expect(campaignFromDate('2026-12-03')).toBe('261203');
+    expect(campaignFromDate('')).toBe('');
   });
   it('partner wymaga nazwy', () => {
     const partner = DEFAULT_CHANNELS.find((c: { id: string }) => c.id === 'partner');

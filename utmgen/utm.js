@@ -63,18 +63,41 @@ export function buildLink(target, params) {
   return url.toString();
 }
 
-/** Podpowiedzi do nazwy kampanii (po porządkach). */
+/** Data wydarzenia (RRRR-MM-DD z pola daty) → nazwa kampanii RRMMDD, np. 2026-12-03 → 261203. */
+export function campaignFromDate(isoDate) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(isoDate ?? ''));
+  return m ? `${m[1].slice(2)}${m[2]}${m[3]}` : '';
+}
+
+/** Czy RRMMDD to prawdziwa data (np. 261231 tak, 261332 nie). */
+function isValidYymmdd(v) {
+  const y = 2000 + Number(v.slice(0, 2));
+  const mo = Number(v.slice(2, 4));
+  const d = Number(v.slice(4, 6));
+  const dt = new Date(Date.UTC(y, mo - 1, d));
+  return dt.getUTCFullYear() === y && dt.getUTCMonth() === mo - 1 && dt.getUTCDate() === d;
+}
+
+/**
+ * Podpowiedzi do nazwy kampanii (po porządkach).
+ * Zalecenie: sama data wydarzenia RRMMDD (np. 261203) – link nie zdradza, czego dotyczy kampania.
+ * Drugie wydarzenie tego samego dnia: 261203-2.
+ */
 export function campaignNotes(rawValue) {
   const raw = String(rawValue ?? '');
   const value = slugify(raw);
   const notes = [];
   if (!value) return notes;
   if (value !== raw.trim()) notes.push({ level: 'info', code: 'cleaned', text: `Zapiszemy jako: ${value}` });
+  if (/[a-z]/.test(value)) {
+    notes.push({ level: 'warn', code: 'reveals', text: 'Słowa w nazwie będą widoczne w linku dla każdego. Zalecamy samą datę wydarzenia: RRMMDD, np. 261203.' });
+  } else if (!/^\d{6}(-\d{1,2})?$/.test(value)) {
+    notes.push({ level: 'tip', code: 'format', text: 'Zalecany format: RRMMDD – sama data wydarzenia, np. 261203 (3 grudnia 2026).' });
+  } else if (!isValidYymmdd(value.slice(0, 6))) {
+    notes.push({ level: 'warn', code: 'baddate', text: 'To nie jest poprawna data RRMMDD – sprawdź miesiąc i dzień.' });
+  }
   if (value.length > CAMPAIGN_MAX) {
     notes.push({ level: 'warn', code: 'long', text: `Ma ${value.length} znaków – skróć do ${CAMPAIGN_MAX}, żeby była czytelna w raportach.` });
-  }
-  if (!/^\d{4}-\d{2}-\d{2}-/.test(value)) {
-    notes.push({ level: 'tip', code: 'nodate', text: 'Dla wydarzenia zacznij od daty: RRRR-MM-DD-krotka-nazwa.' });
   }
   return notes;
 }
