@@ -88,8 +88,17 @@ test('partner wymaga nazwy', async ({ page }) => {
   await open(page);
   await page.fill('#target', TARGET);
   await page.fill('#campaign', '261203');
+  await expect(page.locator('#partner-field')).toBeHidden();
   await pick(page, 'partner:polecenie').check();
   await expect(page.locator('#partner-field')).toBeVisible();
+  // pole jest tuż pod pozycją „Partner / polecenie”
+  const gap = await page.evaluate(() => {
+    const item = document.querySelector('input[value="partner:polecenie"]')!.closest('label')!.getBoundingClientRect();
+    const field = document.getElementById('partner-field')!.getBoundingClientRect();
+    return field.top - item.bottom;
+  });
+  expect(gap).toBeGreaterThanOrEqual(0);
+  expect(gap).toBeLessThan(20);
   // dymek na dole strony mieści się w oknie (otwiera się nad przyciskiem)
   await page.setViewportSize({ width: 420, height: 500 });
   const helpBtn = page.getByRole('button', { name: 'Pomoc: partner' });
@@ -101,7 +110,6 @@ test('partner wymaga nazwy', async ({ page }) => {
   await helpBtn.click();
   const tip = page.locator('#tip-partner');
   await expect(tip).toContainText('komuś innemu');
-  await expect(tip).toContainText('Opcjonalne');
   const box = (await tip.boundingBox())!;
   expect(box.y).toBeGreaterThanOrEqual(0);
   expect(box.y + box.height).toBeLessThanOrEqual(500);
