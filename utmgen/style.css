@@ -118,7 +118,7 @@ input::placeholder { color: #8f8389; }
 .plat-head h3 { margin: 0; font: 600 0.78rem var(--font-body); text-transform: uppercase; letter-spacing: 0.06em; color: var(--pink-800); }
 .ln { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 12px; align-items: center; padding: 6px 0; border-bottom: 1px solid var(--line); font-size: 0.86rem; }
 .ln-l { color: var(--ink); }
-.ln-u { font-size: 0.76rem; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; user-select: all; }
+.ln-u { font-size: 0.76rem; line-height: 1.45; color: var(--ink); overflow-wrap: anywhere; word-break: break-all; user-select: all; }
 .cp { min-height: 40px; min-width: 44px; padding: 0 6px; border: 0; background: none; color: var(--pink-800); font: 600 0.82rem var(--font-body); cursor: pointer; border-radius: 6px; }
 .cp:hover { background: var(--blush-50); }
 @media (max-width: 560px) {
