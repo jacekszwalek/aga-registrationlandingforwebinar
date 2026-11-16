@@ -416,7 +416,7 @@ const CAMPAIGN_TYPES = {
   name: {
     placeholder: 'np. ebook-najlepsza-uczennica',
     inputMode: 'text',
-    rules: 'Nazwa lub tytuł · zawsze ta sama · małe litery i myślniki · widoczna w linku',
+    rules: 'Nazwa lub tytuł · stałe przez cały czas trwania kampanii · małe litery i myślniki · będzie widoczna w linku',
   },
 };
 

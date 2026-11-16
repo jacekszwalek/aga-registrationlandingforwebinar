@@ -108,7 +108,7 @@ test('rodzaj kampanii: jednorazowe (data) i cykliczne/stałe (nazwa) – dymek i
   await expect(page.locator('#campaign-date')).toBeHidden();
   await expect(page.locator('#campaign')).toHaveValue('');
   await expect(page.locator('#campaign')).toHaveAttribute('placeholder', 'np. ebook-najlepsza-uczennica');
-  await expect(rules).toHaveText('Nazwa lub tytuł · zawsze ta sama · małe litery i myślniki · widoczna w linku');
+  await expect(rules).toHaveText('Nazwa lub tytuł · stałe przez cały czas trwania kampanii · małe litery i myślniki · będzie widoczna w linku');
   await expect(rules).not.toContainText('poprawimy');
   await expect(tip).toContainText('zawsze tej samej nazwy');
   await expect(tip).toContainText('261203-2');
