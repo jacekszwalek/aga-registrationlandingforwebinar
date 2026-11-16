@@ -26,6 +26,7 @@
 }
 
 * { box-sizing: border-box; }
+[hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg); color: var(--text); font: 400 15px/1.5 var(--font-body); }
 :focus-visible { outline: none; box-shadow: var(--focus); }
@@ -90,7 +91,7 @@ input::placeholder { color: #8f8389; }
 .it small { color: var(--muted); font: 400 0.74rem var(--mono); }
 
 /* Materiał */
-.more { border-top: 1px solid var(--line); padding-top: 6px; }
+.more { margin: -6px 0 14px; }
 .more > summary { display: flex; align-items: center; gap: 8px; min-height: 44px; cursor: pointer; list-style: none; font-size: 0.88rem; font-weight: 600; color: var(--pink-800); }
 .more > summary::-webkit-details-marker { display: none; }
 .more > summary::before { content: '+'; width: 12px; }

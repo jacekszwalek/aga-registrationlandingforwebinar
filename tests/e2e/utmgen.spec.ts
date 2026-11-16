@@ -43,6 +43,11 @@ test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) =
   await expect(page.locator('#campaign')).toHaveValue('261203');
   await expect(page.locator('#campaign-notes')).toBeEmpty();
   await expect(page.locator('#result')).toContainText('Zaznacz po lewej');
+  await expect(page.locator('#acts')).toBeHidden(); // bez linków nie ma „Kopiuj wszystkie” ani CSV
+  // Materiał jest zaraz pod kampanią, przed miejscami
+  const order = await page.evaluate(() => ['campaign', 'content-details', 'places-label'].map((id) => document.getElementById(id)!.getBoundingClientRect().top));
+  expect(order[0]).toBeLessThan(order[1]);
+  expect(order[1]).toBeLessThan(order[2]);
 
   await pick(page, 'facebook:grupa').check();
   await expect(page.locator('#content')).toBeHidden(); // materiał domyślnie zwinięty

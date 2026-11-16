@@ -46,6 +46,21 @@
         <ul class="notes" id="campaign-notes" aria-live="polite"></ul>
       </div>
 
+      <details class="more" id="content-details">
+        <summary>Materiał (opcjonalnie)<span class="badge" id="content-badge" hidden></span></summary>
+        <div class="f">
+          <div class="lab-row">
+            <label for="content">utm_content</label>
+            <span class="help-wrap">
+              <button type="button" class="help" aria-label="Pomoc: materiał" aria-describedby="tip-content">?</button>
+              <span role="tooltip" id="tip-content" class="tip" hidden><b>utm_content</b> odróżnia konkretne linki w tej samej kampanii i kanale – który przycisk, grafika albo post przyniósł zapis. <b>Przykład:</b> ten sam post wrzucasz z dwiema grafikami – w jednym linku wpisz <code>grafika-z-kubkiem</code>, w drugim <code>grafika-z-laptopem</code>; w GA4 zobaczysz, która dała więcej zapisów. Albo <code>link-rejestracja</code> (przycisk w poście) i <code>link-komentarz</code>. Nie wpisuj nic, co zdradza treść reklamy czy grupę docelową – też widać to w linku. Zostaw puste, jeśli nie porównujesz.</span>
+            </span>
+          </div>
+          <input id="content" type="text" autocomplete="off" spellcheck="false" placeholder="np. link-rejestracja, grafika-z-kubkiem">
+          <p class="note" id="content-note" aria-live="polite"></p>
+        </div>
+      </details>
+
       <div class="f">
         <div class="lab-row">
           <span class="lab" id="places-label">Miejsca</span>
@@ -66,20 +81,6 @@
         </div>
       </div>
 
-      <details class="more" id="content-details">
-        <summary>Materiał (opcjonalnie)<span class="badge" id="content-badge" hidden></span></summary>
-        <div class="f">
-          <div class="lab-row">
-            <label for="content">utm_content</label>
-            <span class="help-wrap">
-              <button type="button" class="help" aria-label="Pomoc: materiał" aria-describedby="tip-content">?</button>
-              <span role="tooltip" id="tip-content" class="tip" hidden><b>utm_content</b> odróżnia konkretne linki w tej samej kampanii i kanale – który przycisk, grafika albo post przyniósł zapis. <b>Przykład:</b> ten sam post wrzucasz z dwiema grafikami – w jednym linku wpisz <code>grafika-z-kubkiem</code>, w drugim <code>grafika-z-laptopem</code>; w GA4 zobaczysz, która dała więcej zapisów. Albo <code>link-rejestracja</code> (przycisk w poście) i <code>link-komentarz</code>. Nie wpisuj nic, co zdradza treść reklamy czy grupę docelową – też widać to w linku. Zostaw puste, jeśli nie porównujesz.</span>
-            </span>
-          </div>
-          <input id="content" type="text" autocomplete="off" spellcheck="false" placeholder="np. link-rejestracja, grafika-z-kubkiem">
-          <p class="note" id="content-note" aria-live="polite"></p>
-        </div>
-      </details>
     </section>
 
     <section class="panel res" aria-labelledby="res-title">
