@@ -1,4 +1,4 @@
-import { slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, todayCampaign, resolveSource, toCsv, toTsv } from './utm.js';
+import { sanitizeLive, sanitizeMessage, slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, todayCampaign, resolveSource, toCsv, toTsv } from './utm.js';
 import { DEFAULT_CHANNELS } from './channels.js';
 
 const STORE = { channels: 'utmgen.channels.v1', state: 'utmgen.state.v1' };
@@ -463,6 +463,24 @@ function init() {
   setupHelp();
   setupSettings();
 
+  // Kampania: niedozwolone znaki zamieniane w locie + komunikat (musi działać przed render).
+  let fixTimer;
+  els.campaign.addEventListener('input', () => {
+    const el = els.campaign;
+    const r = sanitizeLive(el.value, el.selectionStart ?? el.value.length);
+    const fix = $('campaign-fix');
+    if (r.value !== el.value) {
+      el.value = r.value;
+      el.setSelectionRange(r.caret, r.caret);
+    }
+    const msg = sanitizeMessage(r.changes);
+    if (msg) {
+      fix.textContent = msg;
+      fix.hidden = false;
+      clearTimeout(fixTimer);
+      fixTimer = setTimeout(() => { fix.hidden = true; }, 8000);
+    }
+  });
   for (const el of [els.target, els.campaign, els.content]) el.addEventListener('input', render);
   els.picker.addEventListener('input', (e) => {
     if (e.target.id !== 'partner') return;

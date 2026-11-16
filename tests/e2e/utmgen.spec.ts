@@ -51,7 +51,8 @@ test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) =
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute('content', /noindex/);
   await page.fill('#target', TARGET);
   await page.fill('#campaign', 'Zostać Zmienić');
-  await expect(page.locator('#campaign-notes')).toContainText('Zapiszemy jako: zostac-zmienic');
+  await expect(page.locator('#campaign')).toHaveValue('zostac-zmienic'); // zamienione w locie
+  await expect(page.locator('#campaign-fix')).toContainText('[spacja]');
   await expect(page.locator('#campaign-notes')).toContainText('Cykliczne lub stała kampania');
   await page.locator('#campaign-date').fill('2026-12-03');
   await expect(page.locator('#campaign')).toHaveValue('261203');
@@ -144,6 +145,21 @@ test('rodzaj kampanii: jednorazowe (data) i cykliczne/stałe (nazwa) – dymek i
   await expect(page.locator('input[name="ctype"][value="name"]')).toBeChecked();
   await expect(page.locator('#campaign')).toHaveValue('ebook-najlepsza-uczennica');
   void isMobile;
+});
+
+test('kampania: niedozwolone znaki zamieniane w locie z komunikatem', async ({ page }) => {
+  await open(page);
+  await page.locator('.seg label', { hasText: 'Cykliczne' }).click();
+  const c = page.locator('#campaign');
+  await c.pressSequentially('Ebook ');
+  await expect(c).toHaveValue('ebook-');
+  await expect(page.locator('#campaign-fix')).toContainText('[spacja] → „-”');
+  await c.pressSequentially('Ż');
+  await expect(c).toHaveValue('ebook-z');
+  await expect(page.locator('#campaign-fix')).toContainText('„Ż” → „z”');
+  await c.pressSequentially('#1');
+  await expect(c).toHaveValue('ebook-z1');
+  await expect(page.locator('#campaign-fix')).toContainText('„#” → usunięty');
 });
 
 test('partner wymaga nazwy', async ({ page }) => {

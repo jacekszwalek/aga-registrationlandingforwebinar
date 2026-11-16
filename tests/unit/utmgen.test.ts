@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, todayCampaign, resolveSource, toCsv, toTsv } from '../../utmgen/utm.js';
+import { sanitizeLive, sanitizeMessage, charName, slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, todayCampaign, resolveSource, toCsv, toTsv } from '../../utmgen/utm.js';
 import { DEFAULT_CHANNELS } from '../../utmgen/channels.js';
 
 describe('utmgen – porządki', () => {
@@ -8,6 +8,24 @@ describe('utmgen – porządki', () => {
     expect(slugify('Post #1 (rolka)!')).toBe('post-1-rolka');
     expect(slugify('2026-12-03 — Webinar')).toBe('2026-12-03-webinar');
     expect(slugify('')).toBe('');
+  });
+});
+
+describe('utmgen – zamiana znaków w locie (kampania)', () => {
+  it('zamienia niedozwolone znaki i zachowuje kursor', () => {
+    expect(sanitizeLive('Zostać Zmienić').value).toBe('zostac-zmienic');
+    expect(sanitizeLive('a_b.c/d').value).toBe('a-b-c-d');
+    expect(sanitizeLive('#x!').value).toBe('x');
+    expect(sanitizeLive('e-book--x').value).toBe('e-book-x');
+    expect(sanitizeLive('ebook-najlepsza').changes).toEqual([]);
+    expect(sanitizeLive('ab Cd', 3)).toEqual({ value: 'ab-cd', caret: 3, changes: [{ from: ' ', to: '-' }, { from: 'C', to: 'c' }] });
+  });
+  it('komunikat: spacja słowami, usunięte znaki', () => {
+    expect(charName(' ')).toBe('[spacja]');
+    expect(sanitizeMessage(sanitizeLive('a b').changes)).toContain('[spacja] → „-”');
+    expect(sanitizeMessage(sanitizeLive('Ą').changes)).toContain('„Ą” → „a”');
+    expect(sanitizeMessage(sanitizeLive('#').changes)).toContain('„#” → usunięty');
+    expect(sanitizeMessage([])).toBe('');
   });
 });
 
