@@ -87,6 +87,8 @@ test('partner wymaga nazwy', async ({ page }) => {
   await page.fill('#campaign', '261203');
   await pick(page, 'partner:polecenie').check();
   await expect(page.locator('#partner-field')).toBeVisible();
+  await page.getByRole('button', { name: 'Pomoc: partner' }).click();
+  await expect(page.locator('#tip-partner')).toContainText('komuś innemu');
   await expect(page.locator('#result')).toContainText('Wpisz nazwę partnera');
   await page.fill('#partner', 'Ela');
   await expect(page.locator('.ln-u')).toContainText('utm_source=partner-ela&utm_medium=referral');
