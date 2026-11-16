@@ -146,7 +146,7 @@ export function campaignNotes(rawValue, type = 'event') {
     if (isDate) notes.push({ level: 'tip', code: 'looksdate', text: 'To wygląda na datę – dla wydarzenia jednorazowego wybierz „Wydarzenie jednorazowe”.' });
     else if (!/[a-z]/.test(value)) notes.push({ level: 'tip', code: 'noname', text: 'Wpisz nazwę lub tytuł, np. ebook-najlepsza-uczennica.' });
   } else if (/[a-z]/.test(value)) {
-    notes.push({ level: 'warn', code: 'name', text: 'Dla wydarzenia jednorazowego wpisz datę rozpoczęcia RRMMDD, np. 261203. Nazwa? Wybierz „Cykliczne lub stała kampania”.' });
+    notes.push({ level: 'tip', code: 'name', text: 'Sugerowany format to RRMMDD (data rozpoczęcia, np. 261203), ale możesz wpisać dowolną nazwę spoza tej konwencji.' });
   } else if (!isDate) {
     notes.push({ level: 'tip', code: 'format', text: 'Format: RRMMDD – data rozpoczęcia, np. 261203 (3 grudnia 2026).' });
   } else if (!isValidYymmdd(value.slice(0, 6))) {

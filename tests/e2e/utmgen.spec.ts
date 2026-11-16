@@ -53,7 +53,8 @@ test('noindex, porządki nazwy i jeden link (jedno miejsce)', async ({ page }) =
   await page.fill('#campaign', 'Zostać Zmienić');
   await expect(page.locator('#campaign')).toHaveValue('zostac-zmienic'); // zamienione w locie
   await expect(page.locator('#campaign-fix')).toContainText('[spacja]');
-  await expect(page.locator('#campaign-notes')).toContainText('Cykliczne lub stała kampania');
+  await expect(page.locator('#campaign-notes')).toContainText('Sugerowany format to RRMMDD');
+  await expect(page.locator('#campaign-notes')).toContainText('dowolną nazwę spoza tej konwencji');
   await page.locator('#campaign-date').fill('2026-12-03');
   await expect(page.locator('#campaign')).toHaveValue('261203');
   await expect(page.locator('#campaign-notes')).toBeEmpty();
