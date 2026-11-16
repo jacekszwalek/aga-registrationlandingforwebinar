@@ -94,8 +94,10 @@ test('rodzaj kampanii: jednorazowe (data) i cykliczne/stałe (nazwa) – dymek i
   await expect(page.locator('input[name="ctype"][value="event"]')).toBeChecked();
   await expect(page.locator('#campaign')).toHaveValue('261116');
   await expect(rules).toContainText('dwa wydarzenia jednego dnia: 261203-2');
+  // jeden wspólny dymek dla obu rodzajów
   await expect(tip).toContainText('Dwa wydarzenia tego samego dnia');
-  await expect(tip).not.toContainText('ebook');
+  await expect(tip).toContainText('Data zamiast opisu skraca długość linku');
+  await expect(tip).toContainText('ebook-najlepsza-uczennica');
 
   await page.locator('.seg label', { hasText: 'Cykliczne' }).click();
   await expect(page.locator('#campaign-date')).toBeHidden();
@@ -104,7 +106,7 @@ test('rodzaj kampanii: jednorazowe (data) i cykliczne/stałe (nazwa) – dymek i
   await expect(rules).toHaveText('Nazwa lub tytuł · zawsze ta sama · małe litery i myślniki · widoczna w linku');
   await expect(rules).not.toContainText('poprawimy');
   await expect(tip).toContainText('zawsze tej samej nazwy');
-  await expect(tip).not.toContainText('261203');
+  await expect(tip).toContainText('261203-2');
   await page.fill('#campaign', 'ebook-najlepsza-uczennica');
   await expect(page.locator('.ln-u')).toContainText('utm_campaign=ebook-najlepsza-uczennica');
 
