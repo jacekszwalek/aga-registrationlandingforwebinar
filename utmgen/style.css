@@ -71,7 +71,7 @@ input::placeholder { color: #8f8389; }
 .note { margin: 4px 0 0; font-size: 0.82rem; color: var(--muted); }
 .note:empty { display: none; }
 .small { font-size: 0.85rem; color: var(--muted); }
-.partner { margin: 10px 0 0; }
+.partner { margin: 2px 0 8px 36px; }
 
 /* Miejsca */
 .quick { display: flex; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
@@ -191,4 +191,3 @@ dialog::backdrop { background: rgb(43 8 26 / 0.45); }
 .tip { overflow-y: auto; overscroll-behavior: contain; }
 .tip.up { top: auto; bottom: calc(100% + 8px); }
 
-.opt { margin-left: 6px; font-weight: 400; text-transform: none; letter-spacing: 0; color: var(--muted); }

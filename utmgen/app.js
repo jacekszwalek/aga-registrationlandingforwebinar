@@ -40,13 +40,12 @@ let channels = validChannels(store.get(STORE.channels)) ? store.get(STORE.channe
 const shownPlaces = (c) => (c.hidden ? [] : c.placements.filter((p) => !p.hidden));
 const shownChannels = () => channels.filter((c) => shownPlaces(c).length);
 const saved = store.get(STORE.state, {});
-const state = { selected: new Set(saved.selected || []) };
+const state = { selected: new Set(saved.selected || []), partner: '' };
 
 const els = {
   target: $('target'), targetNote: $('target-note'),
   campaign: $('campaign'), campaignNotes: $('campaign-notes'),
   content: $('content'), contentNote: $('content-note'),
-  partnerField: $('partner-field'), partner: $('partner'),
   picker: $('picker'), result: $('result'), meta: $('res-meta'), acts: $('acts'),
 };
 
@@ -142,7 +141,7 @@ function missingText({ target, campaign }) {
 }
 
 function linkRow(c, p, base) {
-  const source = resolveSource(c, els.partner.value);
+  const source = resolveSource(c, state.partner);
   if (!source) return null;
   const medium = slugify(p.medium);
   return {
@@ -168,10 +167,28 @@ function renderPicker() {
           ${shownPlaces(c).map((p) => `
             <label class="it"><input type="checkbox" value="${esc(key(c, p))}" ${state.selected.has(key(c, p)) ? 'checked' : ''}>
               <span class="it-l">${esc(p.label)}</span><small>${esc(slugify(p.medium))}</small></label>`).join('')}
+          ${needsName(c) ? partnerFieldHtml() : ''}
         </div>`).join('')}`)
     .join('');
   updatePartnerField();
   syncChannelBoxes();
+  setupHelp(els.picker);
+}
+
+/** Pole „Nazwa partnera” – tuż pod miejscem „Partner / polecenie”, widoczne tylko po jego zaznaczeniu. */
+const PARTNER_TIP = '<b>Partner / polecenie</b> – link, który dajesz <b>komuś innemu</b>, żeby polecił wydarzenie swoim odbiorcom (np. znajoma coachka w swoim newsletterze, fundacja na swoim profilu). Każdy partner dostaje własny link, np. <code>utm_source=partner-ela</code>, <code>utm_medium=referral</code>. W GA4 i w MailerLite (pole <code>webinar_source</code>) zobaczysz, ile zapisów przyprowadził – możesz podziękować konkretną liczbą i wiesz, z kim warto współpracować dalej. To co innego niż „Udostępnij” na stronie podziękowania (<code>utm_source=referral</code> – polecenia od zapisanych osób, bez nazwy). <b>Nazwa jest widoczna w linku</b> – wpisuj imię lub markę, które partner zna i akceptuje. Nie używasz? Ukryj w „Kanały ⚙” → „Pokazuj”.';
+function partnerFieldHtml() {
+  return `
+          <div class="partner" id="partner-field" hidden>
+            <div class="lab-row">
+              <label for="partner">Nazwa partnera</label>
+              <span class="help-wrap">
+                <button type="button" class="help" aria-label="Pomoc: partner" aria-describedby="tip-partner">?</button>
+                <span role="tooltip" id="tip-partner" class="tip" hidden>${PARTNER_TIP}</span>
+              </span>
+            </div>
+            <input id="partner" type="text" autocomplete="off" spellcheck="false" placeholder="np. ela, fundacja-xyz" value="${esc(state.partner)}">
+          </div>`;
 }
 
 /** Checkbox przy platformie: zaznaczony = wszystkie miejsca, częściowo = niektóre. */
@@ -186,7 +203,8 @@ function syncChannelBoxes() {
 }
 
 function updatePartnerField() {
-  els.partnerField.hidden = !channels.some((c) => needsName(c) && shownPlaces(c).some((p) => state.selected.has(key(c, p))));
+  const field = $('partner-field');
+  if (field) field.hidden = !channels.some((c) => needsName(c) && shownPlaces(c).some((p) => state.selected.has(key(c, p))));
 }
 
 /* ---------- Prawy panel: gotowe linki ---------- */
@@ -397,7 +415,12 @@ function init() {
   setupHelp();
   setupSettings();
 
-  for (const el of [els.target, els.campaign, els.content, els.partner]) el.addEventListener('input', render);
+  for (const el of [els.target, els.campaign, els.content]) el.addEventListener('input', render);
+  els.picker.addEventListener('input', (e) => {
+    if (e.target.id !== 'partner') return;
+    state.partner = e.target.value;
+    render();
+  });
   // Kalendarz pokazuje datę wpisanej kampanii (RRMMDD → RRRR-MM-DD).
   els.campaign.addEventListener('input', () => {
     const m = /^(\d{2})(\d{2})(\d{2})/.exec(slugify(els.campaign.value));
