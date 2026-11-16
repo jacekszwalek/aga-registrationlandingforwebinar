@@ -69,6 +69,12 @@ export function campaignFromDate(isoDate) {
   return m ? `${m[1].slice(2)}${m[2]}${m[3]}` : '';
 }
 
+/** Dzisiejsza data (czas lokalny przeglądarki) jako RRMMDD i RRRR-MM-DD – domyślna kampania. */
+export function todayCampaign(now = new Date()) {
+  const iso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  return { campaign: campaignFromDate(iso), iso };
+}
+
 /** Czy RRMMDD to prawdziwa data (np. 261231 tak, 261332 nie). */
 function isValidYymmdd(v) {
   const y = 2000 + Number(v.slice(0, 2));
