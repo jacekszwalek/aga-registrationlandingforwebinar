@@ -28,6 +28,17 @@ const validChannels = (list) =>
   list.every((c) => c && typeof c.label === 'string' && typeof c.source === 'string' && Array.isArray(c.placements));
 
 let channels = validChannels(store.get(STORE.channels)) ? store.get(STORE.channels) : clone(DEFAULT_CHANNELS);
+// Migracja (16.11.2026): „Reklamy Meta (FB/IG)” rozdzielone na Facebook i Instagram.
+{
+  const i = channels.findIndex((c) => c.id === 'meta-ads' && c.source === 'meta');
+  if (i >= 0) {
+    channels.splice(i, 1, ...clone(DEFAULT_CHANNELS.filter((c) => c.id === 'facebook-ads' || c.id === 'instagram-ads')));
+    store.set(STORE.channels, channels);
+  }
+}
+/** Widoczne w generatorze (ukryte w ustawieniach zostają, ale się nie pokazują). */
+const shownPlaces = (c) => (c.hidden ? [] : c.placements.filter((p) => !p.hidden));
+const shownChannels = () => channels.filter((c) => shownPlaces(c).length);
 const saved = store.get(STORE.state, {});
 const state = {
   mode: saved.mode === 'set' ? 'set' : 'single',
@@ -118,6 +129,9 @@ function renderNotes({ target, content }) {
     .map((n) => `<li class="${n.level}">${esc(n.text)}</li>`)
     .join('');
 
+  const badge = $('content-badge');
+  badge.hidden = !content;
+  badge.textContent = content;
   const rawContent = els.content.value.trim();
   els.contentNote.textContent = rawContent && content !== rawContent ? `Zapiszemy jako: ${content}` : '';
 }
@@ -141,10 +155,11 @@ function linkRow(c, p, base, name) {
 
 /* ---------- Jeden link ---------- */
 function fillChannelSelect() {
-  if (!channels.some((c) => c.id === state.channel)) state.channel = channels[0]?.id;
+  const visible = shownChannels();
+  if (!visible.some((c) => c.id === state.channel)) state.channel = visible[0]?.id;
   const opt = (c) => `<option value="${esc(c.id)}">${esc(c.label)}</option>`;
-  const social = channels.filter((c) => c.group === 'social');
-  const other = channels.filter((c) => c.group !== 'social');
+  const social = visible.filter((c) => c.group === 'social');
+  const other = visible.filter((c) => c.group !== 'social');
   els.channel.innerHTML =
     (social.length ? `<optgroup label="Social media">${social.map(opt).join('')}</optgroup>` : '') +
     (other.length ? `<optgroup label="Inne kanały">${other.map(opt).join('')}</optgroup>` : '');
@@ -154,7 +169,7 @@ function fillChannelSelect() {
 
 function fillPlacementSelect() {
   const c = channels.find((x) => x.id === state.channel);
-  const list = c?.placements || [];
+  const list = c ? shownPlaces(c) : [];
   if (!list.some((p) => p.id === state.placement)) state.placement = list[0]?.id || '';
   els.placement.innerHTML = list
     .map((p) => `<option value="${esc(p.id)}">${esc(p.label)} – ${esc(slugify(p.medium))}</option>`)
@@ -166,7 +181,7 @@ function fillPlacementSelect() {
 function renderSingle(base) {
   const missing = missingText(base);
   const c = channels.find((x) => x.id === state.channel);
-  const p = c?.placements.find((x) => x.id === state.placement);
+  const p = c ? shownPlaces(c).find((x) => x.id === state.placement) : undefined;
   if (missing || !c || !p) {
     els.single.innerHTML = `<p class="empty">${esc(missing || 'Wybierz kanał i miejsce.')}</p>`;
     return;
@@ -191,8 +206,8 @@ function renderSingle(base) {
 /* ---------- Komplet ---------- */
 function renderPicker() {
   const groups = [
-    ['Social media', channels.filter((c) => c.group === 'social')],
-    ['Inne kanały', channels.filter((c) => c.group !== 'social')],
+    ['Social media', shownChannels().filter((c) => c.group === 'social')],
+    ['Inne kanały', shownChannels().filter((c) => c.group !== 'social')],
   ];
   els.picker.innerHTML = groups
     .filter(([, list]) => list.length)
@@ -203,7 +218,7 @@ function renderPicker() {
           <div class="pick-channel">
             <span class="pick-name">${esc(c.label)}</span>
             <div class="pick-places">
-              ${c.placements.map((p) => `
+              ${shownPlaces(c).map((p) => `
                 <label class="chip"><input type="checkbox" value="${esc(key(c, p))}" ${state.selected.has(key(c, p)) ? 'checked' : ''}>
                   <span>${esc(p.label)}</span></label>`).join('')}
             </div>
@@ -214,11 +229,12 @@ function renderPicker() {
 }
 
 function updatePartnerSetField() {
-  const any = channels.some((c) => needsName(c) && c.placements.some((p) => state.selected.has(key(c, p))));
+  const any = channels.some((c) => needsName(c) && shownPlaces(c).some((p) => state.selected.has(key(c, p))));
   els.partnerSetField.hidden = !any;
 }
 
 let currentRows = [];
+let currentGroups = [];
 function renderSet(base) {
   const missing = missingText(base);
   currentRows = [];
@@ -228,13 +244,18 @@ function renderSet(base) {
     return;
   }
   let skipped = false;
+  const groups = [];
   for (const c of channels) {
-    for (const p of c.placements) {
+    const rows = [];
+    for (const p of shownPlaces(c)) {
       if (!state.selected.has(key(c, p))) continue;
       const row = linkRow(c, p, base, els.partnerSet.value);
-      if (row) currentRows.push(row);
-      else skipped = true;
+      if (row) {
+        rows.push(currentRows.length);
+        currentRows.push(row);
+      } else skipped = true;
     }
+    if (rows.length) groups.push({ c, rows });
   }
   if (!currentRows.length) {
     els.set.innerHTML = `<p class="empty">${skipped ? 'Wpisz nazwę partnera.' : 'Zaznacz co najmniej jedno miejsce.'}</p>`;
@@ -244,18 +265,33 @@ function renderSet(base) {
   els.setActions.hidden = false;
   els.set.innerHTML =
     (skipped ? '<p class="note warn">Partner pominięty – wpisz jego nazwę.</p>' : '') +
-    `<p class="small count">Linków: ${currentRows.length}</p><ul class="rows">` +
-    currentRows
-      .map((r, i) => `
-        <li>
-          <div class="row-head"><b>${esc(r.channel)}</b> · ${esc(r.placement)}</div>
-          <div class="link-box">
-            <code class="link">${esc(r.link)}</code>
-            <button type="button" class="btn sm" data-copy="${i}" aria-label="Kopiuj link: ${esc(r.channel)}, ${esc(r.placement)}">Kopiuj</button>
+    `<p class="small count">Linków: ${currentRows.length} · platform: ${groups.length}</p><div class="platforms">` +
+    groups
+      .map(({ c, rows }, gi) => `
+        <section class="platform" aria-labelledby="pf-${gi}">
+          <div class="platform-head">
+            <h3 id="pf-${gi}">${esc(c.label)}<span class="count">${rows.length} ${rows.length === 1 ? 'link' : rows.length < 5 ? 'linki' : 'linków'}</span></h3>
+            ${rows.length > 1 ? `<button type="button" class="ghost sm" data-copy-group="${gi}" aria-label="Kopiuj wszystkie linki: ${esc(c.label)}">Kopiuj ${rows.length}</button>` : ''}
           </div>
-        </li>`)
+          <ul class="rows">
+            ${rows
+              .map((i) => {
+                const r = currentRows[i];
+                return `
+              <li>
+                <div class="row-head">${esc(r.placement)}</div>
+                <div class="link-box">
+                  <code class="link">${esc(r.link)}</code>
+                  <button type="button" class="btn sm" data-copy="${i}" aria-label="Kopiuj link: ${esc(r.channel)}, ${esc(r.placement)}">Kopiuj</button>
+                </div>
+              </li>`;
+              })
+              .join('')}
+          </ul>
+        </section>`)
       .join('') +
-    '</ul>';
+    '</div>';
+  currentGroups = groups;
 }
 
 /* ---------- Odświeżanie ---------- */
@@ -290,7 +326,7 @@ function saveChannels() {
 function renderEditor() {
   $('editor').innerHTML = channels
     .map((c, ci) => `
-      <fieldset class="ed-channel" data-ci="${ci}">
+      <fieldset class="ed-channel${c.hidden ? ' is-hidden' : ''}" data-ci="${ci}">
         <legend class="visually-hidden">${esc(c.label)}</legend>
         <div class="ed-row">
           <label>Nazwa<input data-f="label" value="${esc(c.label)}"></label>
@@ -299,13 +335,15 @@ function renderEditor() {
             <option value="social" ${c.group === 'social' ? 'selected' : ''}>Social media</option>
             <option value="other" ${c.group !== 'social' ? 'selected' : ''}>Inne</option>
           </select></label>
+          <label class="ed-show"><input type="checkbox" data-f="visible" ${c.hidden ? '' : 'checked'}> Pokazuj</label>
           <button type="button" class="icon danger" data-del-channel="${ci}" aria-label="Usuń kanał ${esc(c.label)}">Usuń</button>
         </div>
         <ul class="ed-places">
           ${c.placements.map((p, pi) => `
-            <li data-pi="${pi}">
+            <li data-pi="${pi}"${p.hidden ? ' class="is-hidden"' : ''}>
               <label>Miejsce<input data-p="label" value="${esc(p.label)}"></label>
               <label>Wartość (utm_medium)<input data-p="medium" value="${esc(p.medium)}" spellcheck="false"></label>
+              <label class="ed-show"><input type="checkbox" data-p="visible" ${p.hidden ? '' : 'checked'}> Pokazuj</label>
               <button type="button" class="icon danger" data-del-place="${pi}" aria-label="Usuń miejsce ${esc(p.label)}">×</button>
             </li>`).join('')}
         </ul>
@@ -333,6 +371,14 @@ function setupSettings() {
     const ci = Number(t.closest('[data-ci]')?.dataset.ci);
     const c = channels[ci];
     if (!c) return;
+    if (t.dataset.f === 'visible' || t.dataset.p === 'visible') {
+      const target = t.dataset.p ? c.placements[Number(t.closest('[data-pi]').dataset.pi)] : c;
+      if (t.checked) delete target.hidden;
+      else target.hidden = true;
+      t.closest(t.dataset.p ? 'li' : 'fieldset').classList.toggle('is-hidden', !t.checked);
+      store.set(STORE.channels, channels);
+      return;
+    }
     if (t.dataset.f) {
       c[t.dataset.f] = t.dataset.f === 'source' ? slugify(t.value.replace('{nazwa}', 'NAZWAX')).replace('nazwax', '{nazwa}') : t.value.trim();
       if (t.dataset.f === 'source') t.value = c.source;
@@ -448,7 +494,7 @@ function init() {
       const mode = b.dataset.select;
       state.selected.clear();
       for (const c of channels) {
-        for (const p of c.placements) {
+        for (const p of shownPlaces(c)) {
           if (mode === 'all' || (mode === 'social' && c.group === 'social')) state.selected.add(key(c, p));
         }
       }
@@ -460,6 +506,11 @@ function init() {
   els.set.addEventListener('click', (e) => {
     const b = e.target.closest('[data-copy]');
     if (b) copy(currentRows[Number(b.dataset.copy)].link, 'Link skopiowany');
+    const g = e.target.closest('[data-copy-group]');
+    if (g) {
+      const group = currentGroups[Number(g.dataset.copyGroup)];
+      copy(toTsv(group.rows.map((i) => currentRows[i])), `Skopiowano linki: ${group.c.label}`);
+    }
   });
   $('copy-all').addEventListener('click', () => copy(toTsv(currentRows), `Skopiowano ${currentRows.length} linków`));
   $('download-csv').addEventListener('click', () => {
@@ -479,7 +530,7 @@ function init() {
   $('tab-set').addEventListener('click', () => setMode('set'));
 
   if (!state.selected.size) {
-    for (const c of channels) if (c.group === 'social') for (const p of c.placements) state.selected.add(key(c, p));
+    for (const c of channels) if (c.group === 'social') for (const p of shownPlaces(c)) state.selected.add(key(c, p));
     renderPicker();
   }
   setMode(state.mode);

@@ -3,6 +3,7 @@
  * ten plik to stan wyjściowy i „Przywróć domyślne”.
  * source – utm_source (skąd), medium – utm_medium (rodzaj kanału).
  * {nazwa} w source = pole do wpisania (np. partner-ela).
+ * hidden: true (kanał lub miejsce) = tymczasowo ukryte w generatorze, bez usuwania.
  */
 export const DEFAULT_CHANNELS = [
   {
@@ -67,7 +68,11 @@ export const DEFAULT_CHANNELS = [
     placements: [{ id: 'druk', label: 'Ulotka, slajd, wizytówka', medium: 'offline' }],
   },
   {
-    id: 'meta-ads', label: 'Reklamy Meta (FB/IG)', source: 'meta', group: 'other',
+    id: 'facebook-ads', label: 'Reklamy Facebook', source: 'facebook', group: 'other',
+    placements: [{ id: 'reklama', label: 'Reklama', medium: 'paid' }],
+  },
+  {
+    id: 'instagram-ads', label: 'Reklamy Instagram', source: 'instagram', group: 'other',
     placements: [{ id: 'reklama', label: 'Reklama', medium: 'paid' }],
   },
   {
