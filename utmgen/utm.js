@@ -85,20 +85,24 @@ function isValidYymmdd(v) {
 }
 
 /**
- * Podpowiedzi do nazwy kampanii (po porządkach).
- * Wydarzenie jednorazowe – data rozpoczęcia RRMMDD (np. 261203; drugie tego dnia: 261203-2).
- * Wydarzenie cykliczne lub stała kampania – nazwa/tytuł, np. ebook-najlepsza-uczennica.
+ * Podpowiedzi do nazwy kampanii (po porządkach), zależnie od rodzaju:
+ * 'event' – wydarzenie jednorazowe: data rozpoczęcia RRMMDD (np. 261203; drugie tego dnia: 261203-2);
+ * 'name'  – wydarzenie cykliczne lub stała kampania: nazwa/tytuł, np. ebook-najlepsza-uczennica.
  */
-export function campaignNotes(rawValue) {
+export function campaignNotes(rawValue, type = 'event') {
   const raw = String(rawValue ?? '');
   const value = slugify(raw);
   const notes = [];
   if (!value) return notes;
   if (value !== raw.trim()) notes.push({ level: 'info', code: 'cleaned', text: `Zapiszemy jako: ${value}` });
-  if (/[a-z]/.test(value)) {
-    notes.push({ level: 'tip', code: 'name', text: 'Nazwa – dla wydarzenia cyklicznego lub stałej kampanii. Jest widoczna w linku. Wydarzenie jednorazowe? Wpisz datę rozpoczęcia RRMMDD.' });
-  } else if (!/^\d{6}(-\d{1,2})?$/.test(value)) {
-    notes.push({ level: 'tip', code: 'format', text: 'Wydarzenie jednorazowe: RRMMDD – data rozpoczęcia, np. 261203 (3 grudnia 2026).' });
+  const isDate = /^\d{6}(-\d{1,2})?$/.test(value);
+  if (type === 'name') {
+    if (isDate) notes.push({ level: 'tip', code: 'looksdate', text: 'To wygląda na datę – dla wydarzenia jednorazowego wybierz „Wydarzenie jednorazowe”.' });
+    else if (!/[a-z]/.test(value)) notes.push({ level: 'tip', code: 'noname', text: 'Wpisz nazwę lub tytuł, np. ebook-najlepsza-uczennica.' });
+  } else if (/[a-z]/.test(value)) {
+    notes.push({ level: 'warn', code: 'name', text: 'Dla wydarzenia jednorazowego wpisz datę rozpoczęcia RRMMDD, np. 261203. Nazwa? Wybierz „Cykliczne lub stała kampania”.' });
+  } else if (!isDate) {
+    notes.push({ level: 'tip', code: 'format', text: 'Format: RRMMDD – data rozpoczęcia, np. 261203 (3 grudnia 2026).' });
   } else if (!isValidYymmdd(value.slice(0, 6))) {
     notes.push({ level: 'warn', code: 'baddate', text: 'To nie jest poprawna data RRMMDD – sprawdź miesiąc i dzień.' });
   }

@@ -191,3 +191,16 @@ dialog::backdrop { background: rgb(43 8 26 / 0.45); }
 .tip { overflow-y: auto; overscroll-behavior: contain; }
 .tip.up { top: auto; bottom: calc(100% + 8px); }
 
+
+/* Rodzaj kampanii */
+.seg { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; padding: 3px; margin-bottom: 8px; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; }
+.seg label { position: relative; display: flex; align-items: center; justify-content: center; min-height: 40px; padding: 4px 8px; border-radius: 6px; text-align: center; font-size: 0.8rem; font-weight: 600; color: var(--muted); cursor: pointer; line-height: 1.25; }
+.seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.seg label:has(input:checked) { background: var(--white); color: var(--pink-800); box-shadow: 0 1px 4px rgb(43 8 26 / 0.1); }
+.seg label:has(input:focus-visible) { box-shadow: var(--focus); }
+.two.single { grid-template-columns: 1fr; }
+
+/* Okno ustawień: nagłówek z przyciskiem „Zamknij” przypięty u góry przy przewijaniu */
+dialog { overflow-y: auto; }
+.settings { padding-top: 0; }
+.settings-head { position: sticky; top: 0; z-index: 5; margin: 0 -18px; padding: 10px 18px; background: var(--white); border-bottom: 1px solid var(--line); }

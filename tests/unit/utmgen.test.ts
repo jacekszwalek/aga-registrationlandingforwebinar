@@ -35,17 +35,22 @@ describe('utmgen – link', () => {
 });
 
 describe('utmgen – kampania i kanały', () => {
-  it('podpowiedzi: data RRMMDD (jednorazowe) albo nazwa (cykliczne/stałe)', () => {
-    const codes = (v: string) => campaignNotes(v).map((n: { code: string }) => n.code);
+  it('podpowiedzi – wydarzenie jednorazowe (data RRMMDD)', () => {
+    const codes = (v: string) => campaignNotes(v, 'event').map((n: { code: string }) => n.code);
     expect(campaignNotes('261203')).toEqual([]);
-    expect(campaignNotes('261203-2')).toEqual([]);
+    expect(campaignNotes('261203-2', 'event')).toEqual([]);
     expect(codes('Webinar Grudzień')).toEqual(['cleaned', 'name']);
-    expect(codes('ebook-najlepsza-uczennica')).toEqual(['name']);
-    expect(codes('2026-12-03-zostac')).toEqual(['name']);
     expect(codes('2026-12-03')).toEqual(['format']);
     expect(codes('261332')).toEqual(['baddate']);
     expect(codes('260229')).toEqual(['baddate']);
     expect(codes('280229')).toEqual([]);
+  });
+  it('podpowiedzi – cykliczne lub stała kampania (nazwa)', () => {
+    const codes = (v: string) => campaignNotes(v, 'name').map((n: { code: string }) => n.code);
+    expect(codes('ebook-najlepsza-uczennica')).toEqual([]);
+    expect(codes('E-book Najlepsza Uczennica')).toEqual(['cleaned']);
+    expect(codes('261203')).toEqual(['looksdate']);
+    expect(codes('2026-12')).toEqual(['noname']);
   });
   it('data z kalendarza → RRMMDD', () => {
     expect(campaignFromDate('2026-12-03')).toBe('261203');

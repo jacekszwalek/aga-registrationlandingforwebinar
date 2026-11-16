@@ -13,7 +13,7 @@
   <header class="top">
     <img src="logo.png" alt="Przystań Zmiany Zawodowej" width="72" height="32">
     <h1>Generator linków UTM</h1>
-    <button type="button" class="top-link" id="open-settings" aria-haspopup="dialog">Kanały <span aria-hidden="true">⚙</span></button>
+    <button type="button" class="top-link" id="open-settings" aria-haspopup="dialog">Ustawienia kanałów <span aria-hidden="true">⚙</span></button>
   </header>
 
   <main class="grid">
@@ -35,14 +35,18 @@
           <label for="campaign">Kampania</label>
           <span class="help-wrap">
             <button type="button" class="help" aria-label="Pomoc: kampania" aria-describedby="tip-campaign">?</button>
-            <span role="tooltip" id="tip-campaign" class="tip" hidden><b>Wydarzenie jednorazowe</b> (np. webinar 3 grudnia) – <b>data rozpoczęcia w formacie RRMMDD</b>, np. <code>261203</code>. Pole startuje z dzisiejszą datą – zmień ją na datę wydarzenia albo wybierz z kalendarza. Data nie zdradza w linku, czego dotyczy kampania; czego dotyczy, sprawdzisz po dacie (grupy wydarzeń w MailerLite zaczynają się od tej samej daty). Dwa wydarzenia tego samego dnia: <code>261203-2</code>.<br><br><b>Wydarzenie cykliczne lub stała kampania</b> (np. e-book, cykl spotkań) – <b>nazwa lub tytuł</b>, np. <code>ebook-najlepsza-uczennica</code>. Zawsze ta sama nazwa – w GA4 i MailerLite zobaczysz całą historię razem. Nazwa jest widoczna w linku.</span>
+            <span role="tooltip" id="tip-campaign" class="tip" hidden></span>
           </span>
         </div>
-        <div class="two">
+        <div class="seg" role="radiogroup" aria-label="Rodzaj kampanii">
+          <label><input type="radio" name="ctype" value="event" checked><span>Wydarzenie jednorazowe</span></label>
+          <label><input type="radio" name="ctype" value="name"><span>Cykliczne lub stała kampania</span></label>
+        </div>
+        <div class="two" id="campaign-row">
           <input id="campaign" type="text" autocomplete="off" spellcheck="false" placeholder="261203" aria-describedby="campaign-rules">
           <input id="campaign-date" type="date" aria-label="Wybierz datę wydarzenia z kalendarza">
         </div>
-        <p class="hint" id="campaign-rules"><b>Jednorazowe:</b> data rozpoczęcia RRMMDD, np. 261203 · <b>cykliczne lub stałe:</b> nazwa, np. ebook-najlepsza-uczennica</p>
+        <p class="hint" id="campaign-rules"></p>
         <ul class="notes" id="campaign-notes" aria-live="polite"></ul>
       </div>
 
@@ -66,7 +70,7 @@
           <span class="lab" id="places-label">Miejsca</span>
           <span class="help-wrap">
             <button type="button" class="help" aria-label="Pomoc: miejsca" aria-describedby="tip-places">?</button>
-            <span role="tooltip" id="tip-places" class="tip" hidden>Zaznacz, gdzie wrzucasz link – dla każdego miejsca powstanie osobny link. Jeden link = jedno zaznaczone miejsce. Kanał to <code>utm_source</code> (np. <code>facebook</code>), miejsce to <code>utm_medium</code> (szary napis po prawej, np. <code>group</code>). Listę zmienisz w „Kanały ⚙” – tam też ukryjesz miejsca, których teraz nie używasz.</span>
+            <span role="tooltip" id="tip-places" class="tip" hidden>Zaznacz, gdzie wrzucasz link – dla każdego miejsca powstanie osobny link. Jeden link = jedno zaznaczone miejsce. Kanał to <code>utm_source</code> (np. <code>facebook</code>), miejsce to <code>utm_medium</code> (szary napis po prawej, np. <code>group</code>). Listę zmienisz w „Ustawienia kanałów ⚙” – tam też ukryjesz miejsca, których teraz nie używasz.</span>
           </span>
         </div>
         <div class="quick">
@@ -97,7 +101,7 @@
   <dialog id="settings" aria-labelledby="settings-title">
     <form method="dialog" class="settings">
       <div class="settings-head">
-        <h2 id="settings-title">Kanały</h2>
+        <h2 id="settings-title">Ustawienia kanałów</h2>
         <button type="submit" class="close" aria-label="Zamknij">×</button>
       </div>
       <p class="small">Zmiany zapisują się w tej przeglądarce. Odznacz <b>„Pokazuj”</b>, żeby tymczasowo ukryć kanał lub miejsce (bez usuwania). <b>Kanał</b> = utm_source, <b>wartość</b> miejsca = utm_medium. W kanale możesz użyć <code>{nazwa}</code> – pojawi się pole do wpisania (np. <code>partner-{nazwa}</code>).</p>
