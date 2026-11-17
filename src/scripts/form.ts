@@ -165,7 +165,10 @@ function bindForm(form: HTMLFormElement): void {
         await send(payload);
       }
       try {
-        sessionStorage.setItem(SIGNUP_KEY, JSON.stringify({ newsletter: payload.newsletter, state: payload.state, lead: !honeypot }));
+        // Bez zgody na newsletter zapamiętujemy imię i e-mail tylko w tej karcie (sessionStorage znika po jej zamknięciu)
+        // – przycisk „Zapisz mnie do newslettera” na /dziekuje/ wyśle je razem ze zgodą.
+        const contact = !payload.newsletter && !honeypot ? { email: payload.email, name: payload.name, webinar_source: payload.webinar_source } : null;
+        sessionStorage.setItem(SIGNUP_KEY, JSON.stringify({ newsletter: payload.newsletter, state: payload.state, lead: !honeypot, contact }));
       } catch {
         /* brak sessionStorage – strona podziękowania pokaże wariant domyślny */
       }

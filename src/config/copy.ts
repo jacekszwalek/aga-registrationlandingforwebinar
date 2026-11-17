@@ -179,6 +179,8 @@ export const copy = {
       'W newsletterze dzielę się poradami o rozwoju zawodowym i daję znać o kolejnych wydarzeniach. Możesz wypisać się w każdej chwili.',
     newsletterCta: 'Zapisz mnie do newslettera',
     newsletterDone: 'Dziękuję! Dopisałam Cię do newslettera.',
+    newsletterSaving: 'Zapisuję…',
+    newsletterError: 'Nie udało się zapisać. Spróbuj ponownie za chwilę.',
     shareHeading: 'Znasz kogoś, kto też utknął? Wyślij jej link',
     shareCta: 'Udostępnij link',
     copyCta: 'Skopiuj link',

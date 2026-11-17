@@ -30,10 +30,56 @@ document.querySelectorAll<HTMLAnchorElement>('[data-calendar]').forEach((a) =>
   a.addEventListener('click', () => track('add_to_calendar', { calendar: a.dataset.calendar })),
 );
 
-// Newsletter (prototyp: bez wysyłki – TODO integracja MailerLite).
-document.querySelector('[data-newsletter-cta]')?.addEventListener('click', (e) => {
-  (e.currentTarget as HTMLButtonElement).hidden = true;
-  document.querySelector<HTMLElement>('[data-newsletter-done]')!.hidden = false;
+// Newsletter: osoba, która przy zapisie nie zaznaczyła zgody, może dopisać się tutaj (odrębna, świadoma zgoda).
+// Tryb 'api': imię i e-mail z tej karty (sessionStorage) idą do api/subscribe.php z newsletter: true → grupa „Zgoda marketingowa”.
+// Bez zapisanych danych (np. wejście z linku) blok jest ukryty – nie mamy kogo dopisać.
+type Contact = { email: string; name: string; webinar_source?: string };
+const readSignup = (): { contact?: Contact | null } | null => {
+  try {
+    return JSON.parse(sessionStorage.getItem('pzz_signup') || 'null');
+  } catch {
+    return null;
+  }
+};
+const nlBlock = document.querySelector<HTMLElement>('[data-newsletter-block]');
+const nlBtn = document.querySelector<HTMLButtonElement>('[data-newsletter-cta]');
+const nlDone = document.querySelector<HTMLElement>('[data-newsletter-done]');
+const nlError = document.querySelector<HTMLElement>('[data-newsletter-error]');
+const contact = readSignup()?.contact;
+if (eventConfig.form.mode === 'api' && !contact && nlBlock) nlBlock.hidden = true;
+
+nlBtn?.addEventListener('click', async () => {
+  if (nlError) nlError.hidden = true;
+  if (eventConfig.form.mode === 'api') {
+    if (!contact) return;
+    const label = nlBtn.textContent;
+    nlBtn.disabled = true;
+    nlBtn.textContent = nlBtn.dataset.saving || label;
+    try {
+      const res = await fetch(withBase('api/subscribe.php'), {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ ...contact, newsletter: true, state: document.documentElement.dataset.state || 'before', form: 'thank_you_newsletter' }),
+      });
+      const data = (await res.json().catch(() => null)) as { ok?: boolean } | null;
+      if (!res.ok || !data?.ok) throw new Error(`HTTP ${res.status}`);
+      try {
+        const s = readSignup();
+        sessionStorage.setItem('pzz_signup', JSON.stringify({ ...s, newsletter: true, contact: null }));
+      } catch {
+        /* brak sessionStorage */
+      }
+    } catch {
+      nlBtn.disabled = false;
+      nlBtn.textContent = label;
+      if (nlError) nlError.hidden = false;
+      track('form_error', { form: 'thank_you_newsletter', field: 'network', reason: 'network' });
+      return;
+    }
+  }
+  // Tryb mock (podgląd/testy): tylko komunikat.
+  nlBtn.hidden = true;
+  if (nlDone) nlDone.hidden = false;
   track('newsletter_signup', { source: 'thank_you' });
 });
 
