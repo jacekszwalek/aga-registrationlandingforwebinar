@@ -34,6 +34,24 @@ Struktura grup, zgody i zapis przez API: [`mailerlite-standard.md`](mailerlite-s
 
 **Instrukcja wdrożenia krok po kroku (hosting, MailerLite, GA4, Clarity): [`docs/wdrozenie.md`](wdrozenie.md).**
 
+## Do rozważenia
+### Nagłówek „Jesteś zapisana!” na `/dziekuje/` – osoby, które nie są kobietami (17.11.2026, decyzja: na razie bez zmian)
+Problem: nagłówek ma formę żeńską. Webinar jest głównie dla kobiet, ale zapisać się może każdy; nie chcemy pytać o płeć.
+
+- **Odrzucone: warunek „imię kończy się na -a”.** Myli się w obie strony: kobiety bez „-a” (Margaret, Ingrid, Karin, Nicole, Beatrycze, Miriam, Noemi, pseudonimy, inicjały) i mężczyźni z „-a” (Kuba, Barnaba, Kosma, Jarema). „Zapisana/zapisany” z ukośnikiem brzmi urzędowo.
+- **Opcje:**
+
+| Opcja | Przykład | Plusy | Minusy |
+|---|---|---|---|
+| A. Neutralnie z imieniem (rekomendacja) | „**Dziękuję, Margaret!** Twoje miejsce na webinarze jest zarezerwowane.” | osobiste, ciepłe, bez zgadywania | dłuższe |
+| B. Neutralnie bez imienia | „**Gotowe – miejsce jest Twoje!**” / „**Do zobaczenia 3 grudnia!**” | krótkie | mniej osobiste |
+| C. Zostawić formę żeńską (stan obecny) | „Jesteś zapisana!” | spójne z marką | mężczyzna dostaje formę żeńską |
+| D. Warunek „-a” | – | – | błędy w obie strony |
+
+- **Formy neutralne po polsku:** rzeczownik lub czas teraźniejszy zamiast czasownika w przeszłym / przymiotnika – „Twoje miejsce jest zarezerwowane”, „Masz miejsce na webinarze”, „Zapis potwierdzony”.
+- **Proponowany zakres, jeśli wdrożymy:** tylko `/dziekuje/` (wariant A, a gdy imienia brak – B); reszta landingu zostaje w formie żeńskiej (świadoma zasada marki w CLAUDE.md). Temat maila A1 „{$name}, jesteś zapisana!” → „{$name}, Twoje miejsce jest zarezerwowane – widzimy się 3 grudnia o 19:00”.
+- **Technicznie:** imię jest znane tylko w karcie, w której był zapis (`sessionStorage`) – trzeba je zapamiętywać przy każdym zapisie (dziś tylko bez zgody na newsletter); przy wejściu z linku – wariant B.
+
 ## Integracje (kolejne etapy)
 - **MailerLite**: tryb `api` (`public/api/subscribe.php`) – TODO w [`mailerlite-raport-wdrozenia.md`](mailerlite-raport-wdrozenia.md).
 - **Hosting**: zrobione – `https://przystanzmianyzawodowej.pl/webinar/` (webd.pl, `public_html/webinar`) + wdrażanie FTPS z GitHub Actions.
