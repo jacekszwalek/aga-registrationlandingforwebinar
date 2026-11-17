@@ -284,3 +284,9 @@ test('/dziekuje/: przy newsletterze informacja o administratorze danych', async 
   await expect(priv.getByRole('link', { name: 'Polityce prywatności' })).toBeVisible();
   await expect(priv.getByRole('link', { name: 'Regulaminie newslettera' })).toBeVisible();
 });
+
+test('/dziekuje/: pogrubione „folderów Oferty i Spam”', async ({ page }) => {
+  await page.goto('/dziekuje/');
+  await expect(page.locator('.ty__lead strong')).toHaveText('folderów Oferty i Spam');
+  await expect(page.locator('.ty__lead')).not.toContainText('**');
+});

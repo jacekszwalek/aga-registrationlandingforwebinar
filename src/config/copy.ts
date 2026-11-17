@@ -169,7 +169,7 @@ export const copy = {
     metaTitle: 'Jesteś zapisana! | Przystań Zmiany Zawodowej',
     headline: { before: 'Jesteś zapisana!', after: 'Nagranie jest w drodze na Twoją skrzynkę' },
     inbox:
-      'Sprawdź skrzynkę – wysłałam Ci wiadomość z potwierdzeniem. Jeśli jej nie widzisz, zajrzyj do folderów Oferty i Spam.',
+      'Sprawdź skrzynkę – wysłałam Ci wiadomość z potwierdzeniem. Jeśli jej nie widzisz, zajrzyj do **folderów Oferty i Spam**.', // **…** = pogrubienie
     calendarHeading: 'Zapisz termin w kalendarzu',
     google: 'Dodaj do Kalendarza Google',
     ics: 'Pobierz plik .ics',
