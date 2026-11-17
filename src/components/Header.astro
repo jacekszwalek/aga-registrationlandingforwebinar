@@ -3,7 +3,7 @@ import { Image } from 'astro:assets';
 import logo from '../assets/logo.png';
 import VersionSwitch, { type Version } from './VersionSwitch.astro';
 import { eventConfig } from '../config/event.config';
-import { landingLink } from '../lib/utm';
+import { refLink } from '../lib/utm';
 
 interface Props {
   version: Version;
@@ -17,8 +17,8 @@ const { version, centered = false, transparent = false } = Astro.props;
 
 <header class:list={['site-header', { 'site-header--center': centered, 'site-header--transparent': transparent }]}>
   <div class="site-header__inner">
-    <!-- Logo prowadzi do strony głównej Przystani (z UTM-ami – decyzja 17.11.2026). -->
-    <a class="site-header__logo" href={landingLink(eventConfig.site.homeUrl, eventConfig.id, 'logo')} aria-label="Przystań Zmiany Zawodowej – strona główna">
+    <!-- Logo → strona główna Przystani; bez UTM-ów (nie nadpisują źródła wizyty), tylko ?ref= (decyzja 17.11.2026). -->
+    <a class="site-header__logo" href={refLink(eventConfig.site.homeUrl, 'landing-webinar-logo')} aria-label="Przystań Zmiany Zawodowej – strona główna">
       <Image src={logo} alt="Przystań Zmiany Zawodowej" width={126} height={56} densities={[1, 2]} loading="eager" />
     </a>
     <VersionSwitch current={version} />

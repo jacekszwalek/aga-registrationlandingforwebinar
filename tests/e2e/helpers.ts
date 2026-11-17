@@ -27,10 +27,10 @@ export const isMobile = (info: TestInfo) => ['iphone-13', 'pixel-7'].includes(in
 /** Jedyny cel strony: dozwolone są tylko kotwice do formularza, linki prawne i przełącznik wersji prototypu. */
 export const isAllowedLink = (h: string) =>
   h.startsWith('#zapis-') ||
-  // logo i konsultacja → strona główna Przystani z UTM-ami (decyzja 17.11.2026)
-  /^https:\/\/przystanzmianyzawodowej\.pl\/\?utm_source=landing-webinar&utm_medium=referral&utm_campaign=\d{6}&utm_content=logo$/.test(h) ||
-  /^https:\/\/calendly\.com\/baranowska-agnieszka92\/rozmowa\?utm_source=landing-webinar&utm_medium=referral&utm_campaign=\d{6}&utm_content=konsultacja-dziekuje$/.test(h) ||
   h === 'https://przystanzmianyzawodowej.pl/polityka-prywatnosci/' ||
   h === 'https://przystanzmianyzawodowej.pl/regulamin-newslettera/' ||
+  // logo → strona główna bez UTM-ów (?ref=), konsultacja → Calendly z oryginalnymi UTM-ami + utm_term (decyzja 17.11.2026)
+  h === 'https://przystanzmianyzawodowej.pl/?ref=landing-webinar-logo' ||
+  /^https:\/\/calendly\.com\/baranowska-agnieszka92\/rozmowa\?[^#]*utm_term=landing-webinar-konsultacja$/.test(h) ||
   /^\/archived\/v[1-5]\/$/.test(h) ||
   h.startsWith('/podglad/?url=');

@@ -45,14 +45,20 @@ describe('format', () => {
   });
 });
 
-import { landingLink } from '../../src/lib/utm';
-describe('landingLink – linki do strony głównej z UTM-ami', () => {
-  it('logo i konsultacja', () => {
-    expect(landingLink('https://przystanzmianyzawodowej.pl/', '2026-12-03-zostac-zmienic-wlasna-droga', 'logo')).toBe(
-      'https://przystanzmianyzawodowej.pl/?utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_content=logo',
+import { refLink, consultationLink } from '../../src/lib/utm';
+describe('linki z landingu – bez nadpisywania źródła', () => {
+  it('logo: zwykły ?ref=, bez UTM-ów', () => {
+    expect(refLink('https://przystanzmianyzawodowej.pl/', 'landing-webinar-logo')).toBe('https://przystanzmianyzawodowej.pl/?ref=landing-webinar-logo');
+  });
+  it('konsultacja: oryginalne UTM-y osoby + utm_term', () => {
+    const url = 'https://calendly.com/baranowska-agnieszka92/rozmowa';
+    expect(consultationLink(url, '2026-12-03-x', { utm_source: 'facebook', utm_medium: 'group', utm_campaign: '261203', utm_content: 'post-1' })).toBe(
+      `${url}?utm_source=facebook&utm_medium=group&utm_campaign=261203&utm_content=post-1&utm_term=landing-webinar-konsultacja`,
     );
-    expect(landingLink('https://calendly.com/baranowska-agnieszka92/rozmowa', '2026-12-03-x', 'konsultacja-dziekuje')).toBe(
-      'https://calendly.com/baranowska-agnieszka92/rozmowa?utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_content=konsultacja-dziekuje',
+  });
+  it('konsultacja: bez UTM-ów – oznaczenie landingu', () => {
+    expect(consultationLink('https://calendly.com/x/rozmowa', '2026-12-03-x')).toBe(
+      'https://calendly.com/x/rozmowa?utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_term=landing-webinar-konsultacja',
     );
   });
 });

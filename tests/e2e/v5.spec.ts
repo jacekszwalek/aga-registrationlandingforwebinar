@@ -251,16 +251,19 @@ test('stopka bez danych administratora, z linkiem do polityki prywatności', asy
   await expect(page.locator('footer a', { hasText: 'Polityka prywatności' })).toBeVisible();
 });
 
-test('logo prowadzi do strony głównej, konsultacja do Calendly – oba z UTM-ami', async ({ page }) => {
+test('logo bez UTM-ów (?ref=), konsultacja z oryginalnymi UTM-ami osoby', async ({ page }) => {
   await page.goto('/');
-  await expect(page.locator('.site-header__logo')).toHaveAttribute(
-    'href',
-    'https://przystanzmianyzawodowej.pl/?utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_content=logo',
-  );
+  await expect(page.locator('.site-header__logo')).toHaveAttribute('href', 'https://przystanzmianyzawodowej.pl/?ref=landing-webinar-logo');
+  // wejście bez UTM-ów → oznaczenie landingu
   await page.goto('/dziekuje/');
-  await expect(page.getByRole('link', { name: 'Umawiam konsultację' })).toHaveAttribute(
+  const consult = page.getByRole('link', { name: 'Umawiam konsultację' });
+  await expect(consult).toHaveAttribute('href', /utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_term=landing-webinar-konsultacja$/);
+  // osoba przyszła z Facebooka → jej UTM-y zostają, dochodzi tylko utm_term
+  await page.evaluate(() => sessionStorage.setItem('pzz_utm', JSON.stringify({ utm_source: 'facebook', utm_medium: 'group', utm_campaign: '261203' })));
+  await page.reload();
+  await expect(consult).toHaveAttribute(
     'href',
-    'https://calendly.com/baranowska-agnieszka92/rozmowa?utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_content=konsultacja-dziekuje',
+    'https://calendly.com/baranowska-agnieszka92/rozmowa?utm_source=facebook&utm_medium=group&utm_campaign=261203&utm_term=landing-webinar-konsultacja',
   );
 });
 
