@@ -250,3 +250,34 @@ test('stopka bez danych administratora, z linkiem do polityki prywatności', asy
   await expect(page.locator('footer')).not.toContainText('NIP');
   await expect(page.locator('footer a', { hasText: 'Polityka prywatności' })).toBeVisible();
 });
+
+test('logo prowadzi do strony głównej, konsultacja do Calendly – oba z UTM-ami', async ({ page }) => {
+  await page.goto('/');
+  await expect(page.locator('.site-header__logo')).toHaveAttribute(
+    'href',
+    'https://przystanzmianyzawodowej.pl/?utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_content=logo',
+  );
+  await page.goto('/dziekuje/');
+  await expect(page.getByRole('link', { name: 'Umawiam konsultację' })).toHaveAttribute(
+    'href',
+    'https://calendly.com/baranowska-agnieszka92/rozmowa?utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_content=konsultacja-dziekuje',
+  );
+});
+
+test('/dziekuje/: po zapisie do newslettera przycisk „Zapisano” i nieaktywny', async ({ page }) => {
+  await page.goto('/dziekuje/');
+  const btn = page.locator('[data-newsletter-cta]');
+  await btn.click();
+  await expect(page.locator('[data-newsletter-done]')).toBeVisible();
+  await expect(btn).toHaveText('Zapisano');
+  await expect(btn).toBeDisabled();
+});
+
+test('/dziekuje/: przy newsletterze informacja o administratorze danych', async ({ page }) => {
+  await page.goto('/dziekuje/');
+  const priv = page.locator('[data-newsletter-block] .ty__privacy');
+  await priv.locator('summary').click();
+  await expect(priv).toContainText('Administratorem Twoich danych jest Agnieszka Baranowska');
+  await expect(priv.getByRole('link', { name: 'Polityce prywatności' })).toBeVisible();
+  await expect(priv.getByRole('link', { name: 'Regulaminie newslettera' })).toBeVisible();
+});

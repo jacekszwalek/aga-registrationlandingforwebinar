@@ -77,8 +77,9 @@ nlBtn?.addEventListener('click', async () => {
       return;
     }
   }
-  // Tryb mock (podgląd/testy): tylko komunikat.
-  nlBtn.hidden = true;
+  // Po potwierdzonym zapisie przycisk zostaje, ale z etykietą „Zapisano” i nieaktywny (tryb mock: tylko komunikat).
+  nlBtn.disabled = true;
+  nlBtn.textContent = nlBtn.dataset.saved || 'Zapisano';
   if (nlDone) nlDone.hidden = false;
   track('newsletter_signup', { source: 'thank_you' });
 });
