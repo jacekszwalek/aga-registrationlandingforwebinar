@@ -84,6 +84,8 @@ export interface EventConfig {
     url: string;
     /** false = noindex na wszystkich stronach (prototyp, podgląd na GitHub Pages). */
     indexable: boolean;
+    /** Strona główna Przystani – link pod logo (z UTM-ami). */
+    homeUrl: string;
     privacyPolicyUrl: string;
     termsUrl: string | null;
     consultationUrl: string | null;
@@ -141,9 +143,11 @@ export const eventConfig: EventConfig = {
   site: {
     url: 'https://przystanzmianyzawodowej.pl/webinar/',
     indexable: false,
+    homeUrl: 'https://przystanzmianyzawodowej.pl/',
     privacyPolicyUrl: 'https://przystanzmianyzawodowej.pl/polityka-prywatnosci/',
     termsUrl: 'https://przystanzmianyzawodowej.pl/regulamin-newslettera/',
-    consultationUrl: null,
+    // Calendly – bez ?month=, żeby kalendarz zawsze otwierał bieżący miesiąc (UTM-y Calendly zapisuje przy rezerwacji).
+    consultationUrl: 'https://calendly.com/baranowska-agnieszka92/rozmowa',
   },
   // Dane ze stopki strony macierzystej – tylko na potrzeby prototypu, do potwierdzenia przy wydaniu.
   controller: {

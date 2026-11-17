@@ -44,3 +44,15 @@ describe('format', () => {
     ]);
   });
 });
+
+import { landingLink } from '../../src/lib/utm';
+describe('landingLink – linki do strony głównej z UTM-ami', () => {
+  it('logo i konsultacja', () => {
+    expect(landingLink('https://przystanzmianyzawodowej.pl/', '2026-12-03-zostac-zmienic-wlasna-droga', 'logo')).toBe(
+      'https://przystanzmianyzawodowej.pl/?utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_content=logo',
+    );
+    expect(landingLink('https://calendly.com/baranowska-agnieszka92/rozmowa', '2026-12-03-x', 'konsultacja-dziekuje')).toBe(
+      'https://calendly.com/baranowska-agnieszka92/rozmowa?utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_content=konsultacja-dziekuje',
+    );
+  });
+});

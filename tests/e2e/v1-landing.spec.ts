@@ -99,7 +99,7 @@ test.describe('jeden cel – brak linków wychodzących', () => {
     // Stopka prawna + przełącznik wersji prototypu (znika przy allowPreviewParams = false).
     await expect(page.locator('nav')).toHaveCount(2);
     expect(await page.locator('header a[data-version-link]').evaluateAll((as) => as.map((a) => a.getAttribute('href')))).toEqual(['/archived/v1/', '/archived/v2/', '/archived/v3/', '/archived/v4/', '/archived/v5/']);
-    expect(await page.locator('header a').count()).toBe(7); // + podgląd mobile/desktop
+    expect(await page.locator('header a').count()).toBe(8); // + podgląd mobile/desktop + logo → strona główna
   });
 });
 

@@ -180,6 +180,10 @@ export const copy = {
     newsletterCta: 'Zapisz mnie do newslettera',
     newsletterDone: 'Dziękuję! Dopisałam Cię do newslettera.',
     newsletterSaving: 'Zapisuję…',
+    newsletterSaved: 'Zapisano',
+    // Klauzula przy zapisie do newslettera na /dziekuje/ (jak przy formularzu; do weryfikacji prawnej).
+    newsletterClause:
+      'Administratorem Twoich danych jest {controller}. Przetwarzam je na podstawie Twojej zgody, aby wysyłać Ci newsletter z poradami i informacjami o wydarzeniach – do czasu jej wycofania (link „wypisz się” jest w każdym mailu).',
     newsletterError: 'Nie udało się zapisać. Spróbuj ponownie za chwilę.',
     shareHeading: 'Znasz kogoś, kto też utknął? Wyślij jej link',
     shareCta: 'Udostępnij link',

@@ -1,4 +1,5 @@
 ---
+import { landingLink } from '../../lib/utm';
 import '../../styles/v5.css';
 import Base from '../../layouts/Base.astro';
 import Header from '../Header.astro';
@@ -18,6 +19,8 @@ interface Props {
 const { path } = Astro.props;
 const t = copy.thankYou;
 const cal = calendarEventFromConfig();
+const nlController = `${eventConfig.controller.name} (${eventConfig.controller.brand})`;
+const [nlClauseBefore, nlClauseAfter] = t.newsletterClause.split('{controller}');
 ---
 
 <Base
@@ -79,9 +82,20 @@ const cal = calendarEventFromConfig();
       <section class="card ty__nl" aria-labelledby="nl-title" data-newsletter-block>
         <h2 id="nl-title">{t.newsletterHeading}</h2>
         <p>{t.newsletterText}</p>
-        <button type="button" class="btn" data-newsletter-cta data-saving={t.newsletterSaving}>{t.newsletterCta}</button>
+        <button type="button" class="btn" data-newsletter-cta data-saving={t.newsletterSaving} data-saved={t.newsletterSaved}>{t.newsletterCta}</button>
         <p class="ty__done" role="status" data-newsletter-done hidden>{t.newsletterDone}</p>
         <p class="ty__error" role="alert" data-newsletter-error hidden>{t.newsletterError}</p>
+        <details class="ty__privacy">
+          <summary>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></svg>
+            Twoje dane są bezpieczne – kto je przetwarza?
+          </summary>
+          <p>
+            {nlClauseBefore}{nlController}{nlClauseAfter}
+            Więcej w <a href={eventConfig.site.privacyPolicyUrl} rel="noopener">Polityce prywatności</a> i{' '}
+            {eventConfig.site.termsUrl ? <a href={eventConfig.site.termsUrl} rel="noopener">Regulaminie newslettera</a> : <>Regulaminie <span class="todo">{TODO_MARK}</span></>}.
+          </p>
+        </details>
       </section>
 
       <section class="card" aria-labelledby="share-title">
@@ -97,7 +111,7 @@ const cal = calendarEventFromConfig();
         <h2 id="consult-title">{t.consultationHeading}</h2>
         {
           eventConfig.site.consultationUrl ? (
-            <a class="btn btn--ghost" href={eventConfig.site.consultationUrl} rel="noopener">
+            <a class="btn btn--ghost" href={landingLink(eventConfig.site.consultationUrl, eventConfig.id, 'konsultacja-dziekuje')} rel="noopener">
               Umawiam konsultację
             </a>
           ) : (
@@ -168,6 +182,35 @@ const cal = calendarEventFromConfig();
   :global([data-nl='yes']) .ty__nl,
   .ty__nl[hidden] {
     display: none;
+  }
+  .ty__privacy {
+    margin-top: 12px;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+  }
+  .ty__privacy summary {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 44px;
+    list-style: none;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--pink-200);
+    text-underline-offset: 3px;
+  }
+  .ty__privacy summary::-webkit-details-marker {
+    display: none;
+  }
+  .ty__privacy svg {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: var(--pink-700);
+    stroke-width: 2;
+  }
+  .ty__privacy p {
+    margin: 4px 0 0;
   }
   .ty__error {
     margin: 12px 0 0;
