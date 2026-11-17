@@ -79,8 +79,9 @@ const cal = calendarEventFromConfig();
       <section class="card ty__nl" aria-labelledby="nl-title" data-newsletter-block>
         <h2 id="nl-title">{t.newsletterHeading}</h2>
         <p>{t.newsletterText}</p>
-        <button type="button" class="btn" data-newsletter-cta>{t.newsletterCta}</button>
+        <button type="button" class="btn" data-newsletter-cta data-saving={t.newsletterSaving}>{t.newsletterCta}</button>
         <p class="ty__done" role="status" data-newsletter-done hidden>{t.newsletterDone}</p>
+        <p class="ty__error" role="alert" data-newsletter-error hidden>{t.newsletterError}</p>
       </section>
 
       <section class="card" aria-labelledby="share-title">
@@ -164,8 +165,14 @@ const cal = calendarEventFromConfig();
     font-weight: 600;
     color: var(--pink-800);
   }
-  :global([data-nl='yes']) .ty__nl {
+  :global([data-nl='yes']) .ty__nl,
+  .ty__nl[hidden] {
     display: none;
+  }
+  .ty__error {
+    margin: 12px 0 0;
+    font-weight: 600;
+    color: #9b1c1c;
   }
   .ty__consult {
     text-align: center;
