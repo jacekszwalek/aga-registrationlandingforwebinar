@@ -2,7 +2,7 @@
 import { initConsent, hasConsent } from './consent';
 import { eventConfig } from '../config/event.config';
 import { track } from './track';
-import { referralUrl } from '../lib/utm';
+import { referralUrl, consultationLink } from '../lib/utm';
 import { withBase } from '../lib/paths';
 
 initConsent();
@@ -83,6 +83,20 @@ nlBtn?.addEventListener('click', async () => {
   if (nlDone) nlDone.hidden = false;
   track('newsletter_signup', { source: 'thank_you' });
 });
+
+// Konsultacja (Calendly): przekazujemy ORYGINALNE UTM-y osoby (z linku, z którego przyszła na landing),
+// żeby nie nadpisać źródła; miejsce kliknięcia oznacza utm_term.
+const consult = document.querySelector<HTMLAnchorElement>('[data-consultation]');
+if (consult && eventConfig.site.consultationUrl) {
+  try {
+    const original = JSON.parse(sessionStorage.getItem('pzz_utm') || '{}') as Record<string, string>;
+    consult.href = consultationLink(eventConfig.site.consultationUrl, eventConfig.id, original);
+  } catch {
+    /* brak sessionStorage – zostaje link domyślny */
+  }
+  consult.addEventListener('click', () => track('consultation_click', { place: 'thank_you' }));
+}
+document.querySelector('.site-header__logo')?.addEventListener('click', () => track('logo_click', { place: 'thank_you' }));
 
 const shareUrl = referralUrl(location.origin + withBase(''));
 const shareBtn = document.querySelector<HTMLButtonElement>('[data-share]')!;

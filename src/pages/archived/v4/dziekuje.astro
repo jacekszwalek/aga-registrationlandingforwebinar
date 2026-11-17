@@ -1,5 +1,5 @@
 ---
-import { landingLink } from '../../../lib/utm';
+import { consultationLink } from '../../../lib/utm';
 import '../../../styles/v4.css';
 import Base from '../../../layouts/Base.astro';
 import Header from '../../../components/Header.astro';
@@ -84,7 +84,7 @@ const cal = calendarEventFromConfig();
         <h2 id="consult-title">{t.consultationHeading}</h2>
         {
           eventConfig.site.consultationUrl ? (
-            <a class="btn btn--ghost" href={landingLink(eventConfig.site.consultationUrl, eventConfig.id, 'konsultacja-dziekuje')} rel="noopener">
+            <a class="btn btn--ghost" href={consultationLink(eventConfig.site.consultationUrl, eventConfig.id)} rel="noopener" data-consultation>
               Umawiam konsultację
             </a>
           ) : (

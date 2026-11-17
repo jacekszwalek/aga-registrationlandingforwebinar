@@ -27,15 +27,37 @@ export function referralUrl(base: string): string {
 }
 
 /**
- * Link z landingu do strony głównej Przystani (logo, konsultacja) z UTM-ami:
- * utm_source=landing-webinar, utm_medium=referral, utm_campaign=RRMMDD (data wydarzenia z id), utm_content=miejsce.
+ * Link z landingu do własnej strony (logo → strona główna): BEZ UTM-ów, żeby GA4 nie nadpisał
+ * prawdziwego źródła wizyty (np. facebook). Miejsce kliknięcia oznacza zwykły parametr ?ref=.
  */
-export function landingLink(url: string, eventId: string, content: string): string {
+export function refLink(url: string, ref: string): string {
   const u = new URL(url);
+  u.searchParams.set('ref', ref);
+  return u.toString();
+}
+
+/** RRMMDD z identyfikatora wydarzenia (2026-12-03-… → 261203). */
+export function campaignFromEventId(eventId: string): string {
   const m = /^(\d{2})(\d{2})-(\d{2})-(\d{2})/.exec(eventId);
-  u.searchParams.set('utm_source', 'landing-webinar');
-  u.searchParams.set('utm_medium', 'referral');
-  if (m) u.searchParams.set('utm_campaign', `${m[2]}${m[3]}${m[4]}`);
-  u.searchParams.set('utm_content', content);
+  return m ? `${m[2]}${m[3]}${m[4]}` : '';
+}
+
+/**
+ * Link do konsultacji (Calendly) z ORYGINALNYMI UTM-ami osoby (np. utm_source=facebook z linku,
+ * z którego trafiła na landing) – nic nie jest nadpisywane. Miejsce kliknięcia: utm_term.
+ * Gdy osoba weszła bez UTM-ów: utm_source=landing-webinar, utm_medium=referral, utm_campaign=RRMMDD.
+ */
+export function consultationLink(url: string, eventId: string, original: Record<string, string> = {}): string {
+  const u = new URL(url);
+  const keep = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content'];
+  if (original.utm_source) {
+    for (const k of keep) if (original[k]) u.searchParams.set(k, original[k]);
+  } else {
+    u.searchParams.set('utm_source', 'landing-webinar');
+    u.searchParams.set('utm_medium', 'referral');
+    const c = campaignFromEventId(eventId);
+    if (c) u.searchParams.set('utm_campaign', c);
+  }
+  u.searchParams.set('utm_term', 'landing-webinar-konsultacja');
   return u.toString();
 }

@@ -27,7 +27,7 @@ Cztery wersje: **v1** (`/v1/`, pełny landing z briefu), **v2** (`/v2/`, krótka
 
 ## Zasady
 - Nazwa wydarzenia to **webinar**. Nigdy „wyzwanie” – w treści, adresach, metadanych ani w kodzie.
-- **Nie dodawaj nawigacji ani linków wychodzących.** Dozwolone: kotwice do formularza, linki prawne (polityka, regulamin), przełącznik wersji prototypu, na `/dziekuje/` kalendarz Google, `.ics` i konsultacja (Calendly); logo → strona główna Przystani. Te linki zawsze przez `landingLink()` (UTM-y). Pilnują tego testy (`isAllowedLink` w `tests/e2e/helpers.ts`).
+- **Nie dodawaj nawigacji ani linków wychodzących.** Dozwolone: kotwice do formularza, linki prawne (polityka, regulamin), przełącznik wersji prototypu, na `/dziekuje/` kalendarz Google, `.ics` i konsultacja (Calendly); logo → strona główna Przystani. Logo bez UTM-ów (`refLink()`, `?ref=` – nie nadpisuje źródła wizyty), konsultacja przez `consultationLink()` (oryginalne UTM-y osoby + `utm_term`). Pilnują tego testy (`isAllowedLink` w `tests/e2e/helpers.ts`).
 - Copy: per „Ty”, forma żeńska, ciepło i konkretnie. Nie wymyślaj opinii, liczb ani faktów o prowadzącej.
 - Kontrast: przyciski = biały na `--pink-700` (hover `--pink-800`); biały na `--pink-600` tylko w dużych nagłówkach; `--pink-500` nigdy jako tło pod tekst; bez pomarańczowego. Tekst: `--ink`/`--text`.
 - v2: nagłówki WIELKIMI LITERAMI w LT Flode Neue, przyciski prostokątne (radius 4 px) – jak strona-matka. Treść ponad hero chowaj w `<details class="more">`.

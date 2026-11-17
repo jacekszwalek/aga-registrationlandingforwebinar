@@ -126,3 +126,6 @@ initCountdown();
 initSticky();
 initScrollDepth();
 initAnchors();
+
+// Logo → strona główna (bez UTM-ów, źródło wizyty zostaje); kliknięcie liczymy zdarzeniem.
+document.querySelector('.site-header__logo')?.addEventListener('click', () => track('logo_click', { place: 'landing' }));
