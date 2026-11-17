@@ -121,6 +121,9 @@ test('rodzaj kampanii: jednorazowe (data) i cykliczne/stałe (nazwa) – dymek i
   await page.fill('#campaign', '261203');
   await expect(rules).toContainText('dwa wydarzenia jednego dnia: 261203-2');
   await expect(rules).toContainText('krótszy link, jednoznacznie wskazuje kampanię');
+  await expect(rules).toContainText('To pole to nazwa kampanii (utm_campaign)');
+  await expect(rules).toContainText('sugerowany format: RRMMDD');
+  await expect(rules).toContainText('możesz wpisać dowolną nazwę');
   // jeden wspólny dymek dla obu rodzajów
   await expect(tip).toContainText('Dwa wydarzenia tego samego dnia');
   await expect(tip).toContainText('Data zamiast opisu skraca długość linku');
