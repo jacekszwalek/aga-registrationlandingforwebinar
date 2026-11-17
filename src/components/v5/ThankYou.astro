@@ -58,7 +58,7 @@ const [nlClauseBefore, nlClauseAfter] = t.newsletterClause.split('{controller}')
           <span data-show="before during">{t.headline.before}</span>
           <span data-show="after">{t.headline.after}</span>
         </h1>
-        <p class="ty__lead">{t.inbox}</p>
+        <p class="ty__lead">{t.inbox.split('**').map((part, i) => (i % 2 ? <strong>{part}</strong> : part))}</p>
         <p data-show="before during">{t.recording}</p>
       </section>
 
