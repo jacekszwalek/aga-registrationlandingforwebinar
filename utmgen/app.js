@@ -421,7 +421,7 @@ const CAMPAIGN_TYPES = {
   event: {
     placeholder: `np. ${todayCampaign().campaign}`, // bieżąca data jako podpowiedź w tle (pole puste)
     inputMode: 'numeric',
-    rules: 'To pole to nazwa kampanii (utm_campaign) · sugerowany format: RRMMDD – data rozpoczęcia (krótszy link, jednoznacznie wskazuje kampanię), ale możesz wpisać dowolną nazwę · dwa wydarzenia jednego dnia: 261203-2',
+    rules: 'Nazwa kampanii · sugerowany format: RRMMDD – data rozpoczęcia (krótszy link, jednoznacznie wskazuje kampanię), ale możesz wpisać dowolną nazwę · dwa wydarzenia jednego dnia: 261203-2',
   },
   name: {
     placeholder: 'np. ebook-najlepsza-uczennica',
