@@ -258,6 +258,9 @@ test('logo bez UTM-ów (?ref=), konsultacja z oryginalnymi UTM-ami osoby', async
   await page.goto('/dziekuje/');
   const consult = page.getByRole('link', { name: 'Umawiam konsultację' });
   await expect(consult).toHaveAttribute('href', /utm_source=landing-webinar&utm_medium=referral&utm_campaign=261203&utm_term=landing-webinar-konsultacja$/);
+  // Calendly w nowej karcie – strona podziękowania zostaje otwarta
+  await expect(consult).toHaveAttribute('target', '_blank');
+  await expect(consult).toHaveAttribute('rel', /noopener/);
   // osoba przyszła z Facebooka → jej UTM-y zostają, dochodzi tylko utm_term
   await page.evaluate(() => sessionStorage.setItem('pzz_utm', JSON.stringify({ utm_source: 'facebook', utm_medium: 'group', utm_campaign: '261203' })));
   await page.reload();

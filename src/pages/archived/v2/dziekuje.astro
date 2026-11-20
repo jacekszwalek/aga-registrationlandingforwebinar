@@ -84,7 +84,7 @@ const cal = calendarEventFromConfig();
         <h2 id="consult-title">{t.consultationHeading}</h2>
         {
           eventConfig.site.consultationUrl ? (
-            <a class="btn btn--ghost" href={consultationLink(eventConfig.site.consultationUrl, eventConfig.id)} rel="noopener" data-consultation>
+            <a class="btn btn--ghost" href={consultationLink(eventConfig.site.consultationUrl, eventConfig.id)} target="_blank" rel="noopener" data-consultation>
               Umawiam konsultację
             </a>
           ) : (
