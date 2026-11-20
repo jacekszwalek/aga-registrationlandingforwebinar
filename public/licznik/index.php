@@ -1,6 +1,6 @@
 <?php
 /**
- * Panel licznika etapów (https://przystanzmianyzawodowej.pl/webinar/licznik-webinar/) – chroniony hasłem.
+ * Panel licznika etapów (https://przystanzmianyzawodowej.pl/webinar/licznik/) – chroniony hasłem.
  * Dane: ~/webinar-stats/events.jsonl (api/track.php). Opis: docs/licznik.md.
  * Hasło: w repozytorium jest tylko jego skrót bcrypt; można go podmienić plikiem
  * ~/integrations-keys/.licznik-webinar-hash (jedna linia ze skrótem z password_hash()).

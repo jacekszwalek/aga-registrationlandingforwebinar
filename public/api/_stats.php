@@ -1,6 +1,6 @@
 <?php
 /**
- * Wspólne funkcje licznika etapów (api/track.php i licznik-webinar/index.php).
+ * Wspólne funkcje licznika etapów (api/track.php i licznik/index.php).
  * Plik danych leży POZA public_html: ~/webinar-stats/events.jsonl (albo katalog z PZZ_STATS_DIR).
  * Bez adresów IP, e-maili i imion – tylko nazwa zdarzenia, UTM-y, typ urządzenia i aplikacji.
  */

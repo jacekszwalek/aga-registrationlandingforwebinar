@@ -61,4 +61,3 @@ Problem: nagłówek ma formę żeńską. Webinar jest głównie dla kobiet, ale 
 - **Przed wydaniem**: `allowPreviewParams = false` (wyłącza `?state=`, `?v=`, `?mock=fail`).
 
 - [ ] Polityka prywatności: dopisać anonimowy licznik statystyk bez cookies (`docs/licznik.md`) – do weryfikacji prawnej.
-- [ ] (opcjonalnie) Reguła w `public_html/.htaccess` dla krótkiego adresu `/licznik-webinar` (`docs/licznik.md`).

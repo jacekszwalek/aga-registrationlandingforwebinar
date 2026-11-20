@@ -1,7 +1,7 @@
 <?php
 /**
  * Licznik etapów bez cookies: przyjmuje zdarzenia ze strony (navigator.sendBeacon, src/scripts/funnel.ts)
- * i dopisuje je do ~/webinar-stats/events.jsonl. Bez IP, e-maili i imion. Panel: licznik-webinar/.
+ * i dopisuje je do ~/webinar-stats/events.jsonl. Bez IP, e-maili i imion. Panel: licznik/.
  */
 declare(strict_types=1);
 require __DIR__ . '/_stats.php';

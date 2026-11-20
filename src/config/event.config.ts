@@ -116,7 +116,7 @@ export const eventConfig: EventConfig = {
   allowPreviewParams: !RELEASE,
   // Wydanie (przystanzmianyzawodowej.pl/webinar/): zapis przez api/subscribe.php. Podgląd i testy: mock.
   form: { mode: RELEASE ? 'api' : 'mock' },
-  // Licznik etapów bez cookies (api/track.php, panel /webinar/licznik-webinar/) – tylko w wydaniu.
+  // Licznik etapów bez cookies (api/track.php, panel /webinar/licznik/) – tylko w wydaniu.
   funnel: { enabled: RELEASE },
   mailerlite: {
     accountId: '1427944',

@@ -6,7 +6,7 @@ import { buildPayload } from '../lib/funnel';
 /**
  * Licznik etapów bez cookies: wysyła zdarzenia do naszego serwera (api/track.php) niezależnie od zgody
  * na cookies – bez danych osobowych i bez zapisywania czegokolwiek w przeglądarce. Tylko w wydaniu.
- * Panel: /webinar/licznik-webinar/ (docs/licznik.md).
+ * Panel: /webinar/licznik/ (docs/licznik.md).
  */
 const enabled = eventConfig.funnel.enabled && typeof navigator !== 'undefined';
 const pageId = Math.random().toString(36).slice(2, 12);
