@@ -115,6 +115,9 @@ table{border-collapse:collapse;width:100%;font-size:14px;background:#fff}
 th,td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;white-space:nowrap}
 th{background:#f4eef1;font-weight:600}
 td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
+.filterbar{position:sticky;top:0;z-index:10;margin-top:14px;box-shadow:0 6px 14px -10px rgba(31,26,28,.35)}
+.filterbar .quick{margin-top:8px}
+@media (max-width:600px){.filterbar{padding:8px 10px}form.filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 8px;align-items:end}form.filters label{margin-bottom:2px;font-size:12px}form.filters input[type=date],form.filters select{width:100%;min-width:0}form.filters button{width:100%;justify-content:center}.filterbar .quick{margin-top:6px}}
 .note{background:var(--pink-soft);border-radius:6px;padding:10px 12px;font-size:14px}
 @media (max-width:600px){.step{grid-template-columns:1fr 90px}.step .bar{grid-column:1/-1;order:3}}
 </style>
@@ -227,7 +230,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     <form method="post"><button class="ghost" name="logout" value="1">Wyloguj</button></form>
   </div>
 
-  <div class="card" style="margin-top:14px">
+  <div class="card filterbar">
     <form class="filters" method="get">
       <div><label for="od">Od</label><input id="od" type="date" name="od" value="<?= h($from) ?>"></div>
       <div><label for="do">Do</label><input id="do" type="date" name="do" value="<?= h($to) ?>"></div>
