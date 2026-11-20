@@ -4,6 +4,7 @@ import { extractUtm, serializeUtm } from '../lib/utm';
 import { withBase } from '../lib/paths';
 import { mailerLiteBody, mailerLiteEndpoint } from '../lib/mailerlite';
 import { track, trackOnce } from './track';
+import { funnel } from './funnel';
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 const UTM_KEY = 'pzz_utm';
@@ -172,9 +173,13 @@ function bindForm(form: HTMLFormElement): void {
       } catch {
         /* brak sessionStorage – strona podziękowania pokaże wariant domyślny */
       }
+      // Licznik bez cookies: zapis przyjęty (GA4/Meta liczą konwersję dopiero po zgodzie, na /dziekuje/).
+      if (!honeypot) funnel('signup');
       location.assign(withBase(form.dataset.thanks || 'dziekuje/'));
-    } catch {
-      track('form_error', { form: formId, field: 'network', reason: 'network' });
+    } catch (err) {
+      // Powód: kod HTTP (np. http-429) albo „network”, gdy odpowiedź w ogóle nie dotarła.
+      const status = /HTTP (\d+)|MailerLite (\d+)/.exec(String((err as Error)?.message))?.slice(1).find(Boolean);
+      track('form_error', { form: formId, field: 'network', reason: status ? `http-${status}` : 'network' });
       formError.textContent = formMessages.network;
       formError.hidden = false;
       busy = false;

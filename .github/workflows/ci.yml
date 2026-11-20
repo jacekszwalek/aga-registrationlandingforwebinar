@@ -16,7 +16,7 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Składnia skryptu zapisu (PHP)
-        run: php -l public/api/subscribe.php
+        run: for f in public/api/*.php public/licznik-webinar/*.php; do php -l "$f"; done
       - run: npm run test:unit
       - run: npm run build
       - run: npx playwright install --with-deps chromium webkit
