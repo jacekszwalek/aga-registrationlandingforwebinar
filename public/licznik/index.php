@@ -278,9 +278,9 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
   <?php endif; ?>
 
   <h2>Ostatnie zdarzenia</h2>
-  <div class="scroll"><table><thead><tr><th>Czas</th><th>Zdarzenie</th><th>Strona</th><th>Źródło / medium</th><th>Materiał</th><th>Urządzenie</th><th>Szczegóły</th></tr></thead><tbody>
+  <div class="scroll"><table><thead><tr><th>Czas</th><th>Zdarzenie</th><th>Strona</th><th>Kampania</th><th>Źródło / medium</th><th>Materiał</th><th>Urządzenie</th><th>Szczegóły</th></tr></thead><tbody>
     <?php foreach (array_reverse($recent) as $r): ?>
-      <tr><td><?= h(date('d.m H:i:s', (int) $r['t'])) ?></td><td><?= h($EVENT_PL[$r['e']] ?? $r['e']) ?></td><td><?= h($r['p'] ?? '') ?></td><td><?= h(($r['s'] ?? '–') . ' / ' . ($r['m'] ?? '–')) ?></td><td><?= h($r['ct'] ?? '') ?></td><td><?= h(($r['d'] ?? '') . ' · ' . ($r['a'] ?? '')) ?></td><td><?= h(trim(($r['f'] ?? '') . ' ' . ($r['r'] ?? ''))) ?></td></tr>
+      <tr><td><?= h(date('d.m H:i:s', (int) $r['t'])) ?></td><td><?= h($EVENT_PL[$r['e']] ?? $r['e']) ?></td><td><?= h($r['p'] ?? '') ?></td><td><?= h($r['c'] ?? '–') ?></td><td><?= h(($r['s'] ?? '–') . ' / ' . ($r['m'] ?? '–')) ?></td><td><?= h($r['ct'] ?? '') ?></td><td><?= h(($r['d'] ?? '') . ' · ' . ($r['a'] ?? '')) ?></td><td><?= h(trim(($r['f'] ?? '') . ' ' . ($r['r'] ?? ''))) ?></td></tr>
     <?php endforeach; ?>
   </tbody></table></div>
   <p class="muted">Zdarzeń w okresie: <?= $total ?> · ostatnie: <?= h($last ? date('d.m.Y H:i', $last) : '–') ?></p>
