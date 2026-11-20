@@ -1,0 +1,1 @@
+import"./thankyou.UvSKfnpl.js";

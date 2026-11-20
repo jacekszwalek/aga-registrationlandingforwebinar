@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Przystan Zmiany Zawodowej//Webinar//PL
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:2026-12-03-zostac-zmienic-wlasna-droga-1@przystanzmianyzawodowej.pl
+DTSTAMP:20261120T132242Z
+DTSTART:20261203T180000Z
+DTEND:20261203T193000Z
+SUMMARY:Bezpłatny webinar Przystani Zmiany Zawodowej
+DESCRIPTION:Bezpłatny webinar z Agnieszką Baranowską. Link do spotkania 
+ wyślę Ci mailem przed startem.
+LOCATION:Online – link w mailu
+URL:https://przystanzmianyzawodowej.pl/webinar/
+BEGIN:VALARM
+TRIGGER:-PT30M
+ACTION:DISPLAY
+DESCRIPTION:Bezpłatny webinar Przystani Zmiany Zawodowej
+END:VALARM
+END:VEVENT
+END:VCALENDAR
