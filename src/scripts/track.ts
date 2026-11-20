@@ -1,4 +1,5 @@
 import { eventConfig } from '../config/event.config';
+import { funnel } from './funnel';
 /**
  * Jedno wejście dla zdarzeń analitycznych. Zdarzenia trafiają do kolejki dataLayer
  * (Consent Mode v2 – GA4 przetworzy je dopiero po zgodzie) oraz do window.__events,
@@ -27,6 +28,8 @@ export function context(): Params {
 export function track(name: string, params: Params = {}): void {
   const payload = { ...context(), ...params };
   (window.__events ??= []).push({ name, ...payload });
+  // Licznik bez cookies (tylko wydanie) – działa także bez zgody, bo nie zbiera danych osobowych.
+  funnel(name, params);
   window.gtag?.('event', name, payload);
   // Clarity: to samo zdarzenie jako „smart event” – nagrania da się filtrować po kroku lejka.
   window.clarity?.('event', name);

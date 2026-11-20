@@ -6,6 +6,7 @@ Squeeze page zapisu na bezpłatne webinary Przystani Zmiany Zawodowej (Agnieszka
 |---|---|
 | **Landing (produkcja)** | https://przystanzmianyzawodowej.pl/webinar/ |
 | Strona podziękowania | https://przystanzmianyzawodowej.pl/webinar/dziekuje/ |
+| Licznik etapów (hasło) | https://przystanzmianyzawodowej.pl/webinar/licznik/ ([`docs/licznik.md`](docs/licznik.md)) |
 | **Generator linków UTM** | https://przystanzmianyzawodowej.pl/utmgen/ (narzędzie wewnętrzne, `noindex`) |
 | Podgląd (GitHub Pages) | https://jacekszwalek.github.io/aga-registrationlandingforwebinar/ (+ `/utmgen/`) |
 
@@ -40,6 +41,7 @@ npm run serve & npm run screenshots                 # zrzuty do docs/screenshots
 - `src/config/copy*.ts` – treści (`copy.v5.ts` – strona główna), `formMessages.ts` – komunikaty formularza.
 - `src/pages/` – strona główna (v5), `dziekuje/`, `webinar.ics`, `api/event.json` (konfiguracja dla skryptu zapisu), archiwum `archived/v1–v5/`, `podglad/`.
 - `public/api/subscribe.php` – zapis do MailerLite (grupy, pola, bez maila potwierdzającego).
+- `public/api/track.php` + `public/licznik/` – licznik etapów bez cookies i panel z hasłem ([`docs/licznik.md`](docs/licznik.md)).
 - `utmgen/` – generator linków UTM ([`docs/utmgen.md`](docs/utmgen.md)).
 - `deploy/` – `.htaccess` wydania (HTTPS, cache, przekierowanie starej subdomeny).
 - `docs/` – wdrożenie, MailerLite (audyt, standard, raport, decyzje), szablony maili, TODO.
@@ -111,4 +113,5 @@ Edytuj **tylko** `src/config/event.config.ts` → `sessions` (ISO z przesunięci
 | [`docs/mailerlite-ustalenia.md`](docs/mailerlite-ustalenia.md) | decyzje (ADL) i ważne notatki |
 | [`docs/mailerlite-raport.pdf`](docs/mailerlite-raport.pdf) | audyt MailerLite (stan zastany) |
 | [`docs/utmgen.md`](docs/utmgen.md) | generator linków UTM |
+| [`docs/licznik.md`](docs/licznik.md) | licznik etapów bez cookies |
 | [`docs/decisions.md`](docs/decisions.md) | decyzje projektowe landingu |

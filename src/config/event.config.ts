@@ -43,6 +43,8 @@ export interface EventConfig {
      */
     mode: 'mock' | 'mailerlite' | 'api';
   };
+  /** Licznik etapów bez cookies (src/scripts/funnel.ts → public/api/track.php). */
+  funnel: { enabled: boolean };
   mailerlite: {
     /** Publiczny numer konta MailerLite (widoczny w kodzie osadzenia formularza). */
     accountId: string;
@@ -114,6 +116,8 @@ export const eventConfig: EventConfig = {
   allowPreviewParams: !RELEASE,
   // Wydanie (przystanzmianyzawodowej.pl/webinar/): zapis przez api/subscribe.php. Podgląd i testy: mock.
   form: { mode: RELEASE ? 'api' : 'mock' },
+  // Licznik etapów bez cookies (api/track.php, panel /webinar/licznik/) – tylko w wydaniu.
+  funnel: { enabled: RELEASE },
   mailerlite: {
     accountId: '1427944',
     // Tryb 'api' nie używa formularzy MailerLite (zapis przez API). Konwencja: docs/mailerlite-standard.md.

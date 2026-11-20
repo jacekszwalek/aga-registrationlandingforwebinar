@@ -1,7 +1,7 @@
 # https://przystanzmianyzawodowej.pl/webinar/ – statyczna strona (Astro), hosting webd.pl (Apache/LiteSpeed).
 # Katalog public_html/webinar: podstrona domeny głównej (WordPress w public_html) i zarazem document root
 # subdomeny webinar.przystanzmianyzawodowej.pl. Własny RewriteEngine wyłącza tu reguły WordPressa.
-DirectoryIndex index.html
+DirectoryIndex index.html index.php
 Options -Indexes
 
 # Wymuszenie HTTPS
