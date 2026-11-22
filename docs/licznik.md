@@ -44,3 +44,6 @@ Panel pokazuje rozkład ocen i tabelę według źródła/aplikacji; w dzienniku 
 
 ## Dziennik zdarzeń
 Filtr typu zdarzenia (z liczbą wystąpień), 50 / 100 / 500 wpisów na stronę, przyciski „Nowsze” / „Starsze”; filtry daty, kampanii i źródła obowiązują też dziennik.
+
+## Lejek – normalizacja
+Domyślnie lejek liczy procenty **od ludzi** (pewny + raczej człowiek z oceny wejść), bo wczytania w tle i natychmiastowe wyjścia z aplikacji Meta spłaszczały wykres. Przełącznik „Licz od: ludzi / wszystkich wejść” (`?baza=wejscia`). Nad wykresem: wejścia → ludzie → zapisy. Kroki formularza mają dodatkowo „% z poprzedniego kroku”.
