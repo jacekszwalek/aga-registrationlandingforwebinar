@@ -225,11 +225,11 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 
     // ---------- człowiek czy bot ----------
     $CLASSES = [
-        'human' => ['Człowiek: dotyk, klik lub przewinięcie', 'pewny człowiek'],
-        'reader' => ['Strona widoczna ≥ 10 s, bez dotyku', 'raczej człowiek'],
-        'bounce' => ['Strona widoczna < 10 s, bez dotyku', 'szybkie wyjście albo bot'],
-        'preload' => ['Wczytanie w tle przez aplikację, nikt nie zobaczył', 'nie człowiek'],
-        'bot' => ['Sygnały automatu (webdriver, brak języków, zerowy ekran)', 'bot'],
+        'human' => ['dotyk, klik lub przewinięcie', 'pewny człowiek'],
+        'reader' => ['strona widoczna ≥ 10 s, bez dotyku', 'raczej człowiek'],
+        'bounce' => ['strona widoczna < 10 s, bez dotyku', 'szybkie wyjście albo bot'],
+        'preload' => ['wczytanie w tle przez aplikację, nikt nie zobaczył', 'nie człowiek'],
+        'bot' => ['sygnały automatu (webdriver, brak języków, zerowy ekran)', 'bot'],
     ];
     $classify = static function (array $vv): string {
         $ev = $vv['ev'];
@@ -317,9 +317,9 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
   <h2>Człowiek czy bot? Ocena wejść</h2>
   <div class="card funnel">
     <?php foreach ($CLASSES as $k => [$label, $hint]): $n = $quality[$k]; $w = $qTotal ? round(100 * $n / $qTotal) : 0; ?>
-      <div class="step"><span><?= h($label) ?> <span class="muted">· <?= h($hint) ?></span></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $qTotal) ?></span></div>
+      <div class="step"><span><span class="muted"><?= h(ucfirst($hint)) ?> ·</span> <?= h($label) ?></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $qTotal) ?></span></div>
     <?php endforeach; ?>
-    <p class="muted" style="margin:6px 0 0">Każde wczytanie landingu dostaje jedną ocenę: liczy się najmocniejszy sygnał. Ludzie to zwykle dwa pierwsze wiersze. Sygnały (dotyk, czas widoczności, wczytanie w tle, flagi automatu) zbieramy od 22.11.2026 – starsze wejścia trafiają do „&lt; 10 s, bez dotyku”.</p>
+    <p class="muted" style="margin:6px 0 0">Każde wczytanie landingu dostaje jedną ocenę: liczy się najmocniejszy sygnał. Ludzie to zwykle dwa pierwsze wiersze. Sygnały (dotyk, czas widoczności, wczytanie w tle, flagi automatu) zbieramy od 22.11.2026 – starsze wejścia trafiają do „Szybkie wyjście albo bot”.</p>
   </div>
   <?php if ($qualitySeg):
     uksort($qualitySeg, static fn ($a, $b) => array_sum($qualitySeg[$b]) <=> array_sum($qualitySeg[$a]));
