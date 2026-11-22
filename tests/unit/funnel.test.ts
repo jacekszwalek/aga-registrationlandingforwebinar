@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { appKind, buildPayload, deviceKind, pageKind } from '../../src/lib/funnel';
+import { appKind, botSignals, buildPayload, deviceKind, pageKind } from '../../src/lib/funnel';
 
 const IPHONE = 'Mozilla/5.0 (iPhone; CPU iPhone OS 18_0 like Mac OS X) AppleWebKit/605.1.15 Mobile/15E148';
 
@@ -32,5 +32,12 @@ describe('licznik etapów bez cookies', () => {
     });
     expect(p).toEqual({ e: 'form_error', v: 'abc123', p: 'landing', st: 'before', s: 'facebook', m: 'paid', c: '261203', ct: 'grafikaascript', d: 'mobile', a: 'inna', f: 'email', r: 'invalid' });
     expect(JSON.stringify(p)).not.toContain('example.com');
+  });
+
+  it('sygnały automatu – tylko flagi tak/nie', () => {
+    expect(botSignals({ webdriver: false, ua: IPHONE, languages: ['pl-PL'], screenW: 390, innerW: 390 })).toBe('');
+    expect(botSignals({ webdriver: true, ua: 'Mozilla/5.0 HeadlessChrome/140', languages: [], screenW: 0, innerW: 0 })).toBe('wd.hl.nl.sz');
+    const p = buildPayload({ event: 'page_view', pageId: 'a', pathname: '/', base: '/', ua: IPHONE, width: 390, utm: {}, params: { bot: 'wd' } });
+    expect(p?.bt).toBe('wd');
   });
 });

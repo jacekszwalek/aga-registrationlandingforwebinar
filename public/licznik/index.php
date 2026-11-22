@@ -118,6 +118,10 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .filterbar{position:sticky;top:0;z-index:10;margin-top:14px;box-shadow:0 6px 14px -10px rgba(31,26,28,.35)}
 .filterbar .quick{margin-top:8px}
 @media (max-width:600px){.filterbar{padding:8px 10px}form.filters{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 8px;align-items:end}form.filters label{margin-bottom:2px;font-size:12px}form.filters input[type=date],form.filters select{width:100%;min-width:0}form.filters button{width:100%;justify-content:center}.filterbar .quick{margin-top:6px}}
+.logbar{display:flex;flex-wrap:wrap;gap:10px;align-items:end;margin:0 0 10px}
+.logbar label{font-size:13px;margin-bottom:4px}
+.pager{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
+#zdarzenia{scroll-margin-top:150px}
 .note{background:var(--pink-soft);border-radius:6px;padding:10px 12px;font-size:14px}
 @media (max-width:600px){.step{grid-template-columns:1fr 90px}.step .bar{grid-column:1/-1;order:3}}
 </style>
@@ -142,6 +146,10 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     $fCampaign = (string) ($_GET['kampania'] ?? '');
     $fSource = (string) ($_GET['zrodlo'] ?? '');
     $withArchive = !empty($_GET['archiwum']);
+    // Dziennik zdarzeń: typ, liczba wpisów na stronę i numer strony.
+    $fType = preg_replace('/[^a-z0-9_]/', '', (string) ($_GET['typ'] ?? ''));
+    $perPage = in_array((int) ($_GET['ile'] ?? 50), [50, 100, 500], true) ? (int) ($_GET['ile'] ?? 50) : 50;
+    $page = max(1, (int) ($_GET['str'] ?? 1));
     $tFrom = strtotime($from . ' 00:00:00');
     $tTo = strtotime($to . ' 23:59:59');
 
@@ -163,7 +171,9 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     $groups = ['source' => [], 'content' => [], 'device' => [], 'day' => []];
     $errors = [];
     $other = [];
-    $recent = [];
+    $log = [];
+    $types = [];
+    $visits = [];
     $campaigns = [];
     $sources = [];
     $total = 0;
@@ -183,10 +193,19 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
         $last = $t;
         $e = $r['e'] ?? '';
         $v = $r['v'] ?? ('x' . $total);
-        // Wejście liczymy tylko na landingu (wejście na /dziekuje/ widać w „Ostatnich zdarzeniach”).
+        // Dziennik: wszystkie zdarzenia (filtr typu niżej).
+        $types[$e] = ($types[$e] ?? 0) + 1;
+        if ($fType === '' || $fType === $e) $log[] = $r;
+        // Ocena wejścia (człowiek czy bot) – dla wczytań landingu.
+        if (($r['p'] ?? '') === 'landing') {
+            $vv = &$visits[$v];
+            $vv ??= ['seg' => ($s ?: '(brak UTM)') . ' / ' . ($r['m'] ?? '–') . ' · ' . ($r['a'] ?? 'inna'), 'bt' => '', 'ev' => []];
+            $vv['ev'][$e] = true;
+            if (!empty($r['bt'])) $vv['bt'] = $r['bt'];
+            unset($vv);
+        }
+        // Wejście liczymy tylko na landingu (wejście na /dziekuje/ widać w dzienniku zdarzeń).
         if ($e === 'page_view' && ($r['p'] ?? '') !== 'landing') continue;
-        $recent[] = $r;
-        if (count($recent) > 60) array_shift($recent);
         if (isset($funnel[$e])) $funnel[$e][$v] = true;
         else $other[$e] = ($other[$e] ?? 0) + 1;
         if ($e === 'form_error') {
@@ -203,11 +222,46 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
         foreach ($keys as $g => $k) $groups[$g][$k][$e][$v] = true;
     }
     $base = count($funnel['page_view']);
+
+    // ---------- człowiek czy bot ----------
+    $CLASSES = [
+        'human' => ['Człowiek: dotyk, klik lub przewinięcie', 'pewny człowiek'],
+        'reader' => ['Strona widoczna ≥ 10 s, bez dotyku', 'raczej człowiek'],
+        'bounce' => ['Strona widoczna < 10 s, bez dotyku', 'szybkie wyjście albo bot'],
+        'preload' => ['Wczytanie w tle przez aplikację, nikt nie zobaczył', 'nie człowiek'],
+        'bot' => ['Sygnały automatu (webdriver, brak języków, zerowy ekran)', 'bot'],
+    ];
+    $classify = static function (array $vv): string {
+        $ev = $vv['ev'];
+        if ($vv['bt'] !== '') return 'bot';
+        if (isset($ev['page_preload']) && !isset($ev['page_view'])) return 'preload';
+        if (isset($ev['engaged']) || isset($ev['scroll_50']) || isset($ev['form_open']) || isset($ev['form_start']) || isset($ev['sticky_cta_click'])) return 'human';
+        if (isset($ev['stay_10s'])) return 'reader';
+        return 'bounce';
+    };
+    $quality = array_fill_keys(array_keys($CLASSES), 0);
+    $qualitySeg = [];
+    $visitClass = [];
+    foreach ($visits as $vid => $vv) {
+        if (!isset($vv['ev']['page_view']) && !isset($vv['ev']['page_preload'])) continue;
+        $k = $classify($vv);
+        $visitClass[$vid] = $k;
+        $quality[$k]++;
+        $qualitySeg[$vv['seg']][$k] = ($qualitySeg[$vv['seg']][$k] ?? 0) + 1;
+    }
+    $qTotal = array_sum($quality);
+
+    // ---------- dziennik: stronicowanie ----------
+    $log = array_reverse($log);
+    $logCount = count($log);
+    $pages = max(1, (int) ceil($logCount / $perPage));
+    $page = min($page, $pages);
+    $logPage = array_slice($log, ($page - 1) * $perPage, $perPage);
     $pct = static fn (int $n, int $of) => $of > 0 ? round(100 * $n / $of) . '%' : '–';
-    $qs = static fn (array $over) => '?' . http_build_query(array_filter(array_merge(['od' => $from, 'do' => $to, 'kampania' => $fCampaign, 'zrodlo' => $fSource, 'archiwum' => $withArchive ? '1' : ''], $over)));
+    $qs = static fn (array $over) => '?' . http_build_query(array_filter(array_merge(['od' => $from, 'do' => $to, 'kampania' => $fCampaign, 'zrodlo' => $fSource, 'archiwum' => $withArchive ? '1' : '', 'typ' => $fType, 'ile' => $perPage === 50 ? '' : (string) $perPage], $over)));
     ksort($campaigns);
     ksort($sources);
-    $EVENT_PL = $STEPS + ['page_preload' => 'wczytanie w tle (bez pokazania)', 'generate_lead' => 'konwersja (po zgodzie na cookies)', 'sticky_cta_click' => 'przycisk przyklejony', 'newsletter_signup' => 'newsletter na /dziekuje/', 'add_to_calendar' => 'dodanie do kalendarza', 'consultation_click' => 'konsultacja', 'logo_click' => 'logo', 'share_click' => 'udostępnienie'];
+    $EVENT_PL = $STEPS + ['page_preload' => 'wczytanie w tle (bez pokazania)', 'stay_10s' => 'strona widoczna 10 s', 'stay_30s' => 'strona widoczna 30 s', 'generate_lead' => 'konwersja (po zgodzie na cookies)', 'sticky_cta_click' => 'przycisk przyklejony', 'newsletter_signup' => 'newsletter na /dziekuje/', 'add_to_calendar' => 'dodanie do kalendarza', 'consultation_click' => 'konsultacja', 'logo_click' => 'logo', 'share_click' => 'udostępnienie'];
 
     $table = static function (string $title, array $rows, string $first) use ($COLS, $pct): void {
         if (!$rows) return;
@@ -238,6 +292,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
       <div><label for="kampania">Kampania</label><select id="kampania" name="kampania"><option value="">wszystkie</option><option value="(brak)"<?= $fCampaign === '(brak)' ? ' selected' : '' ?>>(bez UTM)</option><?php foreach (array_map("strval", array_keys($campaigns)) as $c): ?><option<?= $c === $fCampaign ? ' selected' : '' ?>><?= h($c) ?></option><?php endforeach; ?></select></div>
       <div><label for="zrodlo">Źródło</label><select id="zrodlo" name="zrodlo"><option value="">wszystkie</option><option value="(brak)"<?= $fSource === '(brak)' ? ' selected' : '' ?>>(bez UTM)</option><?php foreach (array_map("strval", array_keys($sources)) as $s): ?><option<?= $s === $fSource ? ' selected' : '' ?>><?= h($s) ?></option><?php endforeach; ?></select></div>
       <div><label><input type="checkbox" name="archiwum" value="1"<?= $withArchive ? ' checked' : '' ?> style="min-height:auto"> z archiwum wersji</label></div>
+      <input type="hidden" name="typ" value="<?= h($fType) ?>"><input type="hidden" name="ile" value="<?= $perPage ?>">
       <div><button type="submit">Pokaż</button></div>
     </form>
     <div class="quick">
@@ -258,6 +313,27 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     <?php endforeach; ?>
     <p class="muted" style="margin:6px 0 0">Procent liczony od wejść na stronę. Instagram i Facebook potrafią wczytać stronę z reklamy w tle, zanim ktoś kliknie – od 22.11 takie wczytania są liczone osobno („wczytanie w tle” w Innych zdarzeniach), a „Dotknęły lub przewinęły” pokazuje, ile wejść to na pewno ludzie. „Zapisały się” = serwer przyjął zapis i strona przeszła na podziękowanie. Pełną listę osób ma MailerLite.</p>
   </div>
+
+  <h2>Człowiek czy bot? Ocena wejść</h2>
+  <div class="card funnel">
+    <?php foreach ($CLASSES as $k => [$label, $hint]): $n = $quality[$k]; $w = $qTotal ? round(100 * $n / $qTotal) : 0; ?>
+      <div class="step"><span><?= h($label) ?> <span class="muted">· <?= h($hint) ?></span></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $qTotal) ?></span></div>
+    <?php endforeach; ?>
+    <p class="muted" style="margin:6px 0 0">Każde wczytanie landingu dostaje jedną ocenę: liczy się najmocniejszy sygnał. Ludzie to zwykle dwa pierwsze wiersze. Sygnały (dotyk, czas widoczności, wczytanie w tle, flagi automatu) zbieramy od 22.11.2026 – starsze wejścia trafiają do „&lt; 10 s, bez dotyku”.</p>
+  </div>
+  <?php if ($qualitySeg):
+    uksort($qualitySeg, static fn ($a, $b) => array_sum($qualitySeg[$b]) <=> array_sum($qualitySeg[$a]));
+  ?>
+  <div class="scroll" style="margin-top:10px"><table><thead><tr><th>Źródło / medium · otwarte w</th><th class="n">Wczytania</th>
+    <?php foreach ($CLASSES as [$label, $hint]): ?><th class="n"><?= h(ucfirst($hint)) ?></th><?php endforeach; ?><th class="n">Ludzie</th></tr></thead><tbody>
+    <?php foreach ($qualitySeg as $seg => $row): $sum = array_sum($row); ?>
+      <tr><td><?= h($seg) ?></td><td class="n"><?= $sum ?></td>
+      <?php foreach (array_keys($CLASSES) as $k): ?><td class="n"><?= $row[$k] ?? 0 ?></td><?php endforeach; ?>
+      <td class="n"><?= $pct(($row['human'] ?? 0) + ($row['reader'] ?? 0), $sum) ?></td></tr>
+    <?php endforeach; ?>
+  </tbody></table></div>
+  <p class="muted">„Ludzie” = pewny człowiek + raczej człowiek.</p>
+  <?php endif; ?>
 
   <?php
     $table('Według źródła (utm_source / utm_medium)', $groups['source'], 'Źródło / medium');
@@ -281,12 +357,26 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
   </tbody></table></div>
   <?php endif; ?>
 
-  <h2>Ostatnie zdarzenia</h2>
-  <div class="scroll"><table><thead><tr><th>Czas</th><th>Zdarzenie</th><th>Strona</th><th>Kampania</th><th>Źródło / medium</th><th>Materiał</th><th>Urządzenie</th><th>Szczegóły</th></tr></thead><tbody>
-    <?php foreach (array_reverse($recent) as $r): ?>
-      <tr><td><?= h(date('d.m H:i:s', (int) $r['t'])) ?></td><td><?= h($EVENT_PL[$r['e']] ?? $r['e']) ?></td><td><?= h($r['p'] ?? '') ?></td><td><?= h($r['c'] ?? '–') ?></td><td><?= h(($r['s'] ?? '–') . ' / ' . ($r['m'] ?? '–')) ?></td><td><?= h($r['ct'] ?? '') ?></td><td><?= h(($r['d'] ?? '') . ' · ' . ($r['a'] ?? '')) ?></td><td><?= h(trim(($r['f'] ?? '') . ' ' . ($r['r'] ?? ''))) ?></td></tr>
+  <h2 id="zdarzenia">Dziennik zdarzeń</h2>
+  <form class="logbar" method="get" action="#zdarzenia">
+    <?php foreach (['od' => $from, 'do' => $to, 'kampania' => $fCampaign, 'zrodlo' => $fSource, 'archiwum' => $withArchive ? '1' : ''] as $k => $val): if ($val === '') continue; ?><input type="hidden" name="<?= h($k) ?>" value="<?= h($val) ?>"><?php endforeach; ?>
+    <div><label for="typ">Typ zdarzenia</label><select id="typ" name="typ" onchange="this.form.submit()"><option value="">wszystkie (<?= $total ?>)</option>
+      <?php ksort($types); foreach ($types as $k => $n): $k = (string) $k; ?><option value="<?= h($k) ?>"<?= $k === $fType ? ' selected' : '' ?>><?= h(($EVENT_PL[$k] ?? $k) . ' (' . $n . ')') ?></option><?php endforeach; ?>
+    </select></div>
+    <div><label for="ile">Na stronie</label><select id="ile" name="ile" onchange="this.form.submit()"><?php foreach ([50, 100, 500] as $n): ?><option<?= $n === $perPage ? ' selected' : '' ?>><?= $n ?></option><?php endforeach; ?></select></div>
+    <noscript><div><button type="submit">Pokaż</button></div></noscript>
+  </form>
+  <div class="scroll"><table><thead><tr><th>Czas</th><th>Zdarzenie</th><th>Ocena wejścia</th><th>Strona</th><th>Kampania</th><th>Źródło / medium</th><th>Materiał</th><th>Urządzenie</th><th>Szczegóły</th></tr></thead><tbody>
+    <?php foreach ($logPage as $r): $vc = $visitClass[$r['v'] ?? ''] ?? null; ?>
+      <tr><td><?= h(date('d.m H:i:s', (int) $r['t'])) ?></td><td><?= h($EVENT_PL[$r['e']] ?? $r['e']) ?></td><td><?= h($vc ? $CLASSES[$vc][1] : '–') ?></td><td><?= h($r['p'] ?? '') ?></td><td><?= h($r['c'] ?? '–') ?></td><td><?= h(($r['s'] ?? '–') . ' / ' . ($r['m'] ?? '–')) ?></td><td><?= h($r['ct'] ?? '') ?></td><td><?= h(($r['d'] ?? '') . ' · ' . ($r['a'] ?? '')) ?></td><td><?= h(trim(($r['f'] ?? '') . ' ' . ($r['r'] ?? '') . (!empty($r['bt']) ? ' bot:' . $r['bt'] : ''))) ?></td></tr>
     <?php endforeach; ?>
+    <?php if (!$logPage): ?><tr><td colspan="9">Brak zdarzeń tego typu.</td></tr><?php endif; ?>
   </tbody></table></div>
+  <nav class="pager" aria-label="Strony dziennika">
+    <?php if ($page > 1): ?><a class="btn ghost" href="<?= h($qs(['str' => (string) ($page - 1)])) ?>#zdarzenia">← Nowsze</a><?php endif; ?>
+    <span>Strona <?= $page ?> z <?= $pages ?> · wpisy <?= $logCount ? (($page - 1) * $perPage + 1) : 0 ?>–<?= min($logCount, $page * $perPage) ?> z <?= $logCount ?></span>
+    <?php if ($page < $pages): ?><a class="btn ghost" href="<?= h($qs(['str' => (string) ($page + 1)])) ?>#zdarzenia">Starsze →</a><?php endif; ?>
+  </nav>
   <p class="muted">Zdarzeń w okresie: <?= $total ?> · ostatnie: <?= h($last ? date('d.m.Y H:i', $last) : '–') ?></p>
 <?php endif; ?>
 <?php endif; ?>

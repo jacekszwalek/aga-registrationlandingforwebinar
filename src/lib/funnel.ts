@@ -17,6 +17,7 @@ export interface FunnelPayload {
   a: 'facebook' | 'instagram' | 'inna';
   f?: string; // pole (błędy formularza)
   r?: string; // powód (błędy formularza)
+  bt?: string; // sygnały automatu (np. wd = navigator.webdriver), tylko przy page_view/page_preload
 }
 
 /** Ścieżka strony (bez base) → rodzaj strony. */
@@ -47,7 +48,7 @@ const clean = (v: unknown, max = 60): string | undefined => {
 
 /** Zdarzenia, które liczymy (reszta zostaje tylko w GA4/Clarity po zgodzie). */
 export const FUNNEL_EVENTS = [
-  'page_view', 'page_preload', 'engaged', 'scroll_50', 'scroll_90', 'sticky_cta_click', 'form_open', 'form_start',
+  'page_view', 'page_preload', 'engaged', 'stay_10s', 'stay_30s', 'scroll_50', 'scroll_90', 'sticky_cta_click', 'form_open', 'form_start',
   'form_submit_attempt', 'form_error', 'signup', 'generate_lead', 'newsletter_signup',
   'add_to_calendar', 'consultation_click', 'logo_click', 'share_click',
 ] as const;
@@ -77,7 +78,22 @@ export function buildPayload(input: {
     a: appKind(input.ua),
     f: clean(input.params?.field, 20),
     r: clean(input.params?.reason, 30),
+    bt: clean(input.params?.bot, 30),
   };
   for (const k of Object.keys(p) as Array<keyof FunnelPayload>) if (p[k] === undefined) delete p[k];
   return p;
+}
+
+/**
+ * Sygnały automatu (bez odcisku palca przeglądarki – tylko kilka flag tak/nie):
+ * wd – navigator.webdriver (Selenium, Puppeteer, Playwright), hl – „Headless” w user-agencie,
+ * nl – brak języków przeglądarki, sz – zerowy rozmiar ekranu lub okna.
+ */
+export function botSignals(env: { webdriver?: boolean; ua: string; languages?: readonly string[]; screenW: number; innerW: number }): string {
+  const f: string[] = [];
+  if (env.webdriver) f.push('wd');
+  if (/headless/i.test(env.ua)) f.push('hl');
+  if (!env.languages || env.languages.length === 0) f.push('nl');
+  if (!env.screenW || !env.innerW) f.push('sz');
+  return f.join('.');
 }
