@@ -106,7 +106,14 @@ form.filters label{font-size:13px;margin-bottom:4px}
 .quick{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .quick a{font-size:14px;color:var(--pink)}
 .funnel{display:grid;gap:6px}
-.step{display:grid;grid-template-columns:minmax(150px,240px) 1fr 110px;gap:10px;align-items:center}
+.step{display:grid;grid-template-columns:minmax(150px,240px) 1fr 110px 90px;gap:10px;align-items:center}
+.funnel .prev{font-size:13px;color:var(--muted);text-align:right}
+.step-base .bar span{background:#c98aa6}
+.funnel-head{display:flex;flex-wrap:wrap;gap:10px 20px;justify-content:space-between;align-items:center;margin-bottom:8px}
+.kpis{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:15px}
+.seg-links{display:flex;gap:8px;align-items:center;font-size:14px}
+.seg-links a{color:var(--pink);padding:6px 10px;border:1px solid var(--pink);border-radius:4px;text-decoration:none;min-height:36px;display:inline-flex;align-items:center}
+.seg-links a[aria-current]{background:var(--pink);color:#fff}
 .bar{height:22px;background:var(--pink-soft);border-radius:3px;overflow:hidden}
 .bar span{display:block;height:100%;background:var(--pink)}
 .num{text-align:right;font-variant-numeric:tabular-nums}
@@ -123,7 +130,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 .pager{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:10px 0}
 #zdarzenia{scroll-margin-top:150px}
 .note{background:var(--pink-soft);border-radius:6px;padding:10px 12px;font-size:14px}
-@media (max-width:600px){.step{grid-template-columns:1fr 90px}.step .bar{grid-column:1/-1;order:3}}
+@media (max-width:600px){.step{grid-template-columns:1fr auto auto}.step .bar{grid-column:1/-1;order:3}}
 </style>
 </head>
 <body>
@@ -150,6 +157,8 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     $fType = preg_replace('/[^a-z0-9_]/', '', (string) ($_GET['typ'] ?? ''));
     $perPage = in_array((int) ($_GET['ile'] ?? 50), [50, 100, 500], true) ? (int) ($_GET['ile'] ?? 50) : 50;
     $page = max(1, (int) ($_GET['str'] ?? 1));
+    // Podstawa lejka: ludzie (domyślnie) albo wszystkie wejścia.
+    $fBase = ($_GET['baza'] ?? '') === 'wejscia' ? 'wejscia' : 'ludzie';
     $tFrom = strtotime($from . ' 00:00:00');
     $tTo = strtotime($to . ' 23:59:59');
 
@@ -260,7 +269,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     $page = min($page, $pages);
     $logPage = array_slice($log, ($page - 1) * $perPage, $perPage);
     $pct = static fn (int $n, int $of) => $of > 0 ? round(100 * $n / $of) . '%' : '–';
-    $qs = static fn (array $over) => '?' . http_build_query(array_filter(array_merge(['od' => $from, 'do' => $to, 'kampania' => $fCampaign, 'zrodlo' => $fSource, 'archiwum' => $withArchive ? '1' : '', 'typ' => $fType, 'ile' => $perPage === 50 ? '' : (string) $perPage], $over)));
+    $qs = static fn (array $over) => '?' . http_build_query(array_filter(array_merge(['od' => $from, 'do' => $to, 'kampania' => $fCampaign, 'zrodlo' => $fSource, 'archiwum' => $withArchive ? '1' : '', 'typ' => $fType, 'ile' => $perPage === 50 ? '' : (string) $perPage, 'baza' => $fBase === 'ludzie' ? '' : $fBase], $over)));
     ksort($campaigns);
     ksort($sources);
     $EVENT_PL = $STEPS + ['page_preload' => 'wczytanie w tle (bez pokazania)', 'stay_3s' => 'strona widoczna 3 s', 'stay_10s' => 'strona widoczna 10 s', 'stay_30s' => 'strona widoczna 30 s', 'generate_lead' => 'konwersja (po zgodzie na cookies)', 'sticky_cta_click' => 'przycisk przyklejony', 'newsletter_signup' => 'newsletter na /dziekuje/', 'add_to_calendar' => 'dodanie do kalendarza', 'consultation_click' => 'konsultacja', 'logo_click' => 'logo', 'share_click' => 'udostępnienie'];
@@ -294,7 +303,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
       <div><label for="kampania">Kampania</label><select id="kampania" name="kampania"><option value="">wszystkie</option><option value="(brak)"<?= $fCampaign === '(brak)' ? ' selected' : '' ?>>(bez UTM)</option><?php foreach (array_map("strval", array_keys($campaigns)) as $c): ?><option<?= $c === $fCampaign ? ' selected' : '' ?>><?= h($c) ?></option><?php endforeach; ?></select></div>
       <div><label for="zrodlo">Źródło</label><select id="zrodlo" name="zrodlo"><option value="">wszystkie</option><option value="(brak)"<?= $fSource === '(brak)' ? ' selected' : '' ?>>(bez UTM)</option><?php foreach (array_map("strval", array_keys($sources)) as $s): ?><option<?= $s === $fSource ? ' selected' : '' ?>><?= h($s) ?></option><?php endforeach; ?></select></div>
       <div><label><input type="checkbox" name="archiwum" value="1"<?= $withArchive ? ' checked' : '' ?> style="min-height:auto"> z archiwum wersji</label></div>
-      <input type="hidden" name="typ" value="<?= h($fType) ?>"><input type="hidden" name="ile" value="<?= $perPage ?>">
+      <input type="hidden" name="typ" value="<?= h($fType) ?>"><input type="hidden" name="baza" value="<?= h($fBase === 'ludzie' ? '' : $fBase) ?>"><input type="hidden" name="ile" value="<?= $perPage ?>">
       <div><button type="submit">Pokaż</button></div>
     </form>
     <div class="quick">
@@ -308,12 +317,35 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 <?php if ($total === 0): ?>
   <p class="note" style="margin-top:16px">Brak zdarzeń w wybranym okresie. Licznik zbiera dane od chwili wdrożenia.</p>
 <?php else: ?>
+  <?php
+    // Lejek liczony od ludzi (pewny + raczej człowiek), żeby wczytania w tle i natychmiastowe wyjścia nie spłaszczały wykresu.
+    $people = $quality['human'] + $quality['reader'];
+    $fBaseN = $fBase === 'ludzie' ? $people : $base;
+    $FSTEPS = array_diff_key($STEPS, ['page_view' => 1, 'engaged' => 1]);
+    // „% z poprzedniego kroku” tylko tam, gdzie kroki idą po kolei (formularz).
+    $CHAIN = ['form_start' => 'form_open', 'form_submit_attempt' => 'form_start', 'signup' => 'form_submit_attempt'];
+  ?>
   <h2>Lejek: na którym etapie ludzie odpadają</h2>
   <div class="card funnel">
-    <?php foreach ($STEPS as $e => $label): $n = count($funnel[$e]); $w = $base ? min(100, round(100 * $n / $base)) : 0; ?>
-      <div class="step"><span><?= h($label) ?></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $base) ?></span></div>
+    <div class="funnel-head">
+      <div class="kpis">
+        <span><b><?= $base ?></b> wejść</span>
+        <span>→ <b><?= $people ?></b> ludzi <span class="muted">(<?= $pct($people, $base) ?> wejść)</span></span>
+        <span>→ <b><?= count($funnel['signup']) ?></b> zapisów <span class="muted">(<?= $pct(count($funnel['signup']), $people) ?> ludzi)</span></span>
+      </div>
+      <div class="seg-links" role="group" aria-label="Licz procenty od">
+        <span class="muted">Licz od:</span>
+        <a href="<?= h($qs(['baza' => ''])) ?>"<?= $fBase === 'ludzie' ? ' aria-current="true"' : '' ?>>ludzi</a>
+        <a href="<?= h($qs(['baza' => 'wejscia'])) ?>"<?= $fBase === 'wejscia' ? ' aria-current="true"' : '' ?>>wszystkich wejść</a>
+      </div>
+    </div>
+    <div class="step step-base"><span><?= $fBase === 'ludzie' ? 'Ludzie (dotyk, przewinięcie lub ≥ 10 s)' : 'Weszły na stronę' ?></span><span class="bar"><span style="width:100%"></span></span><span class="num"><b><?= $fBaseN ?></b> · 100%</span><span class="prev"></span></div>
+    <?php foreach ($FSTEPS as $e => $label): $n = count($funnel[$e]); $w = $fBaseN ? min(100, round(100 * $n / $fBaseN)) : 0; $prev = $CHAIN[$e] ?? null; ?>
+      <div class="step"><span><?= h($label) ?></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $fBaseN) ?></span><span class="prev"><?= $prev ? h($pct($n, count($funnel[$prev])) . ' z poprz.') : '' ?></span></div>
     <?php endforeach; ?>
-    <p class="muted" style="margin:6px 0 0">Procent liczony od wejść na stronę. Instagram i Facebook potrafią wczytać stronę z reklamy w tle, zanim ktoś kliknie – od 22.11 takie wczytania są liczone osobno („wczytanie w tle” w Innych zdarzeniach), a „Dotknęły lub przewinęły” pokazuje, ile wejść to na pewno ludzie. „Zapisały się” = serwer przyjął zapis i strona przeszła na podziękowanie. Pełną listę osób ma MailerLite.</p>
+    <p class="muted" style="margin:6px 0 0"><?= $fBase === 'ludzie'
+      ? 'Procent liczony od ludzi – wejść z dotykiem, przewinięciem albo stroną widoczną co najmniej 10 s (patrz „Człowiek czy bot?”). Wczytania w tle i natychmiastowe wyjścia nie zaniżają wykresu.'
+      : 'Procent liczony od wszystkich wejść na stronę, łącznie z natychmiastowymi wyjściami.' ?> „z poprz.” – jaka część osób z poprzedniego kroku formularza przeszła dalej. „Zapisały się” = serwer przyjął zapis; pełną listę osób ma MailerLite.</p>
   </div>
 
   <h2>Człowiek czy bot? Ocena wejść</h2>
