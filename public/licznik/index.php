@@ -148,6 +148,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     // ---------- agregacja ----------
     $STEPS = [
         'page_view' => 'Weszły na stronę',
+        'engaged' => 'Dotknęły lub przewinęły stronę',
         'scroll_50' => 'Przewinęły do połowy',
         'scroll_90' => 'Przewinęły prawie do końca',
         'form_open' => 'Otworzyły formularz',
@@ -156,7 +157,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
         'form_error' => 'Zobaczyły błąd',
         'signup' => 'Zapisały się',
     ];
-    $COLS = ['page_view' => 'Wejścia', 'scroll_50' => '50%', 'form_open' => 'Formularz', 'form_submit_attempt' => 'Próby', 'form_error' => 'Błędy', 'signup' => 'Zapisy'];
+    $COLS = ['page_view' => 'Wejścia', 'engaged' => 'Interakcja', 'scroll_50' => '50%', 'form_open' => 'Formularz', 'form_submit_attempt' => 'Próby', 'form_error' => 'Błędy', 'signup' => 'Zapisy'];
 
     $funnel = array_fill_keys(array_keys($STEPS), []);
     $groups = ['source' => [], 'content' => [], 'device' => [], 'day' => []];
@@ -206,7 +207,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     $qs = static fn (array $over) => '?' . http_build_query(array_filter(array_merge(['od' => $from, 'do' => $to, 'kampania' => $fCampaign, 'zrodlo' => $fSource, 'archiwum' => $withArchive ? '1' : ''], $over)));
     ksort($campaigns);
     ksort($sources);
-    $EVENT_PL = $STEPS + ['generate_lead' => 'konwersja (po zgodzie na cookies)', 'sticky_cta_click' => 'przycisk przyklejony', 'newsletter_signup' => 'newsletter na /dziekuje/', 'add_to_calendar' => 'dodanie do kalendarza', 'consultation_click' => 'konsultacja', 'logo_click' => 'logo', 'share_click' => 'udostępnienie'];
+    $EVENT_PL = $STEPS + ['page_preload' => 'wczytanie w tle (bez pokazania)', 'generate_lead' => 'konwersja (po zgodzie na cookies)', 'sticky_cta_click' => 'przycisk przyklejony', 'newsletter_signup' => 'newsletter na /dziekuje/', 'add_to_calendar' => 'dodanie do kalendarza', 'consultation_click' => 'konsultacja', 'logo_click' => 'logo', 'share_click' => 'udostępnienie'];
 
     $table = static function (string $title, array $rows, string $first) use ($COLS, $pct): void {
         if (!$rows) return;
@@ -255,7 +256,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     <?php foreach ($STEPS as $e => $label): $n = count($funnel[$e]); $w = $base ? min(100, round(100 * $n / $base)) : 0; ?>
       <div class="step"><span><?= h($label) ?></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $base) ?></span></div>
     <?php endforeach; ?>
-    <p class="muted" style="margin:6px 0 0">Procent liczony od wejść na stronę. „Zapisały się” = serwer przyjął zapis i strona przeszła na podziękowanie. Pełną listę osób ma MailerLite.</p>
+    <p class="muted" style="margin:6px 0 0">Procent liczony od wejść na stronę. Instagram i Facebook potrafią wczytać stronę z reklamy w tle, zanim ktoś kliknie – od 22.11 takie wczytania są liczone osobno („wczytanie w tle” w Innych zdarzeniach), a „Dotknęły lub przewinęły” pokazuje, ile wejść to na pewno ludzie. „Zapisały się” = serwer przyjął zapis i strona przeszła na podziękowanie. Pełną listę osób ma MailerLite.</p>
   </div>
 
   <?php
@@ -274,7 +275,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
   <?php endif; ?>
 
   <?php if ($other): arsort($other); ?>
-  <h2>Inne kliknięcia</h2>
+  <h2>Inne zdarzenia</h2>
   <div class="scroll"><table><thead><tr><th>Zdarzenie</th><th class="n">Ile razy</th></tr></thead><tbody>
     <?php foreach ($other as $k => $n): ?><tr><td><?= h($EVENT_PL[$k] ?? $k) ?></td><td class="n"><?= $n ?></td></tr><?php endforeach; ?>
   </tbody></table></div>

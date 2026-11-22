@@ -46,5 +46,33 @@ export function funnel(event: string, params: Record<string, unknown> = {}): voi
   fetch(url, { method: 'POST', body, keepalive: true, headers: { 'content-type': 'text/plain' } }).catch(() => {});
 }
 
-// Wejście na stronę – raz na wczytanie (moduł ładuje się raz).
-if (enabled) funnel('page_view');
+/**
+ * Wejście na stronę – raz na wczytanie, ale dopiero gdy strona jest WIDOCZNA.
+ * Instagram i Facebook wczytują stronę z reklamy w tle (preload), zanim ktoś kliknie –
+ * takie wczytanie liczymy osobno (page_preload), a page_view dopiero po pokazaniu strony.
+ * „engaged” = pierwszy dotyk, kliknięcie, klawisz albo przewinięcie (człowiek, nie wczytanie w tle).
+ */
+function start(): void {
+  const hidden = document.visibilityState === 'hidden' || (document as Document & { prerendering?: boolean }).prerendering === true;
+  if (!hidden) funnel('page_view');
+  else {
+    funnel('page_preload');
+    const onShow = () => {
+      if (document.visibilityState !== 'visible') return;
+      document.removeEventListener('visibilitychange', onShow);
+      document.removeEventListener('prerenderingchange', onShow);
+      funnel('page_view');
+    };
+    document.addEventListener('visibilitychange', onShow);
+    document.addEventListener('prerenderingchange', onShow);
+  }
+  let engaged = false;
+  const onEngage = () => {
+    if (engaged || document.visibilityState !== 'visible') return;
+    engaged = true;
+    funnel('engaged');
+    ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach((t) => window.removeEventListener(t, onEngage));
+  };
+  ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach((t) => window.addEventListener(t, onEngage, { passive: true }));
+}
+if (enabled) start();
