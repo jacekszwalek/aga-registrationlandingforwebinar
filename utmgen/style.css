@@ -210,3 +210,18 @@ dialog { overflow-y: auto; }
 
 /* Komunikat o zamienionym znaku w nazwie kampanii */
 .note.fix { margin-top: 6px; padding: 6px 10px; border-radius: 6px; background: #fff6e5; color: var(--warn); font-size: 0.8rem; }
+
+/* Skracacz */
+.ln-btns { display: flex; gap: 2px; }
+.ln-short { display: grid; grid-template-columns: 150px minmax(0, 1fr) auto; gap: 4px 12px; align-items: center; padding: 6px 0 8px; border-bottom: 1px solid var(--line); font-size: 0.86rem; background: var(--blush-50); }
+.ln-short .ln-l { padding-left: 8px; font-weight: 600; }
+.ln-note { grid-column: 1 / -1; margin: 0 8px; }
+.ln-note:empty { display: none; }
+.sc-in { font: inherit; font-size: 16px; min-height: 40px; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; min-width: 0; }
+.login-form { padding: 20px; }
+.login-form input { font: inherit; font-size: 16px; min-height: 44px; width: 100%; padding: 8px 10px; border: 1px solid var(--line); border-radius: 6px; }
+.login-form .note:empty { display: none; }
+@media (max-width: 600px) {
+  .ln-short { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; }
+  .ln-short .ln-l { grid-column: 1 / -1; }
+}

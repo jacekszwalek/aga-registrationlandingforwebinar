@@ -2,52 +2,16 @@
 /**
  * Panel licznika etapów (https://przystanzmianyzawodowej.pl/webinar/licznik/) – chroniony hasłem.
  * Dane: ~/webinar-stats/events.jsonl (api/track.php). Opis: docs/licznik.md.
- * Hasło: w repozytorium jest tylko jego skrót bcrypt; można go podmienić plikiem
- * ~/integrations-keys/.licznik-webinar-hash (jedna linia ze skrótem z password_hash()).
+ * Logowanie: api/_auth.php (wspólne z panelem linków i skracaczem).
  */
 declare(strict_types=1);
-require __DIR__ . '/../api/_stats.php';
+require __DIR__ . '/../api/_auth.php';
 
 date_default_timezone_set('Europe/Warsaw');
 header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex, nofollow');
 header('X-Frame-Options: DENY');
 header('Referrer-Policy: no-referrer');
-
-const DEFAULT_HASH = '$2y$12$uIfnZraUp9WwuokXQ5t/RusLhEkR6a4QPutNpeZCQbtyykpXqIoH6';
-const COOKIE = 'pzz_licznik';
-const SESSION_DAYS = 30;
-
-function pass_hash(): string
-{
-    $file = dirname(__DIR__, 3) . '/integrations-keys/.licznik-webinar-hash';
-    $h = is_readable($file) ? trim((string) file_get_contents($file)) : '';
-    return str_starts_with($h, '$2') ? $h : DEFAULT_HASH;
-}
-
-/** Ciasteczko logowania (tylko dla panelu): ważność + podpis HMAC; kluczem jest skrót hasła z serwera. */
-function token(int $exp): string
-{
-    return $exp . '.' . hash_hmac('sha256', 'licznik|' . $exp, pass_hash());
-}
-
-function logged_in(): bool
-{
-    $c = (string) ($_COOKIE[COOKIE] ?? '');
-    [$exp] = explode('.', $c, 2) + [''];
-    return ctype_digit($exp) && (int) $exp > time() && hash_equals(token((int) $exp), $c);
-}
-
-function set_cookie(string $value, int $exp): void
-{
-    setcookie(COOKIE, $value, [
-        'expires' => $exp,
-        'path' => rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? '/'), '/') . '/',
-        'secure' => !empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https',
-        'httponly' => true,
-        'samesite' => 'Strict',
-    ]);
-}
 
 function h(mixed $s): string
 {
@@ -59,23 +23,19 @@ $error = '';
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     if (isset($_POST['logout'])) {
-        set_cookie('', time() - 3600);
+        pzz_logout();
         header('Location: ' . $self, true, 303);
         exit;
     }
-    if (pzz_rate_limited('licznik-login', 10, 900)) {
-        $error = 'Za dużo prób. Spróbuj ponownie za 15 minut.';
-    } elseif (password_verify((string) ($_POST['password'] ?? ''), pass_hash())) {
-        $exp = time() + SESSION_DAYS * 86400;
-        set_cookie(token($exp), $exp);
+    $res = pzz_login((string) ($_POST['password'] ?? ''));
+    if ($res === true) {
         header('Location: ' . $self, true, 303);
         exit;
-    } else {
-        $error = 'Nieprawidłowe hasło.';
     }
+    $error = $res === 'limit' ? 'Za dużo prób. Spróbuj ponownie za 15 minut.' : 'Nieprawidłowe hasło.';
 }
 
-$authed = logged_in();
+$authed = pzz_logged_in();
 ?>
 <!doctype html>
 <html lang="pl">
@@ -294,7 +254,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
       <h1>Licznik webinaru</h1>
       <p class="muted">Bez cookies i bez danych osobowych · liczy każde wczytanie strony osobno · czas polski</p>
     </div>
-    <form method="post"><button class="ghost" name="logout" value="1">Wyloguj</button></form>
+    <div style="display:flex;gap:10px;align-items:center"><a class="btn ghost" href="linki/">Krótkie linki</a><form method="post"><button class="ghost" name="logout" value="1">Wyloguj</button></form></div>
   </div>
 
   <div class="card filterbar">

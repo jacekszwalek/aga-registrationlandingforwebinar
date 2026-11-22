@@ -8,7 +8,7 @@ const ROOT = join(process.cwd(), 'utmgen');
 const ORIGIN = 'http://utmgen.test';
 const TYPES: Record<string, string> = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/css', '.png': 'image/png', '.woff2': 'font/woff2' };
 
-async function open(page: Page, opts: { fresh?: boolean } = {}) {
+async function open(page: Page, opts: { fresh?: boolean; api?: boolean } = {}) {
   // Testy startują z pustym wyborem miejsc (pierwsza wizyta ma domyślnie Facebook – Post; sprawdza to osobny test).
   if (!opts.fresh) {
     await page.addInitScript(() => {
@@ -19,6 +19,8 @@ async function open(page: Page, opts: { fresh?: boolean } = {}) {
     });
   }
   await page.route(`${ORIGIN}/**`, (route) => {
+    // API skracacza (/webinar/licznik/api.php) – podstawiane w teście przez wcześniejszy page.route.
+    if (opts.api && new URL(route.request().url()).pathname.startsWith('/webinar/')) return route.fallback();
     let path = new URL(route.request().url()).pathname.replace(/^\/utmgen\//, '/');
     if (path.endsWith('/')) path += 'index.html';
     try {
@@ -291,4 +293,49 @@ test('axe: brak błędów dostępności', async ({ page }) => {
   await page.getByRole('button', { name: 'Zaznacz wszystkie' }).click();
   const r = await new AxeBuilder({ page }).analyze();
   expect(r.violations.map((v) => `${v.id}: ${v.nodes.length}`)).toEqual([]);
+});
+
+test('skracacz: bez API (podgląd) nie ma przycisku „Skróć”', async ({ page }) => {
+  await open(page);
+  await page.fill('#target', 'https://przystanzmianyzawodowej.pl/webinar/');
+  await page.fill('#campaign', '261203');
+  await pick(page, 'facebook:post').check();
+  await expect(page.locator('[data-copy]').first()).toBeVisible();
+  await expect(page.locator('[data-short]')).toHaveCount(0);
+});
+
+test('skracacz: logowanie, własny kod i krótki link do skopiowania', async ({ page }) => {
+  const calls: Array<Record<string, string>> = [];
+  let logged = false;
+  await page.route(`${ORIGIN}/webinar/licznik/api.php`, async (route) => {
+    const req = route.request();
+    if (req.method() === 'GET') return route.fulfill({ json: { ok: true, loggedIn: logged } });
+    const body = req.postDataJSON();
+    calls.push(body);
+    if (body.action === 'login') {
+      logged = body.password === 'dobre';
+      return route.fulfill({ status: logged ? 200 : 401, json: logged ? { ok: true } : { ok: false, error: 'Nieprawidłowe hasło.' } });
+    }
+    return route.fulfill({ json: { ok: true, code: body.code, short: `https://przystanzmianyzawodowej.pl/webinar/l/${body.code}`, existing: false, needsRootRule: false } });
+  });
+  await open(page, { api: true });
+  await page.fill('#target', 'https://przystanzmianyzawodowej.pl/webinar/');
+  await page.fill('#campaign', '261203');
+  await pick(page, 'facebook:post').check();
+  await page.locator('[data-short]').first().click();
+  await page.fill('#login-pass', 'zle');
+  await page.locator('#login button[value=login]').click();
+  await expect(page.locator('#login-err')).toHaveText('Nieprawidłowe hasło.');
+  await page.fill('#login-pass', 'dobre');
+  await page.locator('#login button[value=login]').click();
+  await page.locator('.sc-in').first().fill('FB 261203');
+  await page.locator('[data-make-short]').first().click();
+  await expect(page.locator('.ln-short .ln-u').first()).toHaveText('https://przystanzmianyzawodowej.pl/webinar/l/fb-261203');
+  expect(calls.find((c) => c.action === 'shorten')?.code).toBe('fb-261203');
+  // Po skróceniu przycisk „Skróć” znika, krótki link zostaje po odświeżeniu (pamięć w przeglądarce).
+  await expect(page.locator('[data-short]')).toHaveCount(0);
+  await page.reload();
+  await page.fill('#target', 'https://przystanzmianyzawodowej.pl/webinar/');
+  await page.fill('#campaign', '261203');
+  await expect(page.locator('.ln-short .ln-u').first()).toHaveText('https://przystanzmianyzawodowej.pl/webinar/l/fb-261203');
 });

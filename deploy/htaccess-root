@@ -15,6 +15,9 @@ Options -Indexes
   RewriteCond %{HTTPS} !=on
   RewriteCond %{HTTP:X-Forwarded-Proto} !=https
   RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+  # Krótkie linki: /webinar/…/l/kod → l/index.php (docs/skracacz.md). „.” w kodzie niedozwolona, więc l/index.php nie pętli.
+  RewriteRule ^(.*/)?l/([A-Za-z0-9-]+)/?$ l/index.php?c=$2&p=/webinar/$1 [L]
 </IfModule>
 
 AddType text/calendar .ics

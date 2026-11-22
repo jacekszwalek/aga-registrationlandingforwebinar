@@ -16,7 +16,9 @@ jobs:
           cache: npm
       - run: npm ci
       - name: Składnia skryptu zapisu (PHP)
-        run: for f in public/api/*.php public/licznik/*.php; do php -l "$f"; done
+        run: for f in public/api/*.php public/l/*.php public/licznik/*.php public/licznik/linki/*.php; do php -l "$f"; done
+      - name: Testy skracacza (PHP)
+        run: php tests/php/links.test.php
       - run: npm run test:unit
       - run: npm run build
       - run: npx playwright install --with-deps chromium webkit

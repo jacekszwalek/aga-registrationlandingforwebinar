@@ -7,6 +7,7 @@ Squeeze page zapisu na bezpłatne webinary Przystani Zmiany Zawodowej (Agnieszka
 | **Landing (produkcja)** | https://przystanzmianyzawodowej.pl/webinar/ |
 | Strona podziękowania | https://przystanzmianyzawodowej.pl/webinar/dziekuje/ |
 | Licznik etapów (hasło) | https://przystanzmianyzawodowej.pl/webinar/licznik/ ([`docs/licznik.md`](docs/licznik.md)) |
+| Krótkie linki (hasło) | https://przystanzmianyzawodowej.pl/webinar/licznik/linki/ ([`docs/skracacz.md`](docs/skracacz.md)) |
 | **Generator linków UTM** | https://przystanzmianyzawodowej.pl/utmgen/ (narzędzie wewnętrzne, `noindex`) |
 | Podgląd (GitHub Pages) | https://jacekszwalek.github.io/aga-registrationlandingforwebinar/ (+ `/utmgen/`) |
 
@@ -114,4 +115,5 @@ Edytuj **tylko** `src/config/event.config.ts` → `sessions` (ISO z przesunięci
 | [`docs/mailerlite-raport.pdf`](docs/mailerlite-raport.pdf) | audyt MailerLite (stan zastany) |
 | [`docs/utmgen.md`](docs/utmgen.md) | generator linków UTM |
 | [`docs/licznik.md`](docs/licznik.md) | licznik etapów bez cookies |
+| [`docs/skracacz.md`](docs/skracacz.md) | skracacz linków (generator UTM) |
 | [`docs/decisions.md`](docs/decisions.md) | decyzje projektowe landingu |

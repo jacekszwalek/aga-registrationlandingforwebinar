@@ -119,6 +119,22 @@
     </form>
   </dialog>
 
+  <dialog id="login" aria-labelledby="login-title">
+    <form method="dialog" class="settings login-form">
+      <div class="settings-head">
+        <h2 id="login-title">Zaloguj się, żeby skracać linki</h2>
+      </div>
+      <p class="small">To samo hasło co do licznika webinaru. Logowanie zapamiętamy na 30 dni.</p>
+      <label for="login-pass">Hasło</label>
+      <input id="login-pass" type="password" autocomplete="current-password" required>
+      <p class="note warn" id="login-err" aria-live="polite"></p>
+      <div class="settings-actions">
+        <button type="submit" class="btn" value="login">Zaloguj</button>
+        <button type="submit" class="ghost" value="cancel" formnovalidate>Anuluj</button>
+      </div>
+    </form>
+  </dialog>
+
   <a class="jump" id="jump" href="#res-title" hidden></a>
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 </body>
