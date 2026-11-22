@@ -321,7 +321,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     <?php foreach ($CLASSES as $k => [$label, $hint]): $n = $quality[$k]; $w = $qTotal ? round(100 * $n / $qTotal) : 0; ?>
       <div class="step"><span><span class="muted"><?= h(ucfirst($hint)) ?> ·</span> <?= h($label) ?></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $qTotal) ?></span></div>
     <?php endforeach; ?>
-    <p class="muted" style="margin:6px 0 0">Każde wczytanie landingu dostaje jedną ocenę: liczy się najmocniejszy sygnał. Ludzie to zwykle dwa pierwsze wiersze. Sygnały (dotyk, czas widoczności, wczytanie w tle, flagi automatu) zbieramy od 22.11.2026 – starsze wejścia trafiają do „Natychmiastowe wyjście”.</p>
+    <p class="muted" style="margin:6px 0 0">Każde wczytanie landingu dostaje jedną ocenę: liczy się najmocniejszy sygnał. Ludzie to zwykle dwa pierwsze wiersze.</p>
   </div>
   <?php if ($qualitySeg):
     uksort($qualitySeg, static fn ($a, $b) => array_sum($qualitySeg[$b]) <=> array_sum($qualitySeg[$a]));
