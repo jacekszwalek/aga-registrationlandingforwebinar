@@ -225,11 +225,12 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
 
     // ---------- człowiek czy bot ----------
     $CLASSES = [
-        'human' => ['Człowiek: dotyk, klik lub przewinięcie', 'pewny człowiek'],
-        'reader' => ['Strona widoczna ≥ 10 s, bez dotyku', 'raczej człowiek'],
-        'bounce' => ['Strona widoczna < 10 s, bez dotyku', 'szybkie wyjście albo bot'],
-        'preload' => ['Wczytanie w tle przez aplikację, nikt nie zobaczył', 'nie człowiek'],
-        'bot' => ['Sygnały automatu (webdriver, brak języków, zerowy ekran)', 'bot'],
+        'human' => ['dotyk, klik lub przewinięcie', 'pewny człowiek'],
+        'reader' => ['strona widoczna ≥ 10 s, bez dotyku', 'raczej człowiek'],
+        'bounce' => ['strona widoczna 3–10 s, bez dotyku', 'szybkie wyjście albo bot'],
+        'instant' => ['strona widoczna < 3 s, bez dotyku, i wyjście', 'natychmiastowe wyjście'],
+        'preload' => ['wczytanie w tle przez aplikację, nikt nie zobaczył', 'nie człowiek'],
+        'bot' => ['sygnały automatu (webdriver, brak języków, zerowy ekran)', 'bot'],
     ];
     $classify = static function (array $vv): string {
         $ev = $vv['ev'];
@@ -237,7 +238,8 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
         if (isset($ev['page_preload']) && !isset($ev['page_view'])) return 'preload';
         if (isset($ev['engaged']) || isset($ev['scroll_50']) || isset($ev['form_open']) || isset($ev['form_start']) || isset($ev['sticky_cta_click'])) return 'human';
         if (isset($ev['stay_10s'])) return 'reader';
-        return 'bounce';
+        if (isset($ev['stay_3s'])) return 'bounce';
+        return 'instant';
     };
     $quality = array_fill_keys(array_keys($CLASSES), 0);
     $qualitySeg = [];
@@ -261,7 +263,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     $qs = static fn (array $over) => '?' . http_build_query(array_filter(array_merge(['od' => $from, 'do' => $to, 'kampania' => $fCampaign, 'zrodlo' => $fSource, 'archiwum' => $withArchive ? '1' : '', 'typ' => $fType, 'ile' => $perPage === 50 ? '' : (string) $perPage], $over)));
     ksort($campaigns);
     ksort($sources);
-    $EVENT_PL = $STEPS + ['page_preload' => 'wczytanie w tle (bez pokazania)', 'stay_10s' => 'strona widoczna 10 s', 'stay_30s' => 'strona widoczna 30 s', 'generate_lead' => 'konwersja (po zgodzie na cookies)', 'sticky_cta_click' => 'przycisk przyklejony', 'newsletter_signup' => 'newsletter na /dziekuje/', 'add_to_calendar' => 'dodanie do kalendarza', 'consultation_click' => 'konsultacja', 'logo_click' => 'logo', 'share_click' => 'udostępnienie'];
+    $EVENT_PL = $STEPS + ['page_preload' => 'wczytanie w tle (bez pokazania)', 'stay_3s' => 'strona widoczna 3 s', 'stay_10s' => 'strona widoczna 10 s', 'stay_30s' => 'strona widoczna 30 s', 'generate_lead' => 'konwersja (po zgodzie na cookies)', 'sticky_cta_click' => 'przycisk przyklejony', 'newsletter_signup' => 'newsletter na /dziekuje/', 'add_to_calendar' => 'dodanie do kalendarza', 'consultation_click' => 'konsultacja', 'logo_click' => 'logo', 'share_click' => 'udostępnienie'];
 
     $table = static function (string $title, array $rows, string $first) use ($COLS, $pct): void {
         if (!$rows) return;
@@ -317,9 +319,9 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
   <h2>Człowiek czy bot? Ocena wejść</h2>
   <div class="card funnel">
     <?php foreach ($CLASSES as $k => [$label, $hint]): $n = $quality[$k]; $w = $qTotal ? round(100 * $n / $qTotal) : 0; ?>
-      <div class="step"><span><?= h($label) ?> <span class="muted">· <?= h($hint) ?></span></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $qTotal) ?></span></div>
+      <div class="step"><span><span class="muted"><?= h(ucfirst($hint)) ?> ·</span> <?= h($label) ?></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $qTotal) ?></span></div>
     <?php endforeach; ?>
-    <p class="muted" style="margin:6px 0 0">Każde wczytanie landingu dostaje jedną ocenę: liczy się najmocniejszy sygnał. Ludzie to zwykle dwa pierwsze wiersze. Sygnały (dotyk, czas widoczności, wczytanie w tle, flagi automatu) zbieramy od 22.11.2026 – starsze wejścia trafiają do „&lt; 10 s, bez dotyku”.</p>
+    <p class="muted" style="margin:6px 0 0">Każde wczytanie landingu dostaje jedną ocenę: liczy się najmocniejszy sygnał. Ludzie to zwykle dwa pierwsze wiersze.</p>
   </div>
   <?php if ($qualitySeg):
     uksort($qualitySeg, static fn ($a, $b) => array_sum($qualitySeg[$b]) <=> array_sum($qualitySeg[$a]));

@@ -48,7 +48,7 @@ const clean = (v: unknown, max = 60): string | undefined => {
 
 /** Zdarzenia, które liczymy (reszta zostaje tylko w GA4/Clarity po zgodzie). */
 export const FUNNEL_EVENTS = [
-  'page_view', 'page_preload', 'engaged', 'stay_10s', 'stay_30s', 'scroll_50', 'scroll_90', 'sticky_cta_click', 'form_open', 'form_start',
+  'page_view', 'page_preload', 'engaged', 'stay_3s', 'stay_10s', 'stay_30s', 'scroll_50', 'scroll_90', 'sticky_cta_click', 'form_open', 'form_start',
   'form_submit_attempt', 'form_error', 'signup', 'generate_lead', 'newsletter_signup',
   'add_to_calendar', 'consultation_click', 'logo_click', 'share_click',
 ] as const;

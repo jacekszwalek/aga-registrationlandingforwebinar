@@ -82,11 +82,12 @@ function start(): void {
   };
   ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach((t) => window.addEventListener(t, onEngage, { passive: true }));
 
-  // Czas, przez który strona była WIDOCZNA (karta w tle się nie liczy): 10 s i 30 s.
+  // Czas, przez który strona była WIDOCZNA (karta w tle się nie liczy): 3 s, 10 s i 30 s.
   let visibleMs = 0;
   const timer = window.setInterval(() => {
     if (document.visibilityState !== 'visible') return;
     visibleMs += 1000;
+    if (visibleMs === 3_000) funnel('stay_3s');
     if (visibleMs === 10_000) funnel('stay_10s');
     if (visibleMs === 30_000) {
       funnel('stay_30s');

@@ -11,7 +11,7 @@ czas, zdarzenie, losowy identyfikator wczytania strony (tylko w pamięci karty),
 `utm_source/medium/campaign/content`, `mobile/desktop`, aplikacja (Facebook/Instagram/przeglądarka), przy błędach – pole i powód.
 **Nie** zapisujemy: IP, user-agenta, e-maila, imienia, cookies, localStorage. Boty (podglądy linków, crawlery) są pomijane.
 
-Zdarzenia: `page_view` (tylko gdy strona jest widoczna), `page_preload` (wczytanie w tle przez aplikację Instagram/Facebook, bez pokazania), `engaged` (pierwszy dotyk, kliknięcie, klawisz lub przewinięcie), `stay_10s` / `stay_30s` (strona widoczna 10 / 30 s), `scroll_50`, `scroll_90`, `sticky_cta_click`, `form_open`, `form_start`, `form_submit_attempt`,
+Zdarzenia: `page_view` (tylko gdy strona jest widoczna), `page_preload` (wczytanie w tle przez aplikację Instagram/Facebook, bez pokazania), `engaged` (pierwszy dotyk, kliknięcie, klawisz lub przewinięcie), `stay_3s` / `stay_10s` / `stay_30s` (strona widoczna 3 / 10 / 30 s), `scroll_50`, `scroll_90`, `sticky_cta_click`, `form_open`, `form_start`, `form_submit_attempt`,
 `form_error` (`name/email · required/invalid`, `network · network` lub `network · http-NNN`), `signup` (serwer przyjął zapis),
 `generate_lead`, `newsletter_signup`, `add_to_calendar`, `consultation_click`, `logo_click`, `share_click`.
 
@@ -38,7 +38,8 @@ Każde wczytanie landingu dostaje jedną ocenę (liczy się najmocniejszy sygna�
 2. **nie człowiek** – `page_preload` bez `page_view` (aplikacja wczytała stronę w tle, nikt jej nie zobaczył);
 3. **pewny człowiek** – dotyk, klik, klawisz lub przewinięcie (`engaged`, `scroll_50`, `form_open`…);
 4. **raczej człowiek** – strona widoczna ≥ 10 s bez dotyku;
-5. **szybkie wyjście albo bot** – reszta.
+5. **szybkie wyjście albo bot** – strona widoczna 3–10 s bez dotyku;
+6. **natychmiastowe wyjście** – strona widoczna < 3 s bez dotyku (także wszystkie wejścia sprzed 22.11.2026).
 Panel pokazuje rozkład ocen i tabelę według źródła/aplikacji; w dzienniku każde zdarzenie ma ocenę swojego wejścia. Sygnały zbierane od 22.11.2026.
 
 ## Dziennik zdarzeń
