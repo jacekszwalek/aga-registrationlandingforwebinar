@@ -225,3 +225,22 @@ dialog { overflow-y: auto; }
   .ln-short { grid-template-columns: minmax(0, 1fr) auto; gap: 4px 8px; }
   .ln-short .ln-l { grid-column: 1 / -1; }
 }
+
+/* Krótkie linki – lista */
+.links-dlg { width: min(980px, calc(100vw - 24px)); }
+.sl-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0 8px; }
+.sl-tabs button { min-height: 40px; padding: 4px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--white); color: var(--muted); font: 600 0.82rem var(--font-body); cursor: pointer; }
+.sl-tabs button[aria-pressed="true"] { border-color: var(--pink-800); color: var(--pink-800); background: var(--blush-50); }
+.sl-q { width: 100%; font: inherit; font-size: 16px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; }
+.sl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.sl-short { font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
+.sl-url { grid-column: 1; font-size: 0.74rem; color: var(--muted); overflow-wrap: anywhere; word-break: break-all; }
+.sl-meta, .sl-stats { grid-column: 1; font-size: 0.8rem; color: var(--text); }
+.sl-stats b { color: var(--ink); }
+.sl-act { grid-column: 2; grid-row: 1 / span 4; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.sl-badge { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; vertical-align: middle; }
+.sl-badge.active { background: #e3f1e9; color: #2f6f4f; }
+.sl-badge.sleeping { background: #fdf0d5; color: #7a5000; }
+.sl-badge.archived { background: #ece7ea; color: var(--muted); }
+.sl-empty { padding: 16px 0; color: var(--muted); }
+.warn-t { color: #8a5a00; font-weight: 600; }

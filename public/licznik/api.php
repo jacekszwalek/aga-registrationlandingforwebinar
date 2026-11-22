@@ -1,6 +1,6 @@
 <?php
 /**
- * API skracacza dla generatora UTM (/utmgen/): status, logowanie, skracanie.
+ * API skracacza dla generatora UTM (/utmgen/): status, logowanie, skracanie, lista i usuwanie krótkich linków.
  * To samo hasło i ciasteczko co panel licznika (api/_auth.php). Tylko z naszej domeny (Origin).
  */
 declare(strict_types=1);
@@ -46,6 +46,38 @@ switch ($in['action'] ?? '') {
             error_log('pzz shorten: ' . $e->getMessage());
             out(500, ['ok' => false, 'error' => 'Nie udało się zapisać linku. Spróbuj ponownie.']);
         }
+    case 'list':
+        if (!pzz_logged_in()) out(401, ['ok' => false, 'error' => 'Zaloguj się.', 'login' => true]);
+        $now = time();
+        $list = [];
+        foreach (pzz_links_load() as $code => $l) {
+            $code = (string) $code;
+            $list[] = [
+                'code' => $code,
+                'short' => pzz_short_url($code, $l['prefix']),
+                'url' => $l['url'],
+                'utm' => pzz_link_utm($l['url']),
+                'created' => (int) $l['created'],
+                'clicks' => (int) ($l['clicks'] ?? 0),
+                'last' => $l['last'] ? (int) $l['last'] : null,
+                'idle' => pzz_link_idle_days($l, $now),
+                'state' => pzz_link_state($l, $now),
+                'needsRootRule' => !str_starts_with($l['prefix'], '/webinar/'),
+            ];
+        }
+        // Najdłużej nieklikane na górze.
+        usort($list, static fn ($a, $b) => $b['idle'] <=> $a['idle'] ?: $b['created'] <=> $a['created']);
+        out(200, ['ok' => true, 'links' => $list, 'sleepDays' => PZZ_SLEEP_DAYS, 'archiveDays' => PZZ_ARCHIVE_DAYS]);
+    case 'delete':
+        if (!pzz_logged_in()) out(401, ['ok' => false, 'error' => 'Zaloguj się.', 'login' => true]);
+        $del = strtolower(preg_replace('/[^A-Za-z0-9-]/', '', (string) ($in['code'] ?? '')));
+        $ok = pzz_links_update(static function (array &$links) use ($del) {
+            if (!isset($links[$del]) || (int) ($links[$del]['clicks'] ?? 0) > 0) return false;
+            unset($links[$del]);
+            return true;
+        });
+        if ($ok) out(200, ['ok' => true]);
+        out(409, ['ok' => false, 'error' => 'Nie usunięto: link ma już kliknięcia albo nie istnieje.']);
     default:
         out(400, ['ok' => false, 'error' => 'Nieznana akcja.']);
 }

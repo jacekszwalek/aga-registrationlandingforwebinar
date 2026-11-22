@@ -298,6 +298,106 @@ async function makeShort(i) {
   copy(res.short, res.existing ? 'Ten link był już skrócony – skopiowano krótki link' : 'Krótki link skopiowany');
 }
 
+/* ---------- Krótkie linki – lista ---------- */
+const SL_STATES = { current: 'Bieżące', active: 'Aktywne', sleeping: 'Uśpione', archived: 'Zarchiwizowane', all: 'Wszystkie' };
+const SL_BADGE = { active: 'Aktywny', sleeping: 'Uśpiony', archived: 'Zarchiwizowany' };
+const sl = { links: [], filter: 'current', q: '', loaded: false, error: '' };
+const fmtDate = (t) => (t ? new Date(t * 1000).toLocaleDateString('pl-PL') : '–');
+
+async function loadLinks() {
+  let res = await shortApi({ action: 'list' });
+  if (res.status === 401 && (await askLogin())) res = await shortApi({ action: 'list' });
+  if (!res.ok) {
+    sl.error = res.error || 'Nie udało się pobrać listy.';
+    return false;
+  }
+  sl.links = res.links;
+  sl.loaded = true;
+  sl.error = '';
+  return true;
+}
+
+function slMatches(l) {
+  if (sl.filter === 'current' && l.state === 'archived') return false;
+  if (!['current', 'all'].includes(sl.filter) && l.state !== sl.filter) return false;
+  if (!sl.q) return true;
+  return `${l.short} ${l.url}`.toLowerCase().includes(sl.q);
+}
+
+function renderLinks() {
+  const count = (f) => sl.links.filter((l) => (f === 'all' ? true : f === 'current' ? l.state !== 'archived' : l.state === f)).length;
+  $('sl-tabs').innerHTML = Object.entries(SL_STATES)
+    .map(([k, label]) => `<button type="button" data-sl-filter="${k}" aria-pressed="${sl.filter === k}">${label} <b>${count(k)}</b></button>`)
+    .join('');
+  const list = sl.links.filter(slMatches);
+  if (sl.error) {
+    $('sl-list').innerHTML = `<p class="note warn">${esc(sl.error)}</p>`;
+    return;
+  }
+  if (!list.length) {
+    $('sl-list').innerHTML = `<p class="sl-empty">${sl.links.length ? 'Brak linków dla tego filtra.' : 'Nie ma jeszcze krótkich linków – utwórz je przyciskiem „Skróć” przy gotowym linku.'}</p>`;
+    return;
+  }
+  $('sl-list').innerHTML = list
+    .map((l) => {
+      const u = l.utm || {};
+      const meta = [u.campaign && `kampania <b>${esc(u.campaign)}</b>`, (u.source || u.medium) && `${esc(u.source || '–')} / ${esc(u.medium || '–')}`, u.content && `materiał ${esc(u.content)}`].filter(Boolean).join(' · ');
+      return `<article class="sl">
+        <div><span class="sl-short">${esc(l.short)}</span><span class="sl-badge ${l.state}">${SL_BADGE[l.state]}</span></div>
+        <div class="sl-url">${esc(l.url)}</div>
+        ${meta ? `<div class="sl-meta">${meta}</div>` : ''}
+        <div class="sl-stats"><b>${l.clicks}</b> ${plural(l.clicks, 'kliknięcie', 'kliknięcia', 'kliknięć')} · ostatnie: ${fmtDate(l.last)} · ${l.last ? `bez kliknięć od <b>${l.idle}</b> dni` : '<b>nigdy nieklikany</b>'} · utworzony ${fmtDate(l.created)}${l.needsRootRule ? ' · <span class="warn-t">wymaga reguły na serwerze</span>' : ''}</div>
+        <div class="sl-act">
+          <button type="button" class="cp" data-sl-copy="${esc(l.code)}" aria-label="Kopiuj ${esc(l.short)}">Kopiuj</button>
+          ${l.clicks === 0 ? `<button type="button" class="cp" data-sl-del="${esc(l.code)}" aria-label="Usuń ${esc(l.short)}">Usuń</button>` : ''}
+        </div>
+      </article>`;
+    })
+    .join('');
+}
+
+async function openLinks() {
+  if (!shortener.loggedIn && !(await askLogin())) return;
+  const dlg = $('links');
+  $('sl-list').innerHTML = '<p class="sl-empty">Wczytuję…</p>';
+  if (!dlg.open) dlg.showModal();
+  await loadLinks();
+  renderLinks();
+}
+
+function setupLinks() {
+  const dlg = $('links');
+  $('open-links').addEventListener('click', openLinks);
+  dlg.addEventListener('click', async (e) => {
+    if (e.target.closest('[data-close-links]')) return dlg.close();
+    const f = e.target.closest('[data-sl-filter]');
+    if (f) {
+      sl.filter = f.dataset.slFilter;
+      renderLinks();
+    }
+    const c = e.target.closest('[data-sl-copy]');
+    if (c) copy(sl.links.find((l) => l.code === c.dataset.slCopy).short, 'Krótki link skopiowany');
+    const d = e.target.closest('[data-sl-del]');
+    if (d) {
+      const l = sl.links.find((x) => x.code === d.dataset.slDel);
+      if (!confirm(`Usunąć ${l.short}?\nJego adres będzie prowadził na stronę nadrzędną.`)) return;
+      const res = await shortApi({ action: 'delete', code: l.code });
+      if (!res.ok) return toast(res.error || 'Nie udało się usunąć.');
+      // Usunięty link znika też z pamięci generatora.
+      for (const [k, v] of Object.entries(shortMap)) if (v.short === l.short) delete shortMap[k];
+      store.set(STORE.short, shortMap);
+      toast('Link usunięty');
+      await loadLinks();
+      renderLinks();
+      render();
+    }
+  });
+  $('sl-q').addEventListener('input', (e) => {
+    sl.q = e.target.value.trim().toLowerCase();
+    renderLinks();
+  });
+}
+
 let currentRows = [];
 let currentGroups = [];
 function renderResult(base) {
@@ -544,6 +644,7 @@ function init() {
   renderPicker();
   setupHelp();
   setupSettings();
+  setupLinks();
 
   // Kampania: niedozwolone znaki zamieniane w locie + komunikat (musi działać przed render).
   let fixTimer;
@@ -665,7 +766,9 @@ function init() {
       if (d?.ok) {
         shortener.available = true;
         shortener.loggedIn = !!d.loggedIn;
+        $('open-links').hidden = false;
         render();
+        if (location.hash === '#krotkie-linki') openLinks();
       }
     })
     .catch(() => {});

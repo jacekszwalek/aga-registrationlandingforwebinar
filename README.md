@@ -7,7 +7,7 @@ Squeeze page zapisu na bezpłatne webinary Przystani Zmiany Zawodowej (Agnieszka
 | **Landing (produkcja)** | https://przystanzmianyzawodowej.pl/webinar/ |
 | Strona podziękowania | https://przystanzmianyzawodowej.pl/webinar/dziekuje/ |
 | Licznik etapów (hasło) | https://przystanzmianyzawodowej.pl/webinar/licznik/ ([`docs/licznik.md`](docs/licznik.md)) |
-| Krótkie linki (hasło) | https://przystanzmianyzawodowej.pl/webinar/licznik/linki/ ([`docs/skracacz.md`](docs/skracacz.md)) |
+| Krótkie linki (hasło) | w generatorze UTM: https://przystanzmianyzawodowej.pl/utmgen/#krotkie-linki ([`docs/skracacz.md`](docs/skracacz.md)) |
 | **Generator linków UTM** | https://przystanzmianyzawodowej.pl/utmgen/ (narzędzie wewnętrzne, `noindex`) |
 | Podgląd (GitHub Pages) | https://jacekszwalek.github.io/aga-registrationlandingforwebinar/ (+ `/utmgen/`) |
 

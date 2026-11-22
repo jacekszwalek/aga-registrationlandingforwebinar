@@ -1,7 +1,8 @@
 # Skracacz linków
 
-Krótkie linki z UTM-ami na domenie Przystani – tworzone w generatorze UTM (przycisk **„Skróć”**), zarządzane w panelu
-**https://przystanzmianyzawodowej.pl/webinar/licznik/linki/** (to samo hasło co licznik).
+Krótkie linki z UTM-ami na domenie Przystani – wszystko w generatorze UTM **https://przystanzmianyzawodowej.pl/utmgen/**:
+przycisk **„Skróć”** przy gotowym linku i lista **„Krótkie linki”** w górnym pasku (bezpośrednio: `/utmgen/#krotkie-linki`).
+Logowanie tym samym hasłem co licznik webinaru (zapamiętane na 30 dni).
 
 ## Jak wygląda krótki link
 Ścieżka strony docelowej + `l/` + kod:
@@ -23,7 +24,7 @@ Krótkie linki z UTM-ami na domenie Przystani – tworzone w generatorze UTM (pr
 ## Kliknięcia i archiwum
 - Kliknięcia liczone po stronie serwera: bez cookies, bez IP; boty i podglądy linków (Facebook, LinkedIn, WhatsApp…) się nie liczą.
 - **Aktywne** – kliknięte lub utworzone w ostatnich 30 dniach; **uśpione** – 30–180 dni bez kliknięcia; **zarchiwizowane** – 180+ dni bez kliknięcia (automatycznie). Zarchiwizowane znikają z bieżącej listy, ale **nadal działają**.
-- Panel sortuje od najdłużej nieklikanych; filtr stanu, wyszukiwarka, kopiowanie.
+- Lista w generatorze sortuje od najdłużej nieklikanych; filtry: bieżące (domyślnie, bez zarchiwizowanych), aktywne, uśpione, zarchiwizowane, wszystkie; wyszukiwarka, kopiowanie.
 - **Usunąć** można tylko link bez kliknięć (nigdzie nie trafił) – jego adres prowadzi potem na stronę nadrzędną.
 
 ## Reguła dla całej domeny (jednorazowo)
@@ -40,6 +41,6 @@ Sprawdzenie: `https://przystanzmianyzawodowej.pl/l/test` powinien przekierować 
 ## Technicznie
 - `public/api/_links.php` – logika (zapis `~/utm-links/links.json` poza `public_html`, blokada pliku, zapis atomowy); testy `tests/php/links.test.php` (CI).
 - `public/l/index.php` – przekierowanie 302 + licznik kliknięć.
-- `public/licznik/api.php` – API dla generatora (status, logowanie, skracanie; tylko z naszej domeny).
-- `public/licznik/linki/index.php` – panel; `public/api/_auth.php` – wspólne logowanie z licznikiem.
-- `utmgen/app.js` – przycisk „Skróć”, okno logowania, pamięć krótkich linków w przeglądarce (`utmgen.short.v1`). Na podglądzie GitHub Pages API nie ma, więc przycisk się nie pokazuje.
+- `public/licznik/api.php` – API dla generatora (status, logowanie, skracanie, lista, usuwanie; tylko z naszej domeny).
+- `public/licznik/linki/` – tylko przekierowanie na `/utmgen/#krotkie-linki` (stary adres); `public/api/_auth.php` – wspólne logowanie z licznikiem.
+- `utmgen/app.js` – przycisk „Skróć”, lista „Krótkie linki”, okno logowania, pamięć krótkich linków w przeglądarce (`utmgen.short.v1`). Na podglądzie GitHub Pages API nie ma, więc przycisk się nie pokazuje.
