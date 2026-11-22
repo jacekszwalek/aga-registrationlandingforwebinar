@@ -1,7 +1,9 @@
 import { sanitizeLive, sanitizeMessage, slugify, parseTarget, buildLink, campaignNotes, campaignFromDate, todayCampaign, resolveSource, toCsv, toTsv } from './utm.js';
 import { DEFAULT_CHANNELS } from './channels.js';
 
-const STORE = { channels: 'utmgen.channels.v1', state: 'utmgen.state.v1' };
+const STORE = { channels: 'utmgen.channels.v1', state: 'utmgen.state.v1', short: 'utmgen.short.v1' };
+/** API skracacza (to samo logowanie co licznik webinaru). Na podglądzie GitHub Pages go nie ma – przycisk „Skróć” się nie pokazuje. */
+const SHORT_API = '/webinar/licznik/api.php';
 const $ = (id) => document.getElementById(id);
 
 const store = {
@@ -219,6 +221,83 @@ function updatePartnerField() {
 }
 
 /* ---------- Prawy panel: gotowe linki ---------- */
+/* ---------- Skracacz ---------- */
+const shortener = { available: false, loggedIn: false };
+const shortMap = store.get(STORE.short, {}); // długi link → { short, rule }
+const shortOpen = new Set(); // długie linki z otwartym polem „własny kod”
+
+async function shortApi(body) {
+  const res = await fetch(SHORT_API, { method: 'POST', credentials: 'same-origin', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
+  const data = await res.json().catch(() => ({ ok: false, error: 'Brak odpowiedzi serwera.' }));
+  return { status: res.status, ...data };
+}
+
+/** Okno logowania; zwraca true po udanym logowaniu. */
+function askLogin() {
+  const dlg = $('login');
+  const form = dlg.querySelector('form');
+  const err = $('login-err');
+  err.textContent = '';
+  form.reset();
+  dlg.showModal();
+  return new Promise((resolve) => {
+    const onSubmit = async (e) => {
+      e.preventDefault();
+      if (e.submitter?.value === 'cancel') return done(false);
+      const r = await shortApi({ action: 'login', password: $('login-pass').value });
+      if (r.ok) {
+        shortener.loggedIn = true;
+        done(true);
+      } else err.textContent = r.error || 'Nie udało się zalogować.';
+    };
+    const done = (v) => {
+      form.removeEventListener('submit', onSubmit);
+      dlg.close();
+      resolve(v);
+    };
+    form.addEventListener('submit', onSubmit);
+    dlg.addEventListener('cancel', () => done(false), { once: true });
+  });
+}
+
+function shortBlock(i, r) {
+  const s = shortMap[r.link];
+  if (s) {
+    return `<div class="ln-short">
+      <span class="ln-l">Krótki link</span>
+      <code class="ln-u">${esc(s.short)}</code>
+      <button type="button" class="cp" data-copy-short="${i}" aria-label="Kopiuj krótki link: ${esc(r.channel)}, ${esc(r.placement)}">Kopiuj</button>
+      ${s.rule ? '<p class="note warn ln-note">Ten krótki link zadziała, gdy na serwerze będzie dodana reguła dla całej domeny (jednorazowo, opis w docs/skracacz.md).</p>' : ''}
+    </div>`;
+  }
+  if (!shortOpen.has(r.link)) return '';
+  const suggest = slugify(`${r.source}-${r.campaign}`);
+  return `<div class="ln-short ln-make">
+    <label class="ln-l" for="sc-${i}">Własny kod</label>
+    <input id="sc-${i}" class="sc-in" type="text" autocomplete="off" spellcheck="false" maxlength="40" placeholder="np. ${esc(suggest)} – puste = kod losowy" aria-describedby="se-${i}">
+    <button type="button" class="cp" data-make-short="${i}">Utwórz</button>
+    <p class="note ln-note" id="se-${i}" aria-live="polite"></p>
+  </div>`;
+}
+
+async function makeShort(i) {
+  const r = currentRows[i];
+  const input = $(`sc-${i}`);
+  const err = $(`se-${i}`);
+  const code = slugify(input?.value || '');
+  let res = await shortApi({ action: 'shorten', url: r.link, code });
+  if (res.status === 401 && (await askLogin())) res = await shortApi({ action: 'shorten', url: r.link, code });
+  if (!res.ok) {
+    if (err) err.textContent = res.error || 'Nie udało się skrócić linku.';
+    return;
+  }
+  shortMap[r.link] = { short: res.short, rule: !!res.needsRootRule };
+  store.set(STORE.short, shortMap);
+  shortOpen.delete(r.link);
+  render();
+  copy(res.short, res.existing ? 'Ten link był już skrócony – skopiowano krótki link' : 'Krótki link skopiowany');
+}
+
 let currentRows = [];
 let currentGroups = [];
 function renderResult(base) {
@@ -266,8 +345,11 @@ function renderResult(base) {
           <div class="ln">
             <span class="ln-l">${esc(r.placement)}</span>
             <code class="ln-u" title="${esc(r.link)}">${esc(r.link)}</code>
-            <button type="button" class="cp" data-copy="${i}" aria-label="Kopiuj link: ${esc(r.channel)}, ${esc(r.placement)}">Kopiuj</button>
-          </div>`;
+            <span class="ln-btns">
+              <button type="button" class="cp" data-copy="${i}" aria-label="Kopiuj link: ${esc(r.channel)}, ${esc(r.placement)}">Kopiuj</button>
+              ${shortener.available && !shortMap[r.link] ? `<button type="button" class="cp" data-short="${i}" aria-expanded="${shortOpen.has(r.link)}" aria-label="Skróć link: ${esc(r.channel)}, ${esc(r.placement)}">Skróć</button>` : ''}
+            </span>
+          </div>${shortBlock(i, r)}`;
           }).join('')}
         </section>`)
       .join('');
@@ -546,6 +628,22 @@ function init() {
   els.result.addEventListener('click', (e) => {
     const b = e.target.closest('[data-copy]');
     if (b) copy(currentRows[Number(b.dataset.copy)].link, 'Link skopiowany');
+    const cs = e.target.closest('[data-copy-short]');
+    if (cs) copy(shortMap[currentRows[Number(cs.dataset.copyShort)].link].short, 'Krótki link skopiowany');
+    const sh = e.target.closest('[data-short]');
+    if (sh) {
+      const i = Number(sh.dataset.short);
+      const link = currentRows[i].link;
+      (async () => {
+        if (!shortener.loggedIn && !(await askLogin())) return;
+        if (shortOpen.has(link)) shortOpen.delete(link);
+        else shortOpen.add(link);
+        render();
+        $(`sc-${i}`)?.focus();
+      })();
+    }
+    const mk = e.target.closest('[data-make-short]');
+    if (mk) makeShort(Number(mk.dataset.makeShort));
     const g = e.target.closest('[data-copy-group]');
     if (g) {
       const group = currentGroups[Number(g.dataset.copyGroup)];
@@ -556,6 +654,21 @@ function init() {
   $('download-csv').addEventListener('click', () => {
     download(`utm-${slugify(els.campaign.value) || 'linki'}.csv`, toCsv(currentRows), 'text/csv;charset=utf-8');
   });
+
+  els.result.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && e.target.classList?.contains('sc-in')) makeShort(Number(e.target.id.slice(3)));
+  });
+  // Skracacz dostępny tylko na naszym serwerze (na podglądzie GitHub Pages API nie istnieje).
+  fetch(SHORT_API, { credentials: 'same-origin' })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => {
+      if (d?.ok) {
+        shortener.available = true;
+        shortener.loggedIn = !!d.loggedIn;
+        render();
+      }
+    })
+    .catch(() => {});
 
   render();
 }

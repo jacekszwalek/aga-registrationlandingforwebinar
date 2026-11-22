@@ -25,3 +25,6 @@ Miejsca o tym samym `utm_medium` połączono (profil i strona FB → „Post”;
 
 ## Pliki
 `utmgen/index.html`, `app.js` (interfejs), `utm.js` (logika – testy `tests/unit/utmgen.test.ts`), `channels.js`, `style.css`, `fonts/`, `logo.png`, `.htaccess`. Testy e2e: `tests/e2e/utmgen.spec.ts`.
+
+## Skracanie linków
+Przycisk **„Skróć”** przy linku tworzy krótki link na domenie Przystani (np. `…/webinar/l/k3x9`). Szczegóły, archiwum i reguła dla całej domeny: [`skracacz.md`](skracacz.md).
