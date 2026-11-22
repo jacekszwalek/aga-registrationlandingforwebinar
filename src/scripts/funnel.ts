@@ -1,7 +1,7 @@
 import { eventConfig } from '../config/event.config';
 import { withBase } from '../lib/paths';
 import { extractUtm } from '../lib/utm';
-import { buildPayload } from '../lib/funnel';
+import { botSignals, buildPayload } from '../lib/funnel';
 
 /**
  * Licznik etapów bez cookies: wysyła zdarzenia do naszego serwera (api/track.php) niezależnie od zgody
@@ -53,15 +53,22 @@ export function funnel(event: string, params: Record<string, unknown> = {}): voi
  * „engaged” = pierwszy dotyk, kliknięcie, klawisz albo przewinięcie (człowiek, nie wczytanie w tle).
  */
 function start(): void {
+  const bot = botSignals({
+    webdriver: navigator.webdriver,
+    ua: navigator.userAgent,
+    languages: navigator.languages,
+    screenW: screen.width,
+    innerW: window.innerWidth,
+  });
   const hidden = document.visibilityState === 'hidden' || (document as Document & { prerendering?: boolean }).prerendering === true;
-  if (!hidden) funnel('page_view');
+  if (!hidden) funnel('page_view', { bot });
   else {
-    funnel('page_preload');
+    funnel('page_preload', { bot });
     const onShow = () => {
       if (document.visibilityState !== 'visible') return;
       document.removeEventListener('visibilitychange', onShow);
       document.removeEventListener('prerenderingchange', onShow);
-      funnel('page_view');
+      funnel('page_view', { bot });
     };
     document.addEventListener('visibilitychange', onShow);
     document.addEventListener('prerenderingchange', onShow);
@@ -74,5 +81,17 @@ function start(): void {
     ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach((t) => window.removeEventListener(t, onEngage));
   };
   ['pointerdown', 'touchstart', 'keydown', 'scroll'].forEach((t) => window.addEventListener(t, onEngage, { passive: true }));
+
+  // Czas, przez który strona była WIDOCZNA (karta w tle się nie liczy): 10 s i 30 s.
+  let visibleMs = 0;
+  const timer = window.setInterval(() => {
+    if (document.visibilityState !== 'visible') return;
+    visibleMs += 1000;
+    if (visibleMs === 10_000) funnel('stay_10s');
+    if (visibleMs === 30_000) {
+      funnel('stay_30s');
+      window.clearInterval(timer);
+    }
+  }, 1000);
 }
 if (enabled) start();

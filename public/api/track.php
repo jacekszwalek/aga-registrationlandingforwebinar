@@ -10,7 +10,7 @@ header('Cache-Control: no-store');
 header('X-Robots-Tag: noindex');
 
 const EVENTS = [
-    'page_view', 'page_preload', 'engaged', 'scroll_50', 'scroll_90', 'sticky_cta_click', 'form_open', 'form_start',
+    'page_view', 'page_preload', 'engaged', 'stay_10s', 'stay_30s', 'scroll_50', 'scroll_90', 'sticky_cta_click', 'form_open', 'form_start',
     'form_submit_attempt', 'form_error', 'signup', 'generate_lead', 'newsletter_signup',
     'add_to_calendar', 'consultation_click', 'logo_click', 'share_click',
 ];
@@ -74,6 +74,7 @@ $row = array_filter([
     'a' => $pick($in['a'] ?? '', ['facebook', 'instagram', 'inna'], 'inna'),
     'f' => $clean($in['f'] ?? '', 20),
     'r' => $clean($in['r'] ?? '', 30),
+    'bt' => $clean($in['bt'] ?? '', 30),
 ], static fn ($v) => $v !== null);
 
 pzz_stats_append($row);
