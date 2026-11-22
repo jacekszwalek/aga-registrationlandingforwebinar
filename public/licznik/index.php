@@ -254,7 +254,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
       <h1>Licznik webinaru</h1>
       <p class="muted">Bez cookies i bez danych osobowych · liczy każde wczytanie strony osobno · czas polski</p>
     </div>
-    <div style="display:flex;gap:10px;align-items:center"><a class="btn ghost" href="linki/">Krótkie linki</a><form method="post"><button class="ghost" name="logout" value="1">Wyloguj</button></form></div>
+    <form method="post"><button class="ghost" name="logout" value="1">Wyloguj</button></form>
   </div>
 
   <div class="card filterbar">
