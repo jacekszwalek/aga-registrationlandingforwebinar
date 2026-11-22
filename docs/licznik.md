@@ -11,7 +11,7 @@ czas, zdarzenie, losowy identyfikator wczytania strony (tylko w pamięci karty),
 `utm_source/medium/campaign/content`, `mobile/desktop`, aplikacja (Facebook/Instagram/przeglądarka), przy błędach – pole i powód.
 **Nie** zapisujemy: IP, user-agenta, e-maila, imienia, cookies, localStorage. Boty (podglądy linków, crawlery) są pomijane.
 
-Zdarzenia: `page_view`, `scroll_50`, `scroll_90`, `sticky_cta_click`, `form_open`, `form_start`, `form_submit_attempt`,
+Zdarzenia: `page_view` (tylko gdy strona jest widoczna), `page_preload` (wczytanie w tle przez aplikację Instagram/Facebook, bez pokazania), `engaged` (pierwszy dotyk, kliknięcie, klawisz lub przewinięcie), `scroll_50`, `scroll_90`, `sticky_cta_click`, `form_open`, `form_start`, `form_submit_attempt`,
 `form_error` (`name/email · required/invalid`, `network · network` lub `network · http-NNN`), `signup` (serwer przyjął zapis),
 `generate_lead`, `newsletter_signup`, `add_to_calendar`, `consultation_click`, `logo_click`, `share_click`.
 
@@ -28,3 +28,6 @@ Sprawdzane przez `password_verify`; w repo jest tylko skrót bcrypt (`DEFAULT_HA
 - Liczby to wczytania strony, nie osoby (odświeżenie = nowe wejście). Źródłem prawdy o zapisach jest MailerLite.
 - Polityka prywatności: warto dopisać zdanie o anonimowym liczniku statystyk bez cookies (do weryfikacji prawnej – `docs/todo.md`).
 - Zerowanie danych: usuń plik `~/webinar-stats/events.jsonl` w Menedżerze plików cPanelu.
+
+## Wczytania w tle (Instagram/Facebook)
+Aplikacje Meta wczytują stronę z reklamy z wyprzedzeniem, zanim osoba kliknie (preload) – skrypty wykonują się, choć nikt strony nie widzi. Do 22.11.2026 liczyły się one jako wejścia (np. 264 wejścia z Instagrama, z czego 6 przewinięć). Teraz `page_view` wysyłamy dopiero, gdy strona jest widoczna, a miarą „prawdziwych” wejść jest `engaged`.
