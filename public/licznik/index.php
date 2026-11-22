@@ -107,6 +107,7 @@ form.filters label{font-size:13px;margin-bottom:4px}
 .quick a{font-size:14px;color:var(--pink)}
 .funnel{display:grid;gap:6px}
 .step{display:grid;grid-template-columns:minmax(150px,240px) 1fr 110px 90px;gap:10px;align-items:center}
+.qname{font-size:16px;font-weight:600}
 .funnel .prev{font-size:13px;color:var(--muted);text-align:right}
 .step-base .bar span{background:#c98aa6}
 .funnel-head{display:flex;flex-wrap:wrap;gap:10px 20px;justify-content:space-between;align-items:center;margin-bottom:8px}
@@ -351,7 +352,7 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
   <h2>Człowiek czy bot? Ocena wejść</h2>
   <div class="card funnel">
     <?php foreach ($CLASSES as $k => [$label, $hint]): $n = $quality[$k]; $w = $qTotal ? round(100 * $n / $qTotal) : 0; ?>
-      <div class="step"><span><span class="muted"><?= h(ucfirst($hint)) ?> ·</span> <?= h($label) ?></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $qTotal) ?></span></div>
+      <div class="step"><span><span class="qname"><?= h(ucfirst($hint)) ?></span> <span class="muted">· <?= h($label) ?></span></span><span class="bar"><span style="width:<?= $w ?>%"></span></span><span class="num"><b><?= $n ?></b> · <?= $pct($n, $qTotal) ?></span></div>
     <?php endforeach; ?>
     <p class="muted" style="margin:6px 0 0">Każde wczytanie landingu dostaje jedną ocenę: liczy się najmocniejszy sygnał. Ludzie to zwykle dwa pierwsze wiersze.</p>
   </div>
