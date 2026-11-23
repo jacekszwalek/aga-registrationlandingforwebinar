@@ -234,10 +234,23 @@ dialog { overflow-y: auto; }
 .sl-q { width: 100%; font: inherit; font-size: 16px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--line); border-radius: 8px; margin-bottom: 8px; }
 .sl { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
 .sl-short { font-weight: 600; color: var(--ink); overflow-wrap: anywhere; }
-.sl-url { grid-column: 1; font-size: 0.74rem; color: var(--muted); overflow-wrap: anywhere; word-break: break-all; }
-.sl-meta, .sl-stats { grid-column: 1; font-size: 0.8rem; color: var(--text); }
+.sl-code { color: var(--pink-800); background: var(--blush-50); border-radius: 4px; padding: 0 4px; }
+.sl-to { grid-column: 1 / -1; font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+.sl-url { grid-column: 1 / -1; font-family: var(--mono); font-size: 0.76rem; line-height: 1.9; color: var(--text); overflow-wrap: anywhere; }
+.sl-url .base { color: var(--muted); }
+.sl-url .amp { color: var(--muted); }
+.p { border-radius: 4px; padding: 1px 4px; }
+.p .k { opacity: 0.72; }
+.p-src { background: #fbe1ec; color: #8c1d4f; }
+.p-med { background: #e8e3f8; color: #4b3a8f; }
+.p-cmp { background: #dff1e6; color: #2f6f4f; }
+.p-ct { background: #fdf0d5; color: #7a5000; }
+.p-term { background: #e3eef8; color: #2d5577; }
+.sl-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 0 0 8px; font-size: 0.78rem; }
+.sl-legend .small { font-size: 0.78rem; }
+.sl-meta, .sl-stats { grid-column: 1 / -1; font-size: 0.8rem; color: var(--text); }
 .sl-stats b { color: var(--ink); }
-.sl-act { grid-column: 2; grid-row: 1 / span 4; display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.sl-act { grid-column: 2; grid-row: 1; display: flex; align-items: center; gap: 2px; }
 .sl-badge { display: inline-block; margin-left: 6px; padding: 1px 8px; border-radius: 999px; font-size: 0.72rem; font-weight: 600; vertical-align: middle; }
 .sl-badge.active { background: #e3f1e9; color: #2f6f4f; }
 .sl-badge.sleeping { background: #fdf0d5; color: #7a5000; }

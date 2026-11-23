@@ -301,6 +301,27 @@ async function makeShort(i) {
 const SL_STATES = { current: 'Bieżące', active: 'Aktywne', sleeping: 'Uśpione', archived: 'Zarchiwizowane', all: 'Wszystkie' };
 const SL_BADGE = { active: 'Aktywny', sleeping: 'Uśpiony', archived: 'Zarchiwizowany' };
 const sl = { links: [], filter: 'current', q: '', loaded: false, error: '' };
+const UTM_CLASS = { utm_source: 'p-src', utm_medium: 'p-med', utm_campaign: 'p-cmp', utm_content: 'p-ct', utm_term: 'p-term' };
+/** Krótki link: domena i ścieżka zwykłym tekstem, kod wyróżniony. */
+function shortHtml(short) {
+  const m = /^https?:\/\/(.*\/l\/)([^/]+)$/.exec(short);
+  return m ? `${esc(m[1])}<span class="sl-code">${esc(m[2])}</span>` : esc(short);
+}
+/** Adres docelowy rozłożony: parametry UTM w kolorach, „&” i reszta adresu bez tła – wygląda jak prawdziwy link. */
+function urlHtml(url) {
+  let u;
+  try {
+    u = new URL(url);
+  } catch {
+    return esc(url);
+  }
+  const base = `${u.host}${u.pathname}`;
+  const params = [...u.searchParams.entries()].map(([k, v]) => {
+    const pair = `<span class="k">${esc(k)}=</span>${esc(v)}`;
+    return UTM_CLASS[k] ? `<span class="p ${UTM_CLASS[k]}">${pair}</span>` : `<span>${esc(k)}=${esc(v)}</span>`;
+  });
+  return `<span class="base">${esc(base)}${params.length ? '?' : ''}</span>${params.join('<span class="amp">&amp;</span>')}${u.hash ? `<span class="base">${esc(u.hash)}</span>` : ''}`;
+}
 const fmtDate = (t) => (t ? new Date(t * 1000).toLocaleDateString('pl-PL') : '–');
 
 async function loadLinks() {
@@ -339,12 +360,10 @@ function renderLinks() {
   }
   $('sl-list').innerHTML = list
     .map((l) => {
-      const u = l.utm || {};
-      const meta = [u.campaign && `kampania <b>${esc(u.campaign)}</b>`, (u.source || u.medium) && `${esc(u.source || '–')} / ${esc(u.medium || '–')}`, u.content && `materiał ${esc(u.content)}`].filter(Boolean).join(' · ');
       return `<article class="sl">
-        <div><span class="sl-short">${esc(l.short)}</span><span class="sl-badge ${l.state}">${SL_BADGE[l.state]}</span></div>
-        <div class="sl-url">${esc(l.url)}</div>
-        ${meta ? `<div class="sl-meta">${meta}</div>` : ''}
+        <div><span class="sl-short">${shortHtml(l.short)}</span><span class="sl-badge ${l.state}">${SL_BADGE[l.state]}</span></div>
+        <div class="sl-to">↳ prowadzi do</div>
+        <div class="sl-url">${urlHtml(l.url)}</div>
         <div class="sl-stats"><b>${l.clicks}</b> ${plural(l.clicks, 'kliknięcie', 'kliknięcia', 'kliknięć')} · ostatnie: ${fmtDate(l.last)} · ${l.last ? `bez kliknięć od <b>${l.idle}</b> dni` : '<b>nigdy nieklikany</b>'} · utworzony ${fmtDate(l.created)}</div>
         <div class="sl-act">
           <button type="button" class="cp" data-sl-copy="${esc(l.code)}" aria-label="Kopiuj ${esc(l.short)}">Kopiuj</button>
