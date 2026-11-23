@@ -61,4 +61,4 @@ Problem: nagłówek ma formę żeńską. Webinar jest głównie dla kobiet, ale 
 - **Przed wydaniem**: `allowPreviewParams = false` (wyłącza `?state=`, `?v=`, `?mock=fail`).
 
 - [ ] Polityka prywatności: dopisać anonimowy licznik statystyk bez cookies (`docs/licznik.md`) – do weryfikacji prawnej.
-- [ ] Reguła skracacza w `public_html/.htaccess` (krótkie linki poza `/webinar/` i do innych domen) – `docs/skracacz.md`.
+- [x] Reguła skracacza w `public_html/.htaccess` (dodana 23.11.2026, wariant `R=302`) – `docs/skracacz.md`.
