@@ -58,6 +58,28 @@ function pzz_links_update(callable $fn): mixed
     }
 }
 
+/**
+ * Adres na naszej domenie bez „/” na końcu ścieżki (np. …/webinar?utm_…) → z „/” (…/webinar/?utm_…),
+ * jeśli ostatni człon nie jest plikiem. Dzięki temu krótki link ma postać …/webinar/l/kod.
+ */
+function pzz_normalize_url(string $url): string
+{
+    $u = parse_url($url);
+    if (!$u || !in_array(strtolower($u['host'] ?? ''), PZZ_SITE_HOSTS, true)) return $url;
+    $path = $u['path'] ?? '';
+    if ($path !== '' && (str_ends_with($path, '/') || str_contains(basename($path), '.'))) return $url;
+    $newPath = $path . '/';
+    $pos = strpos($url, $u['host']) + strlen($u['host']) + (isset($u['port']) ? strlen(':' . $u['port']) : 0);
+    return substr($url, 0, $pos) . $newPath . substr($url, $pos + strlen($path));
+}
+
+/** Aktualny adres docelowy i ścieżka krótkiego linku (po normalizacji – także dla linków utworzonych wcześniej). */
+function pzz_link_current(array $l): array
+{
+    $url = pzz_normalize_url((string) $l['url']);
+    return [$url, pzz_link_prefix($url)];
+}
+
 /** Ścieżka przed „l/”: katalog ścieżki strony docelowej na naszej domenie, inaczej „/”. */
 function pzz_link_prefix(string $url): string
 {
@@ -141,12 +163,14 @@ function pzz_link_create(string $url, string $code = ''): array
     if ($code !== '' && !pzz_valid_code($code)) {
         throw new InvalidArgumentException('Kod: 3–40 znaków, małe litery, cyfry i „-” (nie na początku ani końcu).');
     }
+    $url = pzz_normalize_url($url);
     $prefix = pzz_link_prefix($url);
     return pzz_links_update(static function (array &$links) use ($url, $code, $prefix) {
         // Ten sam adres = ten sam krótki link (chyba że prosisz o konkretny nowy kod).
         foreach ($links as $c => $l) {
-            if (($l['url'] ?? '') === $url && ($code === '' || $code === (string) $c)) {
-                return ['code' => (string) $c, 'short' => pzz_short_url((string) $c, $l['prefix']), 'existing' => true, 'needsRootRule' => !str_starts_with($l['prefix'], '/webinar/')];
+            [$lUrl, $lPrefix] = pzz_link_current($l);
+            if ($lUrl === $url && ($code === '' || $code === (string) $c)) {
+                return ['code' => (string) $c, 'short' => pzz_short_url((string) $c, $lPrefix), 'existing' => true, 'needsRootRule' => !str_starts_with($lPrefix, '/webinar/')];
             }
         }
         if ($code !== '' && isset($links[$code])) throw new InvalidArgumentException('Ten kod jest już zajęty – wybierz inny.');
@@ -160,5 +184,8 @@ function pzz_link_create(string $url, string $code = ''): array
 function pzz_link_resolve(array $links, string $code, string $prefix): ?string
 {
     $l = $links[strtolower($code)] ?? null;
-    return $l && ($l['prefix'] ?? '') === pzz_clean_prefix($prefix) ? (string) $l['url'] : null;
+    if (!$l) return null;
+    [$url, $current] = pzz_link_current($l);
+    // Działa adres aktualny i ten, pod którym link utworzono (np. stary …/l/kod sprzed normalizacji).
+    return in_array(pzz_clean_prefix($prefix), [$current, $l['prefix'] ?? ''], true) ? $url : null;
 }

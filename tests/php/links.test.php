@@ -49,6 +49,18 @@ eq(pzz_link_resolve($links, 'nieznany', '/webinar/'), null, 'nieznany kod – br
 eq(pzz_is_bot_ua('facebookexternalhit/1.1'), true, 'podgląd Facebooka to bot');
 eq(pzz_is_bot_ua('Mozilla/5.0 (iPhone) Instagram 350'), false, 'Instagram to człowiek');
 
+eq(pzz_normalize_url('https://przystanzmianyzawodowej.pl/webinar?utm_source=x'), 'https://przystanzmianyzawodowej.pl/webinar/?utm_source=x', 'normalizacja: /webinar → /webinar/');
+eq(pzz_normalize_url('https://przystanzmianyzawodowej.pl/webinar/?a=1'), 'https://przystanzmianyzawodowej.pl/webinar/?a=1', 'normalizacja: bez zmian z „/”');
+eq(pzz_normalize_url('https://przystanzmianyzawodowej.pl/plik.pdf'), 'https://przystanzmianyzawodowej.pl/plik.pdf', 'normalizacja: plik bez zmian');
+eq(pzz_normalize_url('https://przystanzmianyzawodowej.pl?x=1'), 'https://przystanzmianyzawodowej.pl/?x=1', 'normalizacja: sama domena');
+eq(pzz_normalize_url('https://calendly.com/x/rozmowa'), 'https://calendly.com/x/rozmowa', 'normalizacja: obca domena bez zmian');
+$c = pzz_link_create('https://przystanzmianyzawodowej.pl/webinar?utm_source=fb');
+eq(str_contains($c['short'], '/webinar/l/'), true, 'link do …/webinar bez „/” – krótki pod /webinar/l/');
+// Link sprzed normalizacji (prefiks „/”): działa pod starym i nowym adresem, prowadzi na …/webinar/?…
+$legacy = ['qshq' => ['url' => 'https://przystanzmianyzawodowej.pl/webinar?utm_source=facebook', 'prefix' => '/', 'created' => 1, 'clicks' => 0, 'last' => null]];
+eq(pzz_link_resolve($legacy, 'qshq', '/'), 'https://przystanzmianyzawodowej.pl/webinar/?utm_source=facebook', 'stary link pod /l/');
+eq(pzz_link_resolve($legacy, 'qshq', '/webinar/'), 'https://przystanzmianyzawodowej.pl/webinar/?utm_source=facebook', 'stary link pod /webinar/l/');
+
 array_map('unlink', array_filter(glob(pzz_links_dir() . '/{,.}*', GLOB_BRACE) ?: [], 'is_file'));
 @rmdir(pzz_links_dir());
 echo $fail ? "$fail błędów\n" : "OK – skracacz\n";

@@ -52,17 +52,17 @@ switch ($in['action'] ?? '') {
         $list = [];
         foreach (pzz_links_load() as $code => $l) {
             $code = (string) $code;
+            [$url, $prefix] = pzz_link_current($l);
             $list[] = [
                 'code' => $code,
-                'short' => pzz_short_url($code, $l['prefix']),
-                'url' => $l['url'],
-                'utm' => pzz_link_utm($l['url']),
+                'short' => pzz_short_url($code, $prefix),
+                'url' => $url,
+                'utm' => pzz_link_utm($url),
                 'created' => (int) $l['created'],
                 'clicks' => (int) ($l['clicks'] ?? 0),
                 'last' => $l['last'] ? (int) $l['last'] : null,
                 'idle' => pzz_link_idle_days($l, $now),
                 'state' => pzz_link_state($l, $now),
-                'needsRootRule' => !str_starts_with($l['prefix'], '/webinar/'),
             ];
         }
         // Najdłużej nieklikane na górze.
@@ -72,12 +72,12 @@ switch ($in['action'] ?? '') {
         if (!pzz_logged_in()) out(401, ['ok' => false, 'error' => 'Zaloguj się.', 'login' => true]);
         $del = strtolower(preg_replace('/[^A-Za-z0-9-]/', '', (string) ($in['code'] ?? '')));
         $ok = pzz_links_update(static function (array &$links) use ($del) {
-            if (!isset($links[$del]) || (int) ($links[$del]['clicks'] ?? 0) > 0) return false;
+            if (!isset($links[$del])) return false;
             unset($links[$del]);
             return true;
         });
         if ($ok) out(200, ['ok' => true]);
-        out(409, ['ok' => false, 'error' => 'Nie usunięto: link ma już kliknięcia albo nie istnieje.']);
+        out(404, ['ok' => false, 'error' => 'Nie ma takiego linku.']);
     default:
         out(400, ['ok' => false, 'error' => 'Nieznana akcja.']);
 }

@@ -340,7 +340,7 @@ test('skracacz: logowanie, własny kod i krótki link do skopiowania', async ({ 
   await expect(page.locator('.ln-short .ln-u').first()).toHaveText('https://przystanzmianyzawodowej.pl/webinar/l/fb-261203');
 });
 
-test('krótkie linki: lista w generatorze – bieżące bez zarchiwizowanych, filtr, usuwanie', async ({ page }) => {
+test('krótkie linki: lista w generatorze – bieżące bez zarchiwizowanych, filtr, usuwanie ręczne', async ({ page }) => {
   const now = Math.floor(Date.now() / 1000);
   let links = [
     { code: 'nowy', short: 'https://przystanzmianyzawodowej.pl/webinar/l/nowy', url: 'https://przystanzmianyzawodowej.pl/webinar/?utm_source=facebook', utm: { source: 'facebook' }, created: now, clicks: 0, last: null, idle: 0, state: 'active', needsRootRule: false },
@@ -361,7 +361,7 @@ test('krótkie linki: lista w generatorze – bieżące bez zarchiwizowanych, fi
   await page.locator('[data-sl-filter="archived"]').click();
   await expect(page.locator('#links .sl')).toHaveCount(1);
   await expect(page.locator('#links .sl')).toContainText('webinar/l/stary');
-  await expect(page.locator('[data-sl-del]')).toHaveCount(0); // ma kliknięcia – bez „Usuń”
+  await expect(page.locator('[data-sl-del="stary"]')).toBeVisible(); // usuwanie ręczne – także linków z kliknięciami
   await page.locator('[data-sl-filter="current"]').click();
   page.once('dialog', (d) => d.accept());
   await page.locator('[data-sl-del="nowy"]').click();

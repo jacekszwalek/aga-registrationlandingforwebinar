@@ -361,11 +361,11 @@ td.n,th.n{text-align:right;font-variant-numeric:tabular-nums}
     <div><label for="ile">Na stronie</label><select id="ile" name="ile" onchange="this.form.submit()"><?php foreach ([50, 100, 500] as $n): ?><option<?= $n === $perPage ? ' selected' : '' ?>><?= $n ?></option><?php endforeach; ?></select></div>
     <noscript><div><button type="submit">Pokaż</button></div></noscript>
   </form>
-  <div class="scroll"><table><thead><tr><th>Czas</th><th>Zdarzenie</th><th>Ocena wejścia</th><th>Strona</th><th>Kampania</th><th>Źródło / medium</th><th>Materiał</th><th>Urządzenie</th><th>Szczegóły</th></tr></thead><tbody>
+  <div class="scroll"><table><thead><tr><th>Czas</th><th>Zdarzenie</th><th>Ocena wejścia</th><th>Strona</th><th>Kampania</th><th>Źródło / medium</th><th>Materiał</th><th>Urządzenie</th></tr></thead><tbody>
     <?php foreach ($logPage as $r): $vc = $visitClass[$r['v'] ?? ''] ?? null; ?>
-      <tr><td><?= h(date('d.m H:i:s', (int) $r['t'])) ?></td><td><?= h($EVENT_PL[$r['e']] ?? $r['e']) ?></td><td><?= h($vc ? $CLASSES[$vc][1] : '–') ?></td><td><?= h($r['p'] ?? '') ?></td><td><?= h($r['c'] ?? '–') ?></td><td><?= h(($r['s'] ?? '–') . ' / ' . ($r['m'] ?? '–')) ?></td><td><?= h($r['ct'] ?? '') ?></td><td><?= h(($r['d'] ?? '') . ' · ' . ($r['a'] ?? '')) ?></td><td><?= h(trim(($r['f'] ?? '') . ' ' . ($r['r'] ?? '') . (!empty($r['bt']) ? ' bot:' . $r['bt'] : ''))) ?></td></tr>
+      <tr><td><?= h(date('d.m H:i:s', (int) $r['t'])) ?></td><td><?= h($EVENT_PL[$r['e']] ?? $r['e']) ?></td><td><?= h($vc ? $CLASSES[$vc][1] : '–') ?></td><td><?= h($r['p'] ?? '') ?></td><td><?= h($r['c'] ?? '–') ?></td><td><?= h(($r['s'] ?? '–') . ' / ' . ($r['m'] ?? '–')) ?></td><td><?= h($r['ct'] ?? '') ?></td><td><?= h(($r['d'] ?? '') . ' · ' . ($r['a'] ?? '')) ?></td></tr>
     <?php endforeach; ?>
-    <?php if (!$logPage): ?><tr><td colspan="9">Brak zdarzeń tego typu.</td></tr><?php endif; ?>
+    <?php if (!$logPage): ?><tr><td colspan="8">Brak zdarzeń tego typu.</td></tr><?php endif; ?>
   </tbody></table></div>
   <nav class="pager" aria-label="Strony dziennika">
     <?php if ($page > 1): ?><a class="btn ghost" href="<?= h($qs(['str' => (string) ($page - 1)])) ?>#zdarzenia">← Nowsze</a><?php endif; ?>

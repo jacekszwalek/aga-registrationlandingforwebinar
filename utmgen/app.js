@@ -223,7 +223,7 @@ function updatePartnerField() {
 /* ---------- Prawy panel: gotowe linki ---------- */
 /* ---------- Skracacz ---------- */
 const shortener = { available: false, loggedIn: false };
-const shortMap = store.get(STORE.short, {}); // długi link → { short, rule }
+const shortMap = store.get(STORE.short, {}); // długi link → { short }
 const shortOpen = new Set(); // długie linki z otwartym polem „własny kod”
 
 async function shortApi(body) {
@@ -267,7 +267,6 @@ function shortBlock(i, r) {
       <span class="ln-l">Krótki link</span>
       <code class="ln-u">${esc(s.short)}</code>
       <button type="button" class="cp" data-copy-short="${i}" aria-label="Kopiuj krótki link: ${esc(r.channel)}, ${esc(r.placement)}">Kopiuj</button>
-      ${s.rule ? '<p class="note warn ln-note">Ten krótki link zadziała, gdy na serwerze będzie dodana reguła dla całej domeny (jednorazowo, opis w docs/skracacz.md).</p>' : ''}
     </div>`;
   }
   if (!shortOpen.has(r.link)) return '';
@@ -291,7 +290,7 @@ async function makeShort(i) {
     if (err) err.textContent = res.error || 'Nie udało się skrócić linku.';
     return;
   }
-  shortMap[r.link] = { short: res.short, rule: !!res.needsRootRule };
+  shortMap[r.link] = { short: res.short };
   store.set(STORE.short, shortMap);
   shortOpen.delete(r.link);
   render();
@@ -346,10 +345,10 @@ function renderLinks() {
         <div><span class="sl-short">${esc(l.short)}</span><span class="sl-badge ${l.state}">${SL_BADGE[l.state]}</span></div>
         <div class="sl-url">${esc(l.url)}</div>
         ${meta ? `<div class="sl-meta">${meta}</div>` : ''}
-        <div class="sl-stats"><b>${l.clicks}</b> ${plural(l.clicks, 'kliknięcie', 'kliknięcia', 'kliknięć')} · ostatnie: ${fmtDate(l.last)} · ${l.last ? `bez kliknięć od <b>${l.idle}</b> dni` : '<b>nigdy nieklikany</b>'} · utworzony ${fmtDate(l.created)}${l.needsRootRule ? ' · <span class="warn-t">wymaga reguły na serwerze</span>' : ''}</div>
+        <div class="sl-stats"><b>${l.clicks}</b> ${plural(l.clicks, 'kliknięcie', 'kliknięcia', 'kliknięć')} · ostatnie: ${fmtDate(l.last)} · ${l.last ? `bez kliknięć od <b>${l.idle}</b> dni` : '<b>nigdy nieklikany</b>'} · utworzony ${fmtDate(l.created)}</div>
         <div class="sl-act">
           <button type="button" class="cp" data-sl-copy="${esc(l.code)}" aria-label="Kopiuj ${esc(l.short)}">Kopiuj</button>
-          ${l.clicks === 0 ? `<button type="button" class="cp" data-sl-del="${esc(l.code)}" aria-label="Usuń ${esc(l.short)}">Usuń</button>` : ''}
+          <button type="button" class="cp" data-sl-del="${esc(l.code)}" aria-label="Usuń ${esc(l.short)}">Usuń</button>
         </div>
       </article>`;
     })
@@ -380,7 +379,8 @@ function setupLinks() {
     const d = e.target.closest('[data-sl-del]');
     if (d) {
       const l = sl.links.find((x) => x.code === d.dataset.slDel);
-      if (!confirm(`Usunąć ${l.short}?\nJego adres będzie prowadził na stronę nadrzędną.`)) return;
+      const warn = l.clicks > 0 ? `\n\nUwaga: ten link ma ${l.clicks} ${plural(l.clicks, 'kliknięcie', 'kliknięcia', 'kliknięć')} – jeśli nadal gdzieś krąży, osoby trafią na stronę nadrzędną bez UTM-ów.` : '';
+      if (!confirm(`Usunąć ${l.short}?\nJego adres będzie prowadził na stronę nadrzędną.${warn}`)) return;
       const res = await shortApi({ action: 'delete', code: l.code });
       if (!res.ok) return toast(res.error || 'Nie udało się usunąć.');
       // Usunięty link znika też z pamięci generatora.

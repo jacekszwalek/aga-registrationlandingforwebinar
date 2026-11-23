@@ -14,7 +14,9 @@ Logowanie tym samym hasłem co licznik webinaru (zapamiętane na 30 dni).
 | `https://przystanzmianyzawodowej.pl/bezplatne-szkolenie/` | `https://przystanzmianyzawodowej.pl/bezplatne-szkolenie/l/p4t8` ¹ |
 | inna domena (np. Calendly) | `https://przystanzmianyzawodowej.pl/l/x2v7` ¹ |
 
-¹ wymaga jednorazowej reguły w `public_html/.htaccess` (niżej). Generator pokazuje przy takim linku ostrzeżenie.
+¹ działa dzięki regule w `public_html/.htaccess` (dodana 23.11.2026, niżej).
+
+Adres bez „/” na końcu (np. `…/webinar?utm_…`) jest poprawiany na `…/webinar/?utm_…`, więc krótki link ma postać `…/webinar/l/kod`. Linki utworzone wcześniej pod `/l/kod` dalej działają i prowadzą na poprawiony adres.
 
 - **Kod**: losowy, 4 znaki bez mylących się `0/o/1/l/i` (ok. 800 tys. kombinacji; potem automatycznie 5 znaków) albo własny, np. `linkedin-261203` (3–40 znaków: małe litery, cyfry, „-”).
 - **Bez duplikatów**: ten sam pełny adres = ten sam krótki link.
@@ -25,15 +27,15 @@ Logowanie tym samym hasłem co licznik webinaru (zapamiętane na 30 dni).
 - Kliknięcia liczone po stronie serwera: bez cookies, bez IP; boty i podglądy linków (Facebook, LinkedIn, WhatsApp…) się nie liczą.
 - **Aktywne** – kliknięte lub utworzone w ostatnich 30 dniach; **uśpione** – 30–180 dni bez kliknięcia; **zarchiwizowane** – 180+ dni bez kliknięcia (automatycznie). Zarchiwizowane znikają z bieżącej listy, ale **nadal działają**.
 - Lista w generatorze sortuje od najdłużej nieklikanych; filtry: bieżące (domyślnie, bez zarchiwizowanych), aktywne, uśpione, zarchiwizowane, wszystkie; wyszukiwarka, kopiowanie.
-- **Usunąć** można tylko link bez kliknięć (nigdzie nie trafił) – jego adres prowadzi potem na stronę nadrzędną.
+- **Usuwanie ręczne** – każdy link (przy linku z kliknięciami generator ostrzega); usunięty adres prowadzi na stronę nadrzędną.
 
 ## Reguła dla całej domeny (jednorazowo)
-Linki pod `/webinar/…` działają od razu (reguła w `deploy/htaccess-root`, wdrażana automatycznie). Dla pozostałych stron domeny i linków do innych domen wklej w **`public_html/.htaccess`** (cPanel → Menedżer plików), **przed** blokiem `# BEGIN WordPress`:
+Linki pod `/webinar/…` działają dzięki regule w `deploy/htaccess-root` (wdrażana automatycznie). Dla pozostałych stron domeny i linków do innych domen w **`public_html/.htaccess`** (na samej górze, przed `# BEGIN LSCACHE` i `# BEGIN WordPress`) jest reguła – **z przekierowaniem `R=302`**, bo LiteSpeed na hostingu nie przekazuje wewnętrznie do podkatalogu `webinar/` z własnym `.htaccess`:
 ```
 # Krótkie linki (skracacz z generatora UTM)
 <IfModule mod_rewrite.c>
 RewriteEngine On
-RewriteRule ^(.*/)?l/([A-Za-z0-9-]+)/?$ /webinar/l/index.php?c=$2&p=/$1 [L]
+RewriteRule ^(.*/)?l/([A-Za-z0-9-]+)/?$ /webinar/l/index.php?c=$2&p=/$1 [R=302,L]
 </IfModule>
 ```
 Sprawdzenie: `https://przystanzmianyzawodowej.pl/l/test` powinien przekierować na stronę główną.
