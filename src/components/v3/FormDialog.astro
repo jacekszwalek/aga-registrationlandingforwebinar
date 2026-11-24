@@ -92,6 +92,23 @@ const [clauseBefore, clauseAfter] = copy.privacy.clause.split('{controller}');
   .fdialog::backdrop {
     background: rgb(43 8 26 / 0.55);
   }
+  /*
+   * Nagrania sesji (Microsoft Clarity) odtwarzają <dialog> jako „otwarty, ale nie modalny”:
+   * bez warstwy top layer i bez ::backdrop – okno ląduje w treści strony, poza ekranem.
+   * Ta reguła działa tylko w takim stanie (na żywej stronie okno jest zawsze :modal, więc nic się nie zmienia)
+   * i odtwarza wygląd modala: przypięte na środku ekranu, nad treścią, z przyciemnionym tłem (cień zamiast ::backdrop).
+   */
+  .fdialog[open]:not(:modal) {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483647;
+    margin: auto;
+    height: fit-content;
+    overflow: auto;
+    box-shadow:
+      0 0 0 100vmax rgb(43 8 26 / 0.55),
+      0 30px 80px -20px rgb(43 8 26 / 0.45);
+  }
   .fdialog__close {
     position: absolute;
     top: 8px;
