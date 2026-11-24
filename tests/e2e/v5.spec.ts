@@ -293,3 +293,27 @@ test('/dziekuje/: pogrubione „folderów Oferty i Spam”', async ({ page }) =>
   await expect(page.locator('.ty__lead strong')).toHaveText('folderów Oferty i Spam');
   await expect(page.locator('.ty__lead')).not.toContainText('**');
 });
+
+test('okno zapisu: wygląd modala także w odtworzeniu nagrania (Clarity – dialog otwarty bez showModal)', async ({ page }) => {
+  await page.goto('/');
+  const dlg = page.locator('dialog[data-form-dialog]');
+  // Na żywej stronie (showModal) reguła zastępcza nie działa – wygląd bez zmian.
+  await page.locator('[data-open-form]').first().click();
+  await expect(dlg).toBeVisible();
+  const live = await dlg.evaluate((d) => ({ modal: d.matches(':modal'), shadow: getComputedStyle(d).boxShadow }));
+  expect(live.modal).toBe(true);
+  expect(live.shadow).not.toContain('0px 0px 0px');
+  await dlg.evaluate((d: HTMLDialogElement) => d.close());
+  // Odtworzenie nagrania: atrybut open bez showModal → okno przypięte na środku ekranu, z przyciemnieniem tła.
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight / 2));
+  await dlg.evaluate((d) => d.setAttribute('open', ''));
+  const replay = await dlg.evaluate((d) => {
+    const cs = getComputedStyle(d);
+    const r = d.getBoundingClientRect();
+    return { modal: d.matches(':modal'), position: cs.position, shadow: cs.boxShadow, inView: r.top >= 0 && r.bottom <= innerHeight + 1 };
+  });
+  expect(replay.modal).toBe(false);
+  expect(replay.position).toBe('fixed');
+  expect(replay.shadow).toContain('0px 0px 0px');
+  expect(replay.inView).toBe(true);
+});
