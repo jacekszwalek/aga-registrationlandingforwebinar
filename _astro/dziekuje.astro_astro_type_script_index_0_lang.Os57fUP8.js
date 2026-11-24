@@ -1,0 +1,1 @@
+import"./thankyou.BcDXnMGH.js";
